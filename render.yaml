@@ -20,7 +20,7 @@ services:
           property: connectionString
       - key: CORS_ORIGIN
         value: https://temariware.onrender.com
-      - key: GEMINI_API_KEY
+      - key: AIzaSyDH3U1BR3illkQX0U4aYH8Pjlm68IQGfbg
         sync: false
       - key: CHAPA_SECRET_KEY
         sync: false
@@ -33,7 +33,6 @@ services:
   - type: web
     name: temariware-frontend
     env: static
-    plan: free
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
