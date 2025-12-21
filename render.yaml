@@ -20,7 +20,7 @@ services:
           property: connectionString
       - key: CORS_ORIGIN
         value: https://temariware.onrender.com
-      - key: GEMINI_API_KEY
+      - key: AIzaSyDH3U1BR3illkQX0U4aYH8Pjlm68IQGfbg
         sync: false
       - key: CHAPA_SECRET_KEY
         sync: false
