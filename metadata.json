@@ -1,0 +1,8 @@
+{
+  "name": "TemariWare",
+  "description": "The ultimate portfolio, job marketplace, and e-learning platform for Ethiopian university students. Connect, learn, and earn.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
