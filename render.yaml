@@ -1,47 +1,29 @@
 services:
-  # Backend API
   - type: web
     name: temariware-backend
     env: node
-    region: oregon
-    plan: free
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 5000
-      - key: JWT_SECRET
-        generateValue: true
       - key: DATABASE_URL
-        fromDatabase:
-          name: temariware-db
-          property: connectionString
-      - key: CORS_ORIGIN
-        value: https://temariware.onrender.com
-      - key: GEMINI_API_KEY
         sync: false
-      - key: CHAPA_SECRET_KEY
+      - key: REDIS_URL
         sync: false
-      - key: API_BASE_URL
-        value: https://temariware-backend.onrender.com
-      - key: FRONTEND_URL
-        value: https://temariware.onrender.com
+      - key: JWT_SECRET
+        sync: false
 
-  # Frontend Static Site
   - type: web
-    name: temariware-frontend
-    env: static
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
+    name: temariware-bot
+    env: docker
+    rootDir: telegram-bot
     envVars:
-      - key: VITE_API_BASE
-        value: https://temariware-backend.onrender.com
-
-# Database
-databases:
-  - name: temariware-db
-    databaseName: temariware
-    user: temariware
-    plan: free
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: WEBAPP_URL
+        fromService:
+          type: web
+          name: temariware-backend
+          property: url
