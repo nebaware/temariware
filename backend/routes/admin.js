@@ -1,6 +1,6 @@
 const express = require('express');
 const { User, Job, Transaction, UserApplication } = require('../models');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 const router = express.Router();
 
 // Middleware to ensure admin access

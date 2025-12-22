@@ -1,8 +1,10 @@
+```javascript
 const express = require('express');
 const router = express.Router();
 const asyncHandler = require('../utils/asyncHandler');
-const User = require('../models/User');
-const auth = require('../middleware/auth');
+const { User } = require('../models');
+const multer = require('multer');
+const { auth } = require('../middleware/auth');
 const requireAdmin = require('../middleware/requireAdmin');
 
 // GET /api/users/me - Get current user profile
