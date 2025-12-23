@@ -1,8 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { StoreContext } from '../contexts/StoreContext';
+import { UserRole } from '../types';
 
 export const SimpleHomePage: React.FC = () => {
     const navigate = useNavigate();
+    const { state } = useContext(StoreContext);
 
     return (
         <div className="min-h-screen bg-black text-white p-4">
@@ -29,6 +33,20 @@ export const SimpleHomePage: React.FC = () => {
                         <p className="text-xl font-bold text-primary">1,250 ETB</p>
                     </div>
                 </div>
+
+                {/* Admin Panel Access */}
+                {state.user?.role === UserRole.ADMIN && (
+                    <div className="mb-6">
+                        <button 
+                            onClick={() => navigate('/admin')}
+                            className="w-full bg-red-600 hover:bg-red-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">⚙️</div>
+                            <div className="font-bold">Admin Panel</div>
+                            <div className="text-xs text-red-200">Manage Platform</div>
+                        </button>
+                    </div>
+                )}
 
                 {/* Quick Actions */}
                 <div className="grid grid-cols-2 gap-4 mb-6">

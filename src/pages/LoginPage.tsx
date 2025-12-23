@@ -35,7 +35,7 @@ export const LoginPage: React.FC = () => {
                 name: formData.email.split('@')[0],
                 email: formData.email,
                 university: 'TemariWare University',
-                role: UserRole.STUDENT,
+                role: formData.email === 'admin@temariware.com' ? UserRole.ADMIN : UserRole.STUDENT,
                 isVerified: true,
                 walletBalance: 1250,
                 xp: 120,
@@ -53,7 +53,12 @@ export const LoginPage: React.FC = () => {
 
             dispatch({ type: 'LOGIN', payload: user });
             addToast(`Welcome back, ${user.name}!`, 'success');
-            navigate('/');
+            
+            if (user.role === UserRole.ADMIN) {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
         } catch (err: any) {
             setError('Login failed. Try demo@temariware.com / demo123');
             addToast("Login Failed", "error");
