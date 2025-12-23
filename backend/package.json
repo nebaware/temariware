@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "set NODE_ENV=development && nodemon server.js",
         "start": "node server.js",
-        "prod": "set NODE_ENV=production && node server.js"
+        "prod": "set NODE_ENV=production && node server.js",
+        "seed": "node seed.js"
     },
     "dependencies": {
         "@safaricom-et/mpesa-node-js-sdk": "^1.0.0",

@@ -187,6 +187,31 @@ bot.onText(/\/profile/, async (msg) => {
     });
 });
 
+bot.onText(/\/courses/, async (msg) => {
+    const chatId = msg.chat.id;
+    const courses = await getCourses();
+    
+    if (courses.length > 0) {
+        let coursesText = '📚 *Available Courses*\n\n';
+        courses.forEach(course => {
+            coursesText += `📖 ${course.title} - ${course.price || 'Free'}\n`;
+        });
+        coursesText += `\n🌐 View all: ${webAppUrl}/#/gebeta`;
+        
+        bot.sendMessage(chatId, coursesText, { parse_mode: 'Markdown' });
+    } else {
+        bot.sendMessage(chatId, `📚 *Courses Loading...*\n\n🔄 Fetching courses\n\n🌐 View all: ${webAppUrl}/#/gebeta`, {
+            parse_mode: 'Markdown'
+        });
+    }
+});
+
+bot.onText(/\/notifications/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, `🔔 *Your Notifications*\n\n💼 New job posted: Frontend Developer\n💰 Payment received: 500 ETB\n📚 Course reminder: React Basics\n\n🌐 View all: ${webAppUrl}/#/`, {
+        parse_mode: 'Markdown'
+    });
+});
 bot.onText(/\/help/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, `
@@ -196,6 +221,8 @@ bot.onText(/\/help/, (msg) => {
 /jobs - Browse available jobs
 /wallet - Check your wallet
 /profile - View your profile
+/courses - Browse courses
+/notifications - Check notifications
 /version - Check bot version
 /help - Show this help message
 

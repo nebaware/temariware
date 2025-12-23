@@ -70,6 +70,7 @@ app.use('/api/admin', require('./routes/admin'));
 app.use('/api/subscription', require('./routes/subscription'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/dev', require('./routes/dev'));
+app.use('/api/docs', require('./routes/docs'));
 
 // Health Check
 app.get('/health', (req, res) => {
