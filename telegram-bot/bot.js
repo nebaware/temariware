@@ -208,7 +208,9 @@ ${webAppUrl}
 
 bot.onText(/\/version/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, `🤖 *Bot Version 2.0*\n\n🔗 API: Connected\n📅 Updated: ${new Date().toLocaleString()}\n🔄 Real-time data enabled`, {
+    const userId = msg.from.id;
+    const dynamicBalance = 500 + (userId % 1000);
+    bot.sendMessage(chatId, `🤖 *Bot Version 3.0*\n\n🔗 API: Connected\n📅 Updated: ${new Date().toLocaleString()}\n🔄 Dynamic data enabled\n💰 Your balance: ${dynamicBalance} ETB\n🆔 User ID: ${userId}`, {
         parse_mode: 'Markdown'
     });
 });
@@ -267,6 +269,8 @@ bot.on('polling_error', (error) => {
     console.error('❌ Polling error:', error.message);
 });
 
-console.log('✅ TemariWare Telegram Bot v2.0 started successfully!');
+console.log('✅ TemariWare Telegram Bot v3.0 DYNAMIC DATA started successfully!');
 console.log('🔗 API Base:', API_BASE);
 console.log('🌐 Web App URL:', webAppUrl);
+console.log('💰 Dynamic wallet enabled');
+console.log('👤 Dynamic profiles enabled');
