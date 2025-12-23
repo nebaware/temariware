@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
 import { NotificationContext } from '../contexts/NotificationContext';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const NotificationCenter: React.FC = () => {
     const { notifications, unreadCount, markAsRead, markAllAsRead, clearNotification } = useContext(NotificationContext);
@@ -32,19 +31,13 @@ export const NotificationCenter: React.FC = () => {
             </button>
 
             {/* Dropdown */}
-            <AnimatePresence>
-                {isOpen && (
-                    <>
-                        {/* Backdrop */}
-                        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
+            {isOpen && (
+                <>
+                    {/* Backdrop */}
+                    <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
 
-                        {/* Panel */}
-                        <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="absolute right-0 mt-2 w-80 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden"
-                        >
+                    {/* Panel */}
+                    <div className="absolute right-0 mt-2 w-80 bg-[#1e293b] border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
                             {/* Header */}
                             <div className="p-4 border-b border-white/10 flex justify-between items-center">
                                 <div>
@@ -116,10 +109,9 @@ export const NotificationCenter: React.FC = () => {
                                     </button>
                                 </div>
                             )}
-                        </motion.div>
+                        </div>
                     </>
                 )}
-            </AnimatePresence>
         </div>
     );
 };

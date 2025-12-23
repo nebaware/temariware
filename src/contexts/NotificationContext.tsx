@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import type { Notification } from '../types';
-import { socketService } from '../services/socket';
 import { StoreContext } from './StoreContext';
 
 interface NotificationContextType {
@@ -34,60 +33,15 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         localStorage.setItem('tm_notifications', JSON.stringify(notifications));
     }, [notifications]);
 
-    // Socket.io Real-Time Listeners
+    // Mock Socket.io Real-Time Listeners (disabled to prevent errors)
     useEffect(() => {
         if (!state.isAuthenticated) return;
 
-        // Job application updates
-        socketService.on('job:application:update', (data: any) => {
-            addNotification({
-                type: 'Job',
-                title: 'Application Update',
-                message: `Your application for "${data.jobTitle}" is now ${data.status}`,
-                time: new Date().toLocaleTimeString()
-            });
-        });
-
-        // Ekub payout announcements
-        socketService.on('ekub:payout', (data: any) => {
-            addNotification({
-                type: 'Ekub',
-                title: '🎉 Ekub Payout!',
-                message: `${data.winnerName} won ${data.amount} ETB in "${data.ekubName}"`,
-                time: new Date().toLocaleTimeString()
-            });
-        });
-
-        // New messages
-        socketService.on('message:new', (data: any) => {
-            addNotification({
-                type: 'System',
-                title: 'New Message',
-                message: `${data.senderName}: ${data.preview}`,
-                time: new Date().toLocaleTimeString()
-            });
-        });
-
-        // Wallet transactions
-        socketService.on('wallet:transaction', (data: any) => {
-            addNotification({
-                type: 'Wallet',
-                title: 'Transaction Complete',
-                message: `${data.type}: ${data.amount} ETB`,
-                time: new Date().toLocaleTimeString()
-            });
-        });
-
-        // Browser notifications (if permitted)
-        if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
+        // Mock implementation - no actual socket listeners
+        // All socket functionality disabled to prevent errors
 
         return () => {
-            socketService.off('job:application:update');
-            socketService.off('ekub:payout');
-            socketService.off('message:new');
-            socketService.off('wallet:transaction');
+            // Mock cleanup
         };
     }, [state.isAuthenticated]);
 
