@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TemariWare Platform Status</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #0f172a; color: white; }
+        .status { background: #1e293b; padding: 20px; margin: 15px 0; border-radius: 8px; }
+        .working { border-left: 4px solid #10b981; }
+        .broken { border-left: 4px solid #ef4444; }
+        .warning { border-left: 4px solid #f59e0b; }
+        a { color: #14F195; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        h1 { color: #14F195; }
+        .instructions { background: #374151; padding: 15px; border-radius: 8px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🚀 TemariWare Platform Status</h1>
+    
+    <div class="status working">
+        <h3>✅ Working Platform</h3>
+        <p><strong>URL:</strong> <a href="https://temariware-frontend-omek.onrender.com" target="_blank">https://temariware-frontend-omek.onrender.com</a></p>
+        <p><strong>Status:</strong> API Connected, Registration/Login Working</p>
+        <p><strong>Backend:</strong> https://temariware-backend-omek.onrender.com</p>
+    </div>
+
+    <div class="status broken">
+        <h3>❌ Not Working</h3>
+        <p><strong>URL:</strong> https://temariware-frontend.onrender.com</p>
+        <p><strong>Issue:</strong> Failed to fetch (API connection problem)</p>
+    </div>
+
+    <div class="instructions">
+        <h3>📋 How to Use the Platform</h3>
+        <ol>
+            <li><strong>Visit:</strong> <a href="https://temariware-frontend-omek.onrender.com" target="_blank">Working Platform</a></li>
+            <li><strong>Register:</strong> Create account with unique email</li>
+            <li><strong>If "Email already registered":</strong> Click "Login" instead</li>
+            <li><strong>Explore:</strong> Jobs, Wallet, Courses, Profile</li>
+        </ol>
+    </div>
+
+    <div class="instructions">
+        <h3>📱 Telegram Bot</h3>
+        <ol>
+            <li><strong>Search:</strong> @temariware_bot on Telegram</li>
+            <li><strong>Start:</strong> Send /start command</li>
+            <li><strong>Mini App:</strong> Click "🚀 Open TemariWare" button</li>
+            <li><strong>Commands:</strong> /jobs, /wallet, /profile, /help</li>
+        </ol>
+    </div>
+
+    <div class="status warning">
+        <h3>⚠️ Note</h3>
+        <p>Free tier services may take 30-60 seconds to wake up from sleep mode on first visit.</p>
+    </div>
+</body>
+</html>

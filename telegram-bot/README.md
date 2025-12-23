@@ -1,7 +1,7 @@
 # TemariWare Telegram Bot
 
 🚀 **Live Bot**: Search `@temariware_bot` on Telegram  
-🌐 **Web Platform**: [https://temariware-frontend-exz5.onrender.com](https://temariware-frontend-exz5.onrender.com)
+🌐 **Web Platform**: [https://temariware-frontend-omek.onrender.com](https://temariware-frontend-omek.onrender.com)
 
 Telegram bot and mini app integration for TemariWare platform.
 
