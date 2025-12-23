@@ -2,6 +2,7 @@ services:
   - type: web
     name: temariware-backend
     env: node
+    plan: free
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
@@ -20,6 +21,7 @@ services:
   - type: web
     name: temariware-bot
     env: docker
+    plan: free
     rootDir: telegram-bot
     envVars:
       - key: TELEGRAM_BOT_TOKEN
