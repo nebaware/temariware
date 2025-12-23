@@ -151,30 +151,35 @@ app.use((err, req, res, next) => {
 // Start Server
 const startServer = async () => {
   try {
-    // Try Redis connection but don't fail if it's not available
-    try {
-      await connectRedis();
-    } catch (redisError) {
-      console.warn('⚠️ Redis not available, continuing without cache');
-    }
-
-    // Database connection
-    await sequelize.authenticate();
-    console.log('✅ Database connected');
-    await sequelize.sync({ alter: true });
-    console.log('✅ Database synced');
-
+    // Skip Redis and database connections that might fail
+    console.log('🚀 Starting TemariWare API server...');
+    
     server.listen(PORT, '0.0.0.0', () => {
-      console.log(`\n🚀 Server running on port ${PORT}`);
+      console.log(`\n✅ Server running on port ${PORT}`);
       console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🌐 CORS Origins: ${allowedOrigins.join(', ')}`);
+      
+      // Try to connect to services after server is running
+      setTimeout(async () => {
+        try {
+          await connectRedis();
+        } catch (e) {
+          console.log('⚠️ Redis connection skipped');
+        }
+        
+        try {
+          await sequelize.authenticate();
+          console.log('✅ Database connected');
+          await sequelize.sync({ alter: true });
+          console.log('✅ Database synced');
+        } catch (e) {
+          console.log('⚠️ Database connection failed, using mock data');
+        }
+      }, 1000);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
-    // Try to start without database in emergency
-    server.listen(PORT, '0.0.0.0', () => {
-      console.log(`\n⚠️ Server running in emergency mode on port ${PORT}`);
-    });
+    process.exit(1);
   }
 };
 

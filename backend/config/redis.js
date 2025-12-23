@@ -12,6 +12,12 @@ client.on('error', (err) => {
 });
 
 const connectRedis = async () => {
+    // Skip Redis in production if REDIS_URL is not available
+    if (!process.env.REDIS_URL) {
+        console.log('⚠️ No REDIS_URL provided, skipping Redis connection');
+        return;
+    }
+    
     try {
         await client.connect();
         console.log('🚀 Redis connected successfully');

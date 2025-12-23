@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #0f172a; color: white; }
+        .result { background: #1e293b; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .success { border-left: 4px solid #10b981; }
+        .error { border-left: 4px solid #ef4444; }
+        button { padding: 10px 20px; background: #14F195; color: black; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Backend Connection Test</h1>
+    
+    <button onclick="testPing()">Test Ping</button>
+    <button onclick="testHealth()">Test Health</button>
+    <button onclick="testRoot()">Test Root</button>
+    
+    <div id="result" class="result">Click a button to test the backend connection...</div>
+
+    <script>
+        const API_URL = 'https://temariware-backend-cqpb-exz5.onrender.com';
+        
+        function log(message, isError = false) {
+            const result = document.getElementById('result');
+            result.innerHTML = message;
+            result.className = `result ${isError ? 'error' : 'success'}`;
+        }
+
+        async function testPing() {
+            log('Testing ping endpoint...');
+            try {
+                const response = await fetch(`${API_URL}/ping`);
+                const text = await response.text();
+                log(`✅ Ping successful: ${text}`);
+            } catch (error) {
+                log(`❌ Ping failed: ${error.message}`, true);
+            }
+        }
+
+        async function testHealth() {
+            log('Testing health endpoint...');
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                log(`✅ Health check successful:\n${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log(`❌ Health check failed: ${error.message}`, true);
+            }
+        }
+
+        async function testRoot() {
+            log('Testing root endpoint...');
+            try {
+                const response = await fetch(`${API_URL}/`);
+                const data = await response.json();
+                log(`✅ Root endpoint successful:\n${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log(`❌ Root endpoint failed: ${error.message}`, true);
+            }
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            setTimeout(testPing, 1000);
+        };
+    </script>
+</body>
+</html>
