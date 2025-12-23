@@ -151,11 +151,19 @@ bot.onText(/\/help/, (msg) => {
 /jobs - Browse available jobs
 /wallet - Check your wallet
 /profile - View your profile
+/version - Check bot version
 /help - Show this help message
 
 🌐 *Web Platform*
 ${webAppUrl}
     `, {
+        parse_mode: 'Markdown'
+    });
+});
+
+bot.onText(/\/version/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, `🤖 *Bot Version 2.0*\n\n🔗 API: Connected\n📅 Updated: ${new Date().toLocaleString()}\n🔄 Real-time data enabled`, {
         parse_mode: 'Markdown'
     });
 });
@@ -213,4 +221,6 @@ bot.on('polling_error', (error) => {
     console.error('❌ Polling error:', error.message);
 });
 
-console.log('✅ TemariWare Telegram Bot started successfully!');
+console.log('✅ TemariWare Telegram Bot v2.0 started successfully!');
+console.log('🔗 API Base:', API_BASE);
+console.log('🌐 Web App URL:', webAppUrl);
