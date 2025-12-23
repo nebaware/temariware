@@ -8,9 +8,24 @@ import { Card } from '../components/common/Card';
 
 export const HomePage: React.FC = () => {
     const { state, dispatch } = useContext(StoreContext);
-    const { t } = useContext(LanguageContext); // Assuming useText was just a wrapper for this
+    const { t } = useContext(LanguageContext);
     const navigate = useNavigate();
     const [claimed, setClaimed] = useState(state.user?.dailyClaimed || false);
+
+    // Debug: Log user state
+    console.log('HomePage - User state:', state.user);
+    console.log('HomePage - Is authenticated:', state.isAuthenticated);
+
+    // Fallback user data if missing
+    const user = state.user || {
+        name: 'Welcome User',
+        level: 1,
+        xp: 0,
+        walletBalance: 0,
+        streak: 0,
+        avatar: '',
+        dailyClaimed: false
+    };
 
     const handleClaim = () => {
         if (claimed) return;
@@ -18,18 +33,30 @@ export const HomePage: React.FC = () => {
         setClaimed(true);
     };
 
-    const levelProgress = ((state.user?.xp || 0) % 1000) / 10;
+    const levelProgress = ((user.xp || 0) % 1000) / 10;
+
+    // Show loading state if no user data
+    if (!state.isAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black text-white">
+                <div className="text-center">
+                    <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p>Loading your dashboard...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="pb-32 max-w-md mx-auto pt-4 px-4 min-h-screen">
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                     <div onClick={() => navigate('/profile')} className="relative cursor-pointer">
-                        <Avatar src={state.user?.avatar || ''} alt="me" size="md" className="border-2 border-primary" />
-                        <div className="absolute -bottom-1 -right-1 bg-black text-white text-[10px] font-bold px-1.5 rounded border border-gray-700">Lvl {state.user?.level || 1}</div>
+                        <Avatar src={user.avatar || ''} alt="me" size="md" className="border-2 border-primary" />
+                        <div className="absolute -bottom-1 -right-1 bg-black text-white text-[10px] font-bold px-1.5 rounded border border-gray-700">Lvl {user.level || 1}</div>
                     </div>
                     <div>
-                        <h2 className="font-bold text-white text-sm">{state.user?.name}</h2>
+                        <h2 className="font-bold text-white text-sm">{user.name}</h2>
                         <div className="w-24 h-1.5 bg-gray-800 rounded-full mt-1 overflow-hidden">
                             <div className="h-full bg-gradient-to-r from-primary to-blue-500" style={{ width: `${levelProgress}%` }}></div>
                         </div>
@@ -37,7 +64,7 @@ export const HomePage: React.FC = () => {
                 </div>
                 <div className="bg-gray-800/80 backdrop-blur px-4 py-2 rounded-xl border border-white/5 flex flex-col items-end">
                     <span className="text-[10px] text-gray-400 uppercase font-bold">Wallet</span>
-                    <span className="text-primary font-bold font-mono">{(state.user?.walletBalance ?? 0).toLocaleString()} ETB</span>
+                    <span className="text-primary font-bold font-mono">{(user.walletBalance ?? 0).toLocaleString()} ETB</span>
                 </div>
             </div>
 
@@ -48,7 +75,7 @@ export const HomePage: React.FC = () => {
                 </div>
                 <div className="bg-[#1e293b] p-2 rounded-xl border border-white/5 text-center">
                     <span className="text-[10px] text-blue-400 font-bold">Study Streak</span>
-                    <p className="text-white font-bold">{state.user?.streak || 0} Days</p>
+                    <p className="text-white font-bold">{user.streak || 0} Days</p>
                 </div>
                 <div className="bg-[#1e293b] p-2 rounded-xl border border-white/5 text-center">
                     <span className="text-[10px] text-primary font-bold">Tasks Done</span>
