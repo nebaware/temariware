@@ -24,6 +24,7 @@ import { AdminGuard } from './components/guards/AdminGuard';
 
 // Pages
 import { HomePage } from './pages/HomePage';
+import { SimpleHomePage } from './pages/SimpleHomePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DiscoverPage } from './pages/DiscoverPage';
@@ -131,7 +132,7 @@ const App: React.FC = () => {
                                         <Route path="/admin/logs" element={<AdminGuard roles={[AdminRole.SUPER_ADMIN]}><AdminLayout><AdminLogs /></AdminLayout></AdminGuard>} />
 
                                         {/* Protected User Routes */}
-                                        <Route path="/" element={<AuthGuard><HomePage /></AuthGuard>} />
+                                        <Route path="/" element={<AuthGuard><SimpleHomePage /></AuthGuard>} />
                                         <Route path="/discover" element={<AuthGuard><DiscoverPage /></AuthGuard>} />
                                         <Route path="/work" element={<AuthGuard><WorkHubPage /></AuthGuard>} />
                                         <Route path="/gebeta" element={<AuthGuard><GebetaPage /></AuthGuard>} />
