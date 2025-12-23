@@ -69,6 +69,7 @@ app.use('/api/ekub', require('./routes/ekub'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/subscription', require('./routes/subscription'));
 app.use('/api/notifications', require('./routes/notifications'));
+app.use('/api/dev', require('./routes/dev'));
 
 // Health Check
 app.get('/health', (req, res) => {
