@@ -25,6 +25,7 @@ import { AdminGuard } from './components/guards/AdminGuard';
 // Pages
 import { HomePage } from './pages/HomePage';
 import { SimpleHomePage } from './pages/SimpleHomePage';
+import { TestPage } from './pages/TestPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DiscoverPage } from './pages/DiscoverPage';
@@ -139,6 +140,9 @@ const App: React.FC = () => {
                                         </div>
                                     )}
                                     <Routes>
+                                        {/* Test Route */}
+                                        <Route path="/test" element={<TestPage />} />
+                                        
                                         {/* Public Routes */}
                                         <Route path="/login" element={<LoginPage />} />
                                         <Route path="/register" element={<RegisterPage />} />
