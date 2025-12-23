@@ -1,3 +1,9 @@
+databases:
+  - name: temariware-db
+    databaseName: temariware
+    user: temariware
+    plan: free
+
 services:
   - type: web
     name: temariware-backend
@@ -10,7 +16,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: temariware-db
+          property: connectionString
       - key: REDIS_URL
         sync: false
       - key: JWT_SECRET
