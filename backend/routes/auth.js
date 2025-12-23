@@ -45,7 +45,7 @@ router.post('/register', asyncHandler(async (req, res) => {
       });
     }
 
-    // Create user
+    // Create user with minimal required fields
     const user = await User.create({
       name: name.trim(),
       email: email.toLowerCase().trim(),
@@ -53,7 +53,17 @@ router.post('/register', asyncHandler(async (req, res) => {
       university: university.trim(),
       role: 'STUDENT',
       isVerified: false,
-      walletBalance: 0
+      walletBalance: 0,
+      xp: 0,
+      level: 1,
+      profileStrength: 25,
+      views: 0,
+      connections: 0,
+      followers: 0,
+      following: 0,
+      streak: 0,
+      dailyClaimed: false,
+      isBanned: false
     });
 
     console.log('User created successfully:', user.id);
