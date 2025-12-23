@@ -81,4 +81,44 @@ router.post('/:id/unban', auth, requireAdmin, asyncHandler(async (req, res) => {
   res.json({ success: true, message: 'User unbanned' });
 }));
 
+// POST /api/users/change-password - Change password for current user
+router.post('/change-password', auth, asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({
+      success: false,
+      error: 'Current password and new password are required'
+    });
+  }
+
+  const user = await User.findByPk(req.user.id);
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      error: 'User not found'
+    });
+  }
+
+  const isMatch = await user.comparePassword(currentPassword);
+  if (!isMatch) {
+    return res.status(400).json({
+      success: false,
+      error: 'Current password is incorrect'
+    });
+  }
+
+  // Hash new password
+  const bcrypt = require('bcryptjs');
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+  await user.update({ password: hashedPassword });
+
+  res.json({
+    success: true,
+    message: 'Password changed successfully'
+  });
+}));
+
 module.exports = router;

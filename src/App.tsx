@@ -9,6 +9,7 @@ import { ToastProvider } from './contexts/ToastContext';
 import { authUtils } from './utils/auth';
 import { api } from './services/api';
 import { socketService } from './services/socket';
+import { realTimeService } from './services/realtime';
 import { TelegramWebApp } from './utils/telegram';
 
 // Layout Components
@@ -84,6 +85,7 @@ const App: React.FC = () => {
                     const user = await api.user.getMe();
                     dispatch({ type: 'LOGIN', payload: user });
                     socketService.connect(user.id);
+                    realTimeService.connect(user.id.toString());
                 } catch (error) {
                     console.error("Session restore failed", error);
                     dispatch({ type: 'LOGOUT' });
@@ -97,6 +99,7 @@ const App: React.FC = () => {
 
         return () => {
             socketService.disconnect();
+            realTimeService.disconnect();
         };
     }, []);
 

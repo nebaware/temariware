@@ -93,6 +93,13 @@ class UserAPI {
         });
     }
 
+    async changePassword(currentPassword: string, newPassword: string): Promise<any> {
+        return await request<any>('/api/users/change-password', {
+            method: 'POST',
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+    }
+
     async getDiscoverUsers(): Promise<UserProfile[]> {
         return await request<UserProfile[]>('/api/users/discover');
     }

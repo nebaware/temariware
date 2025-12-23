@@ -68,6 +68,7 @@ app.use('/api/wallet', require('./routes/wallet'));
 app.use('/api/ekub', require('./routes/ekub'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/subscription', require('./routes/subscription'));
+app.use('/api/notifications', require('./routes/notifications'));
 
 // Health Check
 app.get('/health', (req, res) => {
@@ -84,12 +85,19 @@ app.get('/', (req, res) => {
     success: true,
     message: 'Welcome to TemariWare API',
     version: '1.0.0',
+    status: 'online',
+    timestamp: new Date().toISOString(),
     endpoints: {
       auth: {
         login: 'POST /api/auth/login',
-        register: 'POST /api/auth/register'
+        register: 'POST /api/auth/register',
+        changePassword: 'POST /api/auth/change-password'
       },
-      users: 'GET /api/users'
+      users: 'GET /api/users',
+      jobs: 'GET /api/jobs',
+      courses: 'GET /api/courses',
+      wallet: 'GET /api/wallet',
+      health: 'GET /health'
     }
   });
 });
