@@ -145,7 +145,7 @@ const App: React.FC = () => {
                                         <Route path="/test" element={<TestPage />} />
                                         
                                         {/* Public Routes */}
-                                        <Route path="/login" element={<MinimalLoginPage />} />
+                                        <Route path="/login" element={<LoginPage />} />
                                         <Route path="/register" element={<RegisterPage />} />
 
                                         {/* Admin Routes */}

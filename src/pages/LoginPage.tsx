@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { StoreContext } from '../contexts/StoreContext';
 import { ToastContext } from '../contexts/ToastContext';
 import { api } from '../services/api';
@@ -51,7 +50,7 @@ export const LoginPage: React.FC = () => {
     return (
         <div className="min-h-screen flex items-center justify-center p-6 bg-black bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-[#000] to-[#000]">
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none"></div>
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="w-full max-w-md bg-[#1e293b]/50 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/10 relative z-10">
+            <div className="w-full max-w-md bg-[#1e293b]/50 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/10 relative z-10">
                 <div className="text-center mb-8">
                     <div className="w-20 h-20 bg-gradient-to-tr from-primary to-blue-600 rounded-2xl mx-auto flex items-center justify-center text-black text-3xl font-bold shadow-[0_0_30px_rgba(20,241,149,0.3)] mb-4 animate-float">
                         <i className="fas fa-graduation-cap"></i>
@@ -106,7 +105,7 @@ export const LoginPage: React.FC = () => {
                         </button>
                     </p>
                 </form>
-            </motion.div>
+            </div>
         </div>
     );
 };
