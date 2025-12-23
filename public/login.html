@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TemariWare Login</title>
+    <style>
+        body { background: black; color: white; font-family: Arial; margin: 0; padding: 20px; }
+        .container { max-width: 400px; margin: 50px auto; background: #1e293b; padding: 40px; border-radius: 10px; }
+        input { width: 100%; padding: 10px; margin: 10px 0; background: #0f172a; border: 1px solid #374151; color: white; border-radius: 5px; }
+        button { width: 100%; padding: 12px; background: #14F195; color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        h1 { text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TemariWare Login</h1>
+        <form onsubmit="login(event)">
+            <input type="email" placeholder="demo@temariware.com" required>
+            <input type="password" placeholder="demo123" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <script>
+        function login(e) {
+            e.preventDefault();
+            localStorage.setItem('tm_token', 'test-token');
+            window.location.href = '/#/';
+        }
+    </script>
+</body>
+</html>
