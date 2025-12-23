@@ -18,8 +18,9 @@ const signToken = (user) => {
 router.post('/register', asyncHandler(async (req, res) => {
   const { name, email, password, university } = req.body;
 
-  console.log('Registration attempt:', { name, email, university }); // Add logging
+  console.log('Registration attempt:', { name, email, university });
 
+  // Validation
   if (!name || !email || !password || !university) {
     return res.status(400).json({
       success: false,
@@ -27,8 +28,16 @@ router.post('/register', asyncHandler(async (req, res) => {
     });
   }
 
+  if (password.length < 6) {
+    return res.status(400).json({
+      success: false,
+      error: 'Password must be at least 6 characters'
+    });
+  }
+
   try {
-    const existingUser = await User.findOne({ where: { email } });
+    // Check if user exists
+    const existingUser = await User.findOne({ where: { email: email.toLowerCase() } });
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -36,19 +45,24 @@ router.post('/register', asyncHandler(async (req, res) => {
       });
     }
 
+    // Create user
     const user = await User.create({
-      name,
-      email: email.toLowerCase(),
-      password,
-      university
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      password: password,
+      university: university.trim(),
+      role: 'STUDENT',
+      isVerified: false,
+      walletBalance: 0
     });
 
-    console.log('User created:', user.id); // Log successful creation
+    console.log('User created successfully:', user.id);
 
     const token = signToken(user);
 
     return res.status(201).json({
       success: true,
+      message: 'Registration successful',
       user: {
         id: user.id,
         name: user.name,
@@ -60,11 +74,32 @@ router.post('/register', asyncHandler(async (req, res) => {
       token
     });
   } catch (error) {
-    console.error('Registration error:', error); // Log any errors
+    console.error('Registration error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    // Handle specific database errors
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({
+        success: false,
+        error: 'Validation failed',
+        details: error.errors.map(e => e.message)
+      });
+    }
+    
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({
+        success: false,
+        error: 'Email already registered'
+      });
+    }
+    
     return res.status(500).json({
       success: false,
-      error: 'Registration failed',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: 'Registration failed - server error',
+      details: process.env.NODE_ENV === 'development' ? error.message : 'Please try again'
     });
   }
 }));

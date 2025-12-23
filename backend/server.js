@@ -71,6 +71,7 @@ app.use('/api/subscription', require('./routes/subscription'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/dev', require('./routes/dev'));
 app.use('/api/docs', require('./routes/docs'));
+app.use('/api/test', require('./routes/test'));
 
 // Health Check
 app.get('/health', (req, res) => {
