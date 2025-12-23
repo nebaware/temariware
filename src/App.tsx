@@ -8,8 +8,6 @@ import { DataSaverContext } from './contexts/DataSaverContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { authUtils } from './utils/auth';
 import { api } from './services/api';
-import { socketService } from './services/socket';
-import { realTimeService } from './services/realtime';
 import { TelegramWebApp } from './utils/telegram';
 
 // Layout Components
@@ -177,8 +175,8 @@ const App: React.FC = () => {
                                         {/* Fallback */}
                                         <Route path="*" element={<Navigate to="/" />} />
                                     </Routes>
-                                    {state.isAuthenticated && <MentorChat />}
-                                    {!window.location.hash.includes('admin') && state.isAuthenticated && <BottomNav />}
+                                    {/* {state.isAuthenticated && <MentorChat />} */}
+                                    {/* {!window.location.hash.includes('admin') && state.isAuthenticated && <BottomNav />} */}
                                 </div>
                             </HashRouter>
                         </ToastProvider>
