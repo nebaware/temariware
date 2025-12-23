@@ -1,13 +1,13 @@
 # TemariWare Telegram Bot
 
-🚀 **Live Bot**: Search `@temariware_bot` on Telegram  
+🚀 **Live Bot**: Search `@temariwarebot` on Telegram  
 🌐 **Web Platform**: [https://temariware-frontend-omek.onrender.com](https://temariware-frontend-omek.onrender.com)
 
 Telegram bot and mini app integration for TemariWare platform.
 
 ## 🚀 Quick Start
 
-1. **Find Bot**: Search `@temariware_bot` on Telegram
+1. **Find Bot**: Search `@temariwarebot` on Telegram
 2. **Start**: Send `/start` command
 3. **Mini App**: Click "🚀 Open TemariWare" button
 4. **Commands**: Use `/jobs`, `/wallet`, `/profile`, `/help`

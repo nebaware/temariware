@@ -1,7 +1,7 @@
 # TemariWare - Complete Student Ecosystem Platform
 
 🚀 **Live Platform**: [https://temariware-frontend-omek.onrender.com](https://temariware-frontend-omek.onrender.com)  
-📱 **Telegram Bot**: Search `@temariware_bot` on Telegram
+📱 **Telegram Bot**: Search `@temariwarebot` on Telegram
 
 ## 🌟 Features
 
@@ -56,7 +56,7 @@
 5. Start exploring jobs, courses, and networking!
 
 ### Telegram Bot
-1. Search for `@temariware_bot` on Telegram
+1. Search for `@temariwarebot` on Telegram
 2. Send `/start` to begin
 3. Click "🚀 Open TemariWare" for mini app
 4. Use commands: `/jobs`, `/wallet`, `/profile`, `/help`
