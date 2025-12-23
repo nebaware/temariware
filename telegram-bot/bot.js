@@ -5,7 +5,7 @@ const path = require('path');
 
 // Replace with your Telegram Bot Token from @BotFather
 const token = process.env.TELEGRAM_BOT_TOKEN || '8532692467:AAFJU_iZuvMhpcXvNr5hKxBhuBzv_w2_euM';
-const webAppUrl = process.env.WEBAPP_URL || 'https://temariware-frontend.onrender.com';
+const webAppUrl = process.env.WEBAPP_URL || 'https://temariware-frontend-exz5.onrender.com';
 
 // Create bot instance
 const bot = new TelegramBot(token, { polling: true });
