@@ -1,17 +1,17 @@
 databases:
-  - name: temariware-db
+  - name: temariware-db-cqpb
     databaseName: temariware
     user: temariware
     plan: free
 
 services:
   - type: redis
-    name: temariware-redis
+    name: temariware-redis-cqpb
     plan: free
     ipAllowList: []
 
   - type: web
-    name: temariware-backend
+    name: temariware-backend-cqpb
     env: node
     plan: free
     rootDir: backend
@@ -22,12 +22,12 @@ services:
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: temariware-db
+          name: temariware-db-cqpb
           property: connectionString
       - key: REDIS_URL
         fromService:
           type: redis
-          name: temariware-redis
+          name: temariware-redis-cqpb
           property: connectionString
       - key: JWT_SECRET
         sync: false
@@ -35,7 +35,7 @@ services:
         sync: false
 
   - type: web
-    name: temariware-bot
+    name: temariware-bot-cqpb
     env: docker
     plan: free
     rootDir: telegram-bot
