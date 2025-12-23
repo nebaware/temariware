@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TemariWare API Test Suite</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #0f172a; color: white; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #334155; border-radius: 8px; }
+        button { padding: 8px 16px; margin: 5px; background: #14F195; color: black; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0ea5e9; }
+        .result { background: #1e293b; padding: 10px; margin: 10px 0; border-radius: 4px; white-space: pre-wrap; }
+        .success { border-left: 4px solid #10b981; }
+        .error { border-left: 4px solid #ef4444; }
+        input { padding: 8px; margin: 5px; background: #1e293b; color: white; border: 1px solid #475569; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🚀 TemariWare API Test Suite</h1>
+    
+    <div class="test-section">
+        <h2>🔗 Backend Connection</h2>
+        <button onclick="testConnection()">Test Backend Connection</button>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="connection-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔐 Authentication</h2>
+        <div>
+            <input type="email" id="email" placeholder="Email" value="test@example.com">
+            <input type="password" id="password" placeholder="Password" value="password123">
+            <input type="text" id="name" placeholder="Name" value="Test User">
+            <input type="text" id="university" placeholder="University" value="Test University">
+        </div>
+        <button onclick="testRegister()">Register</button>
+        <button onclick="testLogin()">Login</button>
+        <button onclick="testChangePassword()">Change Password</button>
+        <div id="auth-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>👤 User Management</h2>
+        <button onclick="testGetMe()">Get My Profile</button>
+        <button onclick="testGetUsers()">Get All Users</button>
+        <button onclick="testDiscoverUsers()">Discover Users</button>
+        <div id="user-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>💼 Jobs</h2>
+        <button onclick="testGetJobs()">Get Jobs</button>
+        <button onclick="testCreateJob()">Create Job</button>
+        <div id="jobs-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>💰 Wallet</h2>
+        <button onclick="testWallet()">Get Wallet Balance</button>
+        <button onclick="testTransactions()">Get Transactions</button>
+        <div id="wallet-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔔 Notifications</h2>
+        <button onclick="testNotifications()">Get Notifications</button>
+        <div id="notifications-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://temariware-backend-cqpb-exz5.onrender.com';
+        let authToken = localStorage.getItem('test_token');
+
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${isError ? 'error' : 'success'}`;
+        }
+
+        async function apiCall(endpoint, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    ...options,
+                    headers: { ...headers, ...options.headers }
+                });
+                
+                const data = await response.json();
+                return { success: response.ok, data, status: response.status };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function testConnection() {
+            const result = await apiCall('/');
+            log('connection-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testHealth() {
+            const result = await apiCall('/health');
+            log('connection-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testRegister() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value;
+            const university = document.getElementById('university').value;
+
+            const result = await apiCall('/api/auth/register', {
+                method: 'POST',
+                body: JSON.stringify({ email, password, name, university })
+            });
+
+            if (result.success && result.data.token) {
+                authToken = result.data.token;
+                localStorage.setItem('test_token', authToken);
+            }
+
+            log('auth-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const result = await apiCall('/api/auth/login', {
+                method: 'POST',
+                body: JSON.stringify({ email, password })
+            });
+
+            if (result.success && result.data.token) {
+                authToken = result.data.token;
+                localStorage.setItem('test_token', authToken);
+            }
+
+            log('auth-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testChangePassword() {
+            const result = await apiCall('/api/users/change-password', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    currentPassword: 'password123', 
+                    newPassword: 'newpassword123' 
+                })
+            });
+            log('auth-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testGetMe() {
+            const result = await apiCall('/api/users/me');
+            log('user-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testGetUsers() {
+            const result = await apiCall('/api/users');
+            log('user-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testDiscoverUsers() {
+            const result = await apiCall('/api/users/discover');
+            log('user-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testGetJobs() {
+            const result = await apiCall('/api/jobs');
+            log('jobs-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testCreateJob() {
+            const result = await apiCall('/api/jobs', {
+                method: 'POST',
+                body: JSON.stringify({
+                    title: 'Test Job',
+                    description: 'Test job description',
+                    salary: '5000 ETB',
+                    type: 'Full-time',
+                    location: 'Addis Ababa'
+                })
+            });
+            log('jobs-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testWallet() {
+            const result = await apiCall('/api/wallet/balance');
+            log('wallet-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testTransactions() {
+            const result = await apiCall('/api/wallet/transactions');
+            log('wallet-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        async function testNotifications() {
+            const result = await apiCall('/api/notifications');
+            log('notifications-result', JSON.stringify(result, null, 2), !result.success);
+        }
+
+        // Auto-test connection on load
+        window.onload = () => {
+            testConnection();
+            if (authToken) {
+                document.querySelector('h1').innerHTML += ' (Authenticated ✅)';
+            }
+        };
+    </script>
+</body>
+</html>
