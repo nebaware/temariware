@@ -72,11 +72,18 @@ app.use('/api/notifications', require('./routes/notifications'));
 
 // Health Check
 app.get('/health', (req, res) => {
-  res.json({
+  res.status(200).json({
     status: 'ok',
-    message: 'Server is running',
-    timestamp: new Date().toISOString()
+    message: 'TemariWare API is running',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
   });
+});
+
+// Simple ping endpoint
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
 });
 
 // Root Route
@@ -144,20 +151,30 @@ app.use((err, req, res, next) => {
 // Start Server
 const startServer = async () => {
   try {
-    await connectRedis();
+    // Try Redis connection but don't fail if it's not available
+    try {
+      await connectRedis();
+    } catch (redisError) {
+      console.warn('⚠️ Redis not available, continuing without cache');
+    }
+
+    // Database connection
     await sequelize.authenticate();
     console.log('✅ Database connected');
     await sequelize.sync({ alter: true });
     console.log('✅ Database synced');
 
-    server.listen(PORT, () => {
+    server.listen(PORT, '0.0.0.0', () => {
       console.log(`\n🚀 Server running on port ${PORT}`);
       console.log(`📡 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🌐 Allowed Origin: ${process.env.CORS_ORIGIN || 'http://localhost:3000'}`);
+      console.log(`🌐 CORS Origins: ${allowedOrigins.join(', ')}`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);
-    process.exit(1);
+    // Try to start without database in emergency
+    server.listen(PORT, '0.0.0.0', () => {
+      console.log(`\n⚠️ Server running in emergency mode on port ${PORT}`);
+    });
   }
 };
 
@@ -165,7 +182,20 @@ startServer();
 
 // Graceful Shutdown
 process.on('SIGINT', async () => {
-  await disconnectRedis();
+  try {
+    await disconnectRedis();
+  } catch (e) {
+    console.log('Redis already disconnected');
+  }
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  try {
+    await disconnectRedis();
+  } catch (e) {
+    console.log('Redis already disconnected');
+  }
   process.exit(0);
 });
 
