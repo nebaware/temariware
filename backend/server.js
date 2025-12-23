@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const compression = require('compression');
 const { sequelize } = require('./config/db');
 require('./models'); // Register models for sync
+const { connectRedis, disconnectRedis } = require('./config/redis');
+const { apiLimiter, authLimiter } = require('./middleware/rateLimit');
 
 const http = require('http');
 const initSocket = require('./utils/socket');
@@ -23,9 +25,14 @@ app.use(helmet());
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(apiLimiter); // Apply general rate limiting
 
 // CORS Configuration
 const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'];
+// Ensure Render Frontend URL is allowed
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl requests)
@@ -46,7 +53,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
+app.use('/api/auth', authLimiter, require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/courses', require('./routes/courses'));
@@ -66,21 +73,6 @@ app.get('/health', (req, res) => {
 });
 
 // Root Route
-app.get('/', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Welcome to TemariWare API',
-    version: '1.0.0',
-    endpoints: {
-      auth: {
-        login: 'POST /api/auth/login',
-        register: 'POST /api/auth/register'
-      },
-      users: 'GET /api/users'
-    }
-  });
-});
-// Root route
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -138,6 +130,7 @@ app.use((err, req, res, next) => {
 // Start Server
 const startServer = async () => {
   try {
+    await connectRedis();
     await sequelize.authenticate();
     console.log('✅ Database connected');
     await sequelize.sync({ alter: true });
@@ -155,5 +148,11 @@ const startServer = async () => {
 };
 
 startServer();
+
+// Graceful Shutdown
+process.on('SIGINT', async () => {
+  await disconnectRedis();
+  process.exit(0);
+});
 
 module.exports = app;

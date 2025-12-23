@@ -5,6 +5,7 @@ const path = require('path');
 
 // Replace with your Telegram Bot Token from @BotFather
 const token = process.env.TELEGRAM_BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE';
+const webAppUrl = process.env.WEBAPP_URL || 'http://localhost:3000';
 
 // Create bot instance
 const bot = new TelegramBot(token, { polling: true });
@@ -66,14 +67,14 @@ Choose an option below:
 
 bot.onText(/\/jobs/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, '💼 *Available Jobs*\n\n📌 Backend Developer - Remote - 15,000 ETB\n📌 UI Designer - Addis Ababa - 12,000 ETB\n📌 Data Entry - Part-time - 5,000 ETB\n\n🌐 View all: http://localhost:3000/#/work', {
+    bot.sendMessage(chatId, `💼 *Available Jobs*\n\n📌 Backend Developer - Remote - 15,000 ETB\n📌 UI Designer - Addis Ababa - 12,000 ETB\n📌 Data Entry - Part-time - 5,000 ETB\n\n🌐 View all: ${webAppUrl}/#/work`, {
         parse_mode: 'Markdown'
     });
 });
 
 bot.onText(/\/wallet/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, '💰 *Your Wallet*\n\n💵 Balance: 1,250 ETB\n📊 Earned: 5,600 ETB\n📤 Pending: 300 ETB\n\n🌐 Manage: http://localhost:3000/#/wallet', {
+    bot.sendMessage(chatId, `💰 *Your Wallet*\n\n💵 Balance: 1,250 ETB\n📊 Earned: 5,600 ETB\n📤 Pending: 300 ETB\n\n🌐 Manage: ${webAppUrl}/#/wallet`, {
         parse_mode: 'Markdown'
     });
 });
@@ -81,7 +82,7 @@ bot.onText(/\/wallet/, (msg) => {
 bot.onText(/\/profile/, (msg) => {
     const chatId = msg.chat.id;
     const user = msg.from;
-    bot.sendMessage(chatId, `👤 *Your Profile*\n\nName: ${user.first_name}\n✅ Verified Student\n⭐ Level 5\n🎯 85% Profile Strength\n\n🌐 View: http://localhost:3000/#/profile`, {
+    bot.sendMessage(chatId, `👤 *Your Profile*\n\nName: ${user.first_name}\n✅ Verified Student\n⭐ Level 5\n🎯 85% Profile Strength\n\n🌐 View: ${webAppUrl}/#/profile`, {
         parse_mode: 'Markdown'
     });
 });
@@ -98,7 +99,7 @@ bot.onText(/\/help/, (msg) => {
 /help - Show this help message
 
 🌐 *Web Platform*
-http://localhost:3000
+${webAppUrl}
     `, {
         parse_mode: 'Markdown'
     });
@@ -112,19 +113,19 @@ bot.on('callback_query', (query) => {
     switch (data) {
         case 'jobs':
             bot.answerCallbackQuery(query.id);
-            bot.sendMessage(chatId, '💼 *Latest Jobs*\n\n📌 Backend Developer - 15,000 ETB\n📌 UI Designer - 12,000 ETB\n📌 Data Entry - 5,000 ETB\n\n🌐 http://localhost:3000/#/work', { parse_mode: 'Markdown' });
+            bot.sendMessage(chatId, `💼 *Latest Jobs*\n\n📌 Backend Developer - 15,000 ETB\n📌 UI Designer - 12,000 ETB\n📌 Data Entry - 5,000 ETB\n\n🌐 ${webAppUrl}/#/work`, { parse_mode: 'Markdown' });
             break;
         case 'wallet':
             bot.answerCallbackQuery(query.id);
-            bot.sendMessage(chatId, '💰 *Wallet Summary*\n\n💵 Balance: 1,250 ETB\n📊 Earned: 5,600 ETB\n📤 Pending: 300 ETB\n\n🌐 http://localhost:3000/#/wallet', { parse_mode: 'Markdown' });
+            bot.sendMessage(chatId, `💰 *Wallet Summary*\n\n💵 Balance: 1,250 ETB\n📊 Earned: 5,600 ETB\n📤 Pending: 300 ETB\n\n🌐 ${webAppUrl}/#/wallet`, { parse_mode: 'Markdown' });
             break;
         case 'profile':
             bot.answerCallbackQuery(query.id);
-            bot.sendMessage(chatId, '👤 *Your Profile*\n\n✅ Verified Student\n⭐ Level 5\n🎯 85% Complete\n\n🌐 http://localhost:3000/#/profile', { parse_mode: 'Markdown' });
+            bot.sendMessage(chatId, `👤 *Your Profile*\n\n✅ Verified Student\n⭐ Level 5\n🎯 85% Complete\n\n🌐 ${webAppUrl}/#/profile`, { parse_mode: 'Markdown' });
             break;
         case 'courses':
             bot.answerCallbackQuery(query.id);
-            bot.sendMessage(chatId, '📚 *Available Courses*\n\n📖 Web Development\n📖 Data Science\n📖 Mobile Apps\n\n🌐 http://localhost:3000/#/gebeta', { parse_mode: 'Markdown' });
+            bot.sendMessage(chatId, `📚 *Available Courses*\n\n📖 Web Development\n📖 Data Science\n📖 Mobile Apps\n\n🌐 ${webAppUrl}/#/gebeta`, { parse_mode: 'Markdown' });
             break;
         default:
             bot.answerCallbackQuery(query.id);

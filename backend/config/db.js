@@ -11,7 +11,9 @@ if (!fs.existsSync(dbPath)) {
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: path.join(dbPath, 'database.sqlite'),
-  logging: false
+  // Set logging to console.log in development, or disable it in production.
+  // This is useful for debugging but can be noisy in production.
+  logging: process.env.NODE_ENV === 'development' ? console.log : false
 });
 
 module.exports = { sequelize };
