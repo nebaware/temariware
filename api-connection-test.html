@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #0f172a; color: white; }
+        .result { background: #1e293b; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .success { border-left: 4px solid #10b981; }
+        .error { border-left: 4px solid #ef4444; }
+        button { padding: 10px 20px; background: #14F195; color: black; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔗 API Connection Test</h1>
+    
+    <button onclick="testBackend('https://temariware-backend-omek.onrender.com')">Test Backend OMEK</button>
+    <button onclick="testBackend('https://temariware-backend-cqpb.onrender.com')">Test Backend CQPB</button>
+    
+    <div id="result" class="result">Click a button to test backend connections...</div>
+
+    <script>
+        function log(message, isError = false) {
+            const result = document.getElementById('result');
+            result.innerHTML = message;
+            result.className = `result ${isError ? 'error' : 'success'}`;
+        }
+
+        async function testBackend(url) {
+            log(`Testing ${url}...`);
+            try {
+                const response = await fetch(`${url}/health`);
+                const data = await response.json();
+                log(`✅ ${url} is working!\n${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                log(`❌ ${url} failed: ${error.message}`, true);
+            }
+        }
+
+        // Auto-test both on load
+        window.onload = () => {
+            setTimeout(() => testBackend('https://temariware-backend-omek.onrender.com'), 1000);
+        };
+    </script>
+</body>
+</html>

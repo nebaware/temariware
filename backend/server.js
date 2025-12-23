@@ -32,8 +32,8 @@ const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split('
   'http://localhost:3000', 
   'http://localhost:5173', 
   'http://localhost:5174',
-  'https://temariware-frontend.onrender.com',
-  'https://temariware-frontend-exz5.onrender.com'
+  'https://temariware-frontend-exz5.onrender.com',
+  'https://temariware-frontend-omek.onrender.com'
 ];
 // Ensure Render Frontend URL is allowed
 if (process.env.FRONTEND_URL) {

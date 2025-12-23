@@ -32,7 +32,7 @@ services:
       - key: JWT_SECRET
         value: temariware_jwt_secret_2024_production_key
       - key: CORS_ORIGIN
-        value: https://temariware-frontend.onrender.com,https://temariware-frontend-exz5.onrender.com
+        value: https://temariware-frontend-exz5.onrender.com,https://temariware-frontend-omek.onrender.com
 
   - type: web
     name: temariware-frontend-exz5
@@ -41,7 +41,7 @@ services:
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
-        value: https://temariware-backend-cqpb-exz5.onrender.com
+        value: https://temariware-backend-omek.onrender.com
 
   - type: web
     name: temariware-bot-cqpb-exz5
