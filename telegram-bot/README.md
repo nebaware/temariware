@@ -67,6 +67,9 @@ start - Start the bot and see main menu
 jobs - Browse available jobs
 wallet - Check your wallet balance
 profile - View your profile
+courses - Browse available courses
+notifications - Check your notifications
+version - Check bot version
 help - Show help message
 ```
 
