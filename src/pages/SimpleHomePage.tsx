@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 export const SimpleHomePage: React.FC = () => {
     const navigate = useNavigate();
 
+    console.log('SimpleHomePage rendering');
+
     return (
         <div className="min-h-screen bg-black text-white p-4">
             <div className="max-w-md mx-auto">
