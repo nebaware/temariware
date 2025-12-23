@@ -1,14 +1,13 @@
 # TemariWare Telegram Bot
 
-🚀 **Live Bot**: Search your bot on Telegram  
-🌐 **Web Platform**: [https://temariware-frontend-exz5.onrender.com](https://temariware-frontend-exz5.onrender.com)  
-🔧 **Backend API**: [https://temariware-backend-cqpb-exz5.onrender.com](https://temariware-backend-cqpb-exz5.onrender.com)
+🚀 **Live Bot**: Search `@temariware_bot` on Telegram  
+🌐 **Web Platform**: [https://temariware-frontend-exz5.onrender.com](https://temariware-frontend-exz5.onrender.com)
 
 Telegram bot and mini app integration for TemariWare platform.
 
 ## 🚀 Quick Start
 
-1. **Find Bot**: Search your bot username on Telegram
+1. **Find Bot**: Search `@temariware_bot` on Telegram
 2. **Start**: Send `/start` command
 3. **Mini App**: Click "🚀 Open TemariWare" button
 4. **Commands**: Use `/jobs`, `/wallet`, `/profile`, `/help`
@@ -16,7 +15,7 @@ Telegram bot and mini app integration for TemariWare platform.
 ## 📱 Bot Commands
 
 - `/start` - Welcome message and main menu with mini app button
-- `/jobs` - Browse available jobs (shows top 3 + web link)
+- `/jobs` - Browse available jobs
 - `/wallet` - Check wallet balance and recent transactions
 - `/profile` - View user profile summary
 - `/help` - Show all available commands
@@ -44,23 +43,13 @@ npm install
 
 # Configure environment
 cp .env.example .env
-# Add your TELEGRAM_BOT_TOKEN
+# Add your bot configuration
 
 # Run development
 npm run dev
 
 # Run production
 npm start
-```
-
-### Environment Variables
-```env
-TELEGRAM_BOT_TOKEN=8532692467:AAFJU_iZuvMhpcXvNr5hKxBhuBzv_w2_euM
-WEBAPP_URL=https://temariware-frontend-exz5.onrender.com
-DATABASE_URL=postgresql://...
-REDIS_URL=redis://...
-NODE_ENV=production
-PORT=3001
 ```
 
 ## 🔧 Bot Configuration
@@ -83,7 +72,7 @@ help - Show help message
 
 ## 🚀 Deployment
 
-Deployed automatically via Render.com:
+Deployed automatically via cloud infrastructure:
 - **Service**: Docker container
 - **Auto-deploy**: On git push to main
 - **Environment**: Production variables set
@@ -96,13 +85,6 @@ Deployed automatically via Render.com:
 - Rate limiting on bot commands
 - User authentication via web platform
 - Secure webhook handling
-
-## 📊 Bot Analytics
-
-- User interaction tracking
-- Command usage statistics
-- Error monitoring and logging
-- Performance metrics
 
 ## 🤝 Integration
 
@@ -118,24 +100,10 @@ Deployed automatically via Render.com:
 - **Jobs**: Live job postings
 - **Messages**: Integrated messaging system
 
-## 🧪 Testing
-
-```bash
-# Test bot locally
-npm run test
-
-# Test specific commands
-node test-commands.js
-
-# Monitor logs
-npm run logs
-```
-
 ## 📞 Support
 
 - **Bot Issues**: Contact via `/help` command
 - **Technical**: Create GitHub issue
-- **General**: support@temariware.com
 
 ---
 

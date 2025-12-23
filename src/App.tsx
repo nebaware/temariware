@@ -149,6 +149,15 @@ const App: React.FC = () => {
                                         <Route path="/settings" element={<AuthGuard><SettingsPage /></AuthGuard>} />
                                         <Route path="/subscription" element={<AuthGuard><SubscriptionPage /></AuthGuard>} />
 
+                                        {/* Redirect common paths */}
+                                        <Route path="/jobs" element={<Navigate to="/work" replace />} />
+                                        <Route path="/courses" element={<Navigate to="/gebeta" replace />} />
+                                        <Route path="/learning" element={<Navigate to="/gebeta" replace />} />
+                                        <Route path="/savings" element={<Navigate to="/ekub" replace />} />
+                                        <Route path="/chat" element={<Navigate to="/messages" replace />} />
+                                        <Route path="/dashboard" element={<Navigate to="/" replace />} />
+                                        <Route path="/home" element={<Navigate to="/" replace />} />
+
                                         {/* Fallback */}
                                         <Route path="*" element={<Navigate to="/" />} />
                                     </Routes>
