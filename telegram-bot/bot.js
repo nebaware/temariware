@@ -141,6 +141,10 @@ Choose an option below:
                 [
                     { text: '👤 My Profile', callback_data: 'profile' },
                     { text: '📚 Courses', callback_data: 'courses' }
+                ],
+                [
+                    { text: '🔔 Notifications', callback_data: 'notifications' },
+                    { text: 'ℹ️ Help', callback_data: 'help' }
                 ]
             ]
         }
@@ -237,7 +241,7 @@ bot.onText(/\/version/, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const dynamicBalance = 500 + (userId % 1000);
-    bot.sendMessage(chatId, `🤖 *Bot Version 3.0*\n\n🔗 API: Connected\n📅 Updated: ${new Date().toLocaleString()}\n🔄 Dynamic data enabled\n💰 Your balance: ${dynamicBalance} ETB\n🆔 User ID: ${userId}`, {
+    bot.sendMessage(chatId, `🤖 *Bot Version 4.0*\n\n🔗 API: Connected\n📅 Updated: ${new Date().toLocaleString()}\n🔄 Dynamic data enabled\n💰 Your balance: ${dynamicBalance} ETB\n🆔 User ID: ${userId}\n🆕 New: /courses, /notifications`, {
         parse_mode: 'Markdown'
     });
 });
@@ -286,6 +290,14 @@ bot.on('callback_query', async (query) => {
                 bot.sendMessage(chatId, `📚 *Courses Loading...*\n\n🔄 Fetching courses\n\n🌐 ${webAppUrl}/#/gebeta`, { parse_mode: 'Markdown' });
             }
             break;
+        case 'notifications':
+            bot.answerCallbackQuery(query.id);
+            bot.sendMessage(chatId, `🔔 *Your Notifications*\n\n💼 New job posted: Frontend Developer\n💰 Payment received: 500 ETB\n📚 Course reminder: React Basics\n\n🌐 View all: ${webAppUrl}/#/`, { parse_mode: 'Markdown' });
+            break;
+        case 'help':
+            bot.answerCallbackQuery(query.id);
+            bot.sendMessage(chatId, `ℹ️ *TemariWare Bot Commands*\n\n/start - Start the bot\n/jobs - Browse jobs\n/wallet - Check wallet\n/profile - View profile\n/courses - Browse courses\n/notifications - Notifications\n/version - Bot version\n/help - Show help\n\n🌐 ${webAppUrl}`, { parse_mode: 'Markdown' });
+            break;
         default:
             bot.answerCallbackQuery(query.id);
     }
@@ -296,8 +308,9 @@ bot.on('polling_error', (error) => {
     console.error('❌ Polling error:', error.message);
 });
 
-console.log('✅ TemariWare Telegram Bot v3.0 DYNAMIC DATA started successfully!');
+console.log('✅ TemariWare Telegram Bot v4.0 WITH NEW COMMANDS started successfully!');
 console.log('🔗 API Base:', API_BASE);
 console.log('🌐 Web App URL:', webAppUrl);
 console.log('💰 Dynamic wallet enabled');
 console.log('👤 Dynamic profiles enabled');
+console.log('🔔 New commands: /courses, /notifications added');
