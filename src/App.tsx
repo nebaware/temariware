@@ -122,12 +122,12 @@ const App: React.FC = () => {
                         <ToastProvider>
                             <HashRouter>
                                 <div className="min-h-screen bg-black text-gray-100 font-sans pb-safe selection:bg-primary selection:text-black">
-                                    {/* Notification Center - Only show when authenticated */}
-                                    {state.isAuthenticated && (
+                                    {/* Notification Center - Disabled to prevent errors */}
+                                    {/* {state.isAuthenticated && (
                                         <div className="fixed top-4 right-4 z-50">
                                             <NotificationCenter />
                                         </div>
-                                    )}
+                                    )} */}
                                     <Routes>
                                         {/* Test Route */}
                                         <Route path="/test" element={<TestPage />} />
