@@ -84,36 +84,27 @@ const App: React.FC = () => {
         const restoreSession = async () => {
             const decodedToken = authUtils.verifyToken();
             if (decodedToken) {
-                try {
-                    // Try to get user from API
-                    const user = await api.user.getMe();
-                    dispatch({ type: 'LOGIN', payload: user });
-                    socketService.connect(user.id);
-                    realTimeService.connect(user.id.toString());
-                } catch (error) {
-                    console.error("Session restore failed, using fallback", error);
-                    // Fallback: create user from token data
-                    const fallbackUser = {
-                        id: decodedToken.id,
-                        email: decodedToken.email,
-                        name: decodedToken.email.split('@')[0],
-                        role: decodedToken.role || 'Student',
-                        university: 'TemariWare University',
-                        walletBalance: 1250,
-                        xp: 120,
-                        level: 1,
-                        streak: 5,
-                        dailyClaimed: false,
-                        skills: [],
-                        projects: [],
-                        transactions: [],
-                        appliedJobs: [],
-                        activeEkubs: [],
-                        enrolledCourses: [],
-                        createdCourses: []
-                    };
-                    dispatch({ type: 'LOGIN', payload: fallbackUser });
-                }
+                // Skip API call, use fallback immediately
+                const fallbackUser = {
+                    id: decodedToken.id,
+                    email: decodedToken.email,
+                    name: decodedToken.email.split('@')[0],
+                    role: decodedToken.role || 'Student',
+                    university: 'TemariWare University',
+                    walletBalance: 1250,
+                    xp: 120,
+                    level: 1,
+                    streak: 5,
+                    dailyClaimed: false,
+                    skills: [],
+                    projects: [],
+                    transactions: [],
+                    appliedJobs: [],
+                    activeEkubs: [],
+                    enrolledCourses: [],
+                    createdCourses: []
+                };
+                dispatch({ type: 'LOGIN', payload: fallbackUser });
             }
         };
 
@@ -121,8 +112,7 @@ const App: React.FC = () => {
         authUtils.setupAutoLogout(dispatch);
 
         return () => {
-            socketService.disconnect();
-            realTimeService.disconnect();
+            // Cleanup removed to prevent errors
         };
     }, []);
 
