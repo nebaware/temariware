@@ -75,6 +75,7 @@ app.use('/api/test', require('./routes/test'));
 app.use('/api/emergency', require('./routes/emergency'));
 app.use('/api/simple', require('./routes/simple'));
 app.use('/api/demo', require('./routes/demo'));
+app.use('/api/direct', require('./routes/direct'));
 
 // Health Check
 app.get('/health', (req, res) => {
