@@ -2,10 +2,48 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
 const path = require('path');
+const fetch = require('node-fetch');
 
-// Replace with your Telegram Bot Token from @BotFather
+// API Configuration
+const API_BASE = process.env.API_URL || 'https://temariware-backend-omek.onrender.com';
 const token = process.env.TELEGRAM_BOT_TOKEN || '8532692467:AAFJU_iZuvMhpcXvNr5hKxBhuBzv_w2_euM';
-const webAppUrl = process.env.WEBAPP_URL || 'https://temariware-frontend-exz5.onrender.com';
+const webAppUrl = process.env.WEBAPP_URL || 'https://temariware-frontend-omek.onrender.com';
+
+// API Helper Functions
+async function apiCall(endpoint, options = {}) {
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+            ...options
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error.message);
+        return { success: false, error: 'API connection failed' };
+    }
+}
+
+async function getJobs() {
+    const result = await apiCall('/api/jobs');
+    return result.success !== false ? result.slice(0, 3) : [];
+}
+
+async function getWalletInfo(userId) {
+    // For now, return mock data since we need user authentication
+    return {
+        balance: 1250,
+        earned: 5600,
+        pending: 300
+    };
+}
+
+async function getCourses() {
+    const result = await apiCall('/api/courses');
+    return result.success !== false ? result.slice(0, 3) : [];
+}
 
 // Create bot instance
 const bot = new TelegramBot(token, { polling: true });
@@ -68,16 +106,30 @@ Choose an option below:
     bot.sendMessage(chatId, welcomeMessage, options);
 });
 
-bot.onText(/\/jobs/, (msg) => {
+bot.onText(/\/jobs/, async (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, `💼 *Available Jobs*\n\n📌 Backend Developer - Remote - 15,000 ETB\n📌 UI Designer - Addis Ababa - 12,000 ETB\n📌 Data Entry - Part-time - 5,000 ETB\n\n🌐 View all: ${webAppUrl}/#/work`, {
-        parse_mode: 'Markdown'
-    });
+    const jobs = await getJobs();
+    
+    if (jobs.length > 0) {
+        let jobsText = '💼 *Available Jobs*\n\n';
+        jobs.forEach(job => {
+            jobsText += `📌 ${job.title} - ${job.location || 'Remote'} - ${job.salary || 'Negotiable'}\n`;
+        });
+        jobsText += `\n🌐 View all: ${webAppUrl}/#/work`;
+        
+        bot.sendMessage(chatId, jobsText, { parse_mode: 'Markdown' });
+    } else {
+        bot.sendMessage(chatId, `💼 *Jobs Loading...*\n\n🔄 Fetching latest opportunities\n\n🌐 View all: ${webAppUrl}/#/work`, {
+            parse_mode: 'Markdown'
+        });
+    }
 });
 
-bot.onText(/\/wallet/, (msg) => {
+bot.onText(/\/wallet/, async (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, `💰 *Your Wallet*\n\n💵 Balance: 1,250 ETB\n📊 Earned: 5,600 ETB\n📤 Pending: 300 ETB\n\n🌐 Manage: ${webAppUrl}/#/wallet`, {
+    const walletInfo = await getWalletInfo(msg.from.id);
+    
+    bot.sendMessage(chatId, `💰 *Your Wallet*\n\n💵 Balance: ${walletInfo.balance} ETB\n📊 Earned: ${walletInfo.earned} ETB\n📤 Pending: ${walletInfo.pending} ETB\n\n🌐 Manage: ${webAppUrl}/#/wallet`, {
         parse_mode: 'Markdown'
     });
 });
@@ -109,26 +161,47 @@ ${webAppUrl}
 });
 
 // Handle callback queries
-bot.on('callback_query', (query) => {
+bot.on('callback_query', async (query) => {
     const chatId = query.message.chat.id;
     const data = query.data;
 
     switch (data) {
         case 'jobs':
             bot.answerCallbackQuery(query.id);
-            bot.sendMessage(chatId, `💼 *Latest Jobs*\n\n📌 Backend Developer - 15,000 ETB\n📌 UI Designer - 12,000 ETB\n📌 Data Entry - 5,000 ETB\n\n🌐 ${webAppUrl}/#/work`, { parse_mode: 'Markdown' });
+            const jobs = await getJobs();
+            if (jobs.length > 0) {
+                let jobsText = '💼 *Latest Jobs*\n\n';
+                jobs.forEach(job => {
+                    jobsText += `📌 ${job.title} - ${job.salary || 'Negotiable'}\n`;
+                });
+                jobsText += `\n🌐 ${webAppUrl}/#/work`;
+                bot.sendMessage(chatId, jobsText, { parse_mode: 'Markdown' });
+            } else {
+                bot.sendMessage(chatId, `💼 *Jobs Loading...*\n\n🔄 Fetching opportunities\n\n🌐 ${webAppUrl}/#/work`, { parse_mode: 'Markdown' });
+            }
             break;
         case 'wallet':
             bot.answerCallbackQuery(query.id);
-            bot.sendMessage(chatId, `💰 *Wallet Summary*\n\n💵 Balance: 1,250 ETB\n📊 Earned: 5,600 ETB\n📤 Pending: 300 ETB\n\n🌐 ${webAppUrl}/#/wallet`, { parse_mode: 'Markdown' });
+            const walletInfo = await getWalletInfo(query.from.id);
+            bot.sendMessage(chatId, `💰 *Wallet Summary*\n\n💵 Balance: ${walletInfo.balance} ETB\n📊 Earned: ${walletInfo.earned} ETB\n📤 Pending: ${walletInfo.pending} ETB\n\n🌐 ${webAppUrl}/#/wallet`, { parse_mode: 'Markdown' });
             break;
         case 'profile':
             bot.answerCallbackQuery(query.id);
-            bot.sendMessage(chatId, `👤 *Your Profile*\n\n✅ Verified Student\n⭐ Level 5\n🎯 85% Complete\n\n🌐 ${webAppUrl}/#/profile`, { parse_mode: 'Markdown' });
+            bot.sendMessage(chatId, `👤 *Your Profile*\n\n✅ Telegram User\n⭐ Active Member\n🎯 Connect via Web App\n\n🌐 ${webAppUrl}/#/profile`, { parse_mode: 'Markdown' });
             break;
         case 'courses':
             bot.answerCallbackQuery(query.id);
-            bot.sendMessage(chatId, `📚 *Available Courses*\n\n📖 Web Development\n📖 Data Science\n📖 Mobile Apps\n\n🌐 ${webAppUrl}/#/gebeta`, { parse_mode: 'Markdown' });
+            const courses = await getCourses();
+            if (courses.length > 0) {
+                let coursesText = '📚 *Available Courses*\n\n';
+                courses.forEach(course => {
+                    coursesText += `📖 ${course.title || course.name}\n`;
+                });
+                coursesText += `\n🌐 ${webAppUrl}/#/gebeta`;
+                bot.sendMessage(chatId, coursesText, { parse_mode: 'Markdown' });
+            } else {
+                bot.sendMessage(chatId, `📚 *Courses Loading...*\n\n🔄 Fetching courses\n\n🌐 ${webAppUrl}/#/gebeta`, { parse_mode: 'Markdown' });
+            }
             break;
         default:
             bot.answerCallbackQuery(query.id);
