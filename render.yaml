@@ -11,7 +11,7 @@ services:
     ipAllowList: []
 
   - type: web
-    name: temariware-backend-cqpb
+    name: temariware-backend-cqpb-exz5
     env: node
     plan: free
     rootDir: backend
@@ -35,7 +35,7 @@ services:
         value: https://temariware-frontend.onrender.com,https://temariware-frontend-exz5.onrender.com
 
   - type: web
-    name: temariware-frontend
+    name: temariware-frontend-exz5
     env: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
@@ -44,7 +44,7 @@ services:
         value: https://temariware-backend-cqpb-exz5.onrender.com
 
   - type: web
-    name: temariware-bot-cqpb
+    name: temariware-bot-cqpb-exz5
     env: docker
     plan: free
     rootDir: telegram-bot
