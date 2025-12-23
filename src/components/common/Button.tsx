@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface ButtonProps {
     children: React.ReactNode;
@@ -21,5 +20,5 @@ export const Button: React.FC<ButtonProps> = ({ children, onClick, variant = 'pr
         success: "bg-emerald-500 text-white shadow-emerald-500/30",
         neon: "bg-transparent border border-primary text-primary hover:bg-primary hover:text-black shadow-[0_0_10px_rgba(20,241,149,0.2)]"
     };
-    return <motion.button whileTap={{ scale: 0.96 }} type={type} onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant]} ${className}`}>{children}</motion.button>;
+    return <button type={type} onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant]} ${className}`}>{children}</button>;
 };
