@@ -1,8 +1,8 @@
-
+import { API_BASE_URL } from '../config';
 import { MOCK_JOBS, MOCK_USER, DISCOVER_USERS } from '../constants';
 import { Job, UserProfile, UserRole, AdminRole } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
+const API_BASE = API_BASE_URL;
 const defaultHeaders = () => {
     const token = localStorage.getItem('tm_token');
     return token ? { Authorization: `Bearer ${token}` } : {};

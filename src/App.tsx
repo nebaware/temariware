@@ -9,6 +9,7 @@ import { ToastProvider } from './contexts/ToastContext';
 import { authUtils } from './utils/auth';
 import { api } from './services/api';
 import { socketService } from './services/socket';
+import { TelegramWebApp } from './utils/telegram';
 
 // Layout Components
 import { TopHeader } from './components/layout/TopHeader';
@@ -59,6 +60,15 @@ const App: React.FC = () => {
     const t = (key: string) => DICTIONARY[key]?.[lang] || key;
 
     useEffect(() => {
+        // Initialize Telegram WebApp if available
+        if (TelegramWebApp.isAvailable()) {
+            TelegramWebApp.init();
+            const telegramUser = TelegramWebApp.getUser();
+            if (telegramUser) {
+                console.log('Telegram user:', telegramUser);
+            }
+        }
+
         // Normalize URL for HashRouter: redirect /path to /#/path
         // This ensures assets load correctly from the root even if the user enters a subpath
         if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {

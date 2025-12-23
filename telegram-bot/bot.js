@@ -4,8 +4,8 @@ const express = require('express');
 const path = require('path');
 
 // Replace with your Telegram Bot Token from @BotFather
-const token = process.env.TELEGRAM_BOT_TOKEN || 'YOUR_BOT_TOKEN_HERE';
-const webAppUrl = process.env.WEBAPP_URL || 'http://localhost:3000';
+const token = process.env.TELEGRAM_BOT_TOKEN || '8532692467:AAFJU_iZuvMhpcXvNr5hKxBhuBzv_w2_euM';
+const webAppUrl = process.env.WEBAPP_URL || 'https://temariware-frontend.onrender.com';
 
 // Create bot instance
 const bot = new TelegramBot(token, { polling: true });
@@ -49,6 +49,9 @@ Choose an option below:
     const options = {
         reply_markup: {
             inline_keyboard: [
+                [
+                    { text: '🚀 Open TemariWare', web_app: { url: webAppUrl } }
+                ],
                 [
                     { text: '💼 Browse Jobs', callback_data: 'jobs' },
                     { text: '💰 My Wallet', callback_data: 'wallet' }

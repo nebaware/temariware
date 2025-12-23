@@ -30,9 +30,19 @@ services:
           name: temariware-redis
           property: connectionString
       - key: JWT_SECRET
-        sync: false
+        value: temariware_jwt_secret_2024_production_key
       - key: CORS_ORIGIN
-        sync: false
+        value: https://temariware-frontend.onrender.com
+
+  - type: web
+    name: temariware-frontend
+    env: static
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://temariware-backend-cqpb-exz5.onrender.com
 
   - type: web
     name: temariware-bot-cqpb
@@ -41,9 +51,9 @@ services:
     rootDir: telegram-bot
     envVars:
       - key: TELEGRAM_BOT_TOKEN
-        sync: false
+        value: 8532692467:AAFJU_iZuvMhpcXvNr5hKxBhuBzv_w2_euM
       - key: WEBAPP_URL
-        sync: false
+        value: https://temariware-frontend.onrender.com
       - key: DATABASE_URL
         fromDatabase:
           name: temariware-db

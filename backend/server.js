@@ -28,7 +28,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(apiLimiter); // Apply general rate limiting
 
 // CORS Configuration
-const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'];
+const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [
+  'http://localhost:3000', 
+  'http://localhost:5173', 
+  'http://localhost:5174',
+  'https://temariware-frontend.onrender.com'
+];
 // Ensure Render Frontend URL is allowed
 if (process.env.FRONTEND_URL) {
   allowedOrigins.push(process.env.FRONTEND_URL);
