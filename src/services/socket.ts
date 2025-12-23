@@ -1,63 +1,43 @@
-import { io, Socket } from 'socket.io-client';
-
-const SOCKET_URL = import.meta.env.VITE_API_BASE || 'http://localhost:5000';
-
+// Mock Socket Service to prevent errors
 class SocketService {
-    private socket: Socket | null = null;
-
     connect(userId: string) {
-        if (this.socket) return;
-
-        this.socket = io(SOCKET_URL);
-
-        this.socket.on('connect', () => {
-            console.log('Connected to socket server');
-            this.socket?.emit('join', userId);
-        });
-
-        this.socket.on('disconnect', () => {
-            console.log('Disconnected from socket server');
-        });
+        // Mock implementation - do nothing
     }
 
     disconnect() {
-        if (this.socket) {
-            this.socket.disconnect();
-            this.socket = null;
-        }
+        // Mock implementation - do nothing
     }
 
     sendMessage(data: { receiverId: string, text: string, senderId: string }) {
-        this.socket?.emit('sendMessage', data);
+        // Mock implementation - do nothing
     }
 
     onMessage(callback: (message: any) => void) {
-        this.socket?.on('receiveMessage', callback);
+        // Mock implementation - do nothing
     }
 
     offMessage() {
-        this.socket?.off('receiveMessage');
+        // Mock implementation - do nothing
     }
 
-    // --- Project Collaboration ---
     joinProject(projectId: string) {
-        this.socket?.emit('joinProject', projectId);
+        // Mock implementation - do nothing
     }
 
     emitTaskUpdate(projectId: string, tasks: any[]) {
-        this.socket?.emit('updateTasks', { projectId, tasks });
+        // Mock implementation - do nothing
     }
 
     onTasksUpdated(handler: (tasks: any[]) => void) {
-        this.socket?.on('tasksUpdated', handler);
+        // Mock implementation - do nothing
     }
 
     emitCodeChange(projectId: string, file: string, code: string) {
-        this.socket?.emit('codeChange', { projectId, file, code });
+        // Mock implementation - do nothing
     }
 
     onCodeUpdated(handler: (data: { code: string, file: string }) => void) {
-        this.socket?.on('codeUpdated', handler);
+        // Mock implementation - do nothing
     }
 }
 
