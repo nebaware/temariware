@@ -5,6 +5,11 @@ databases:
     plan: free
 
 services:
+  - type: redis
+    name: temariware-redis
+    plan: free
+    ipAllowList: []
+
   - type: web
     name: temariware-backend
     env: node
@@ -20,7 +25,10 @@ services:
           name: temariware-db
           property: connectionString
       - key: REDIS_URL
-        sync: false
+        fromService:
+          type: redis
+          name: temariware-redis
+          property: connectionString
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
