@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:full": "concurrently \"npm run dev\" \"npm --prefix backend run dev\"",
-    "build": "mkdir -p dist && cp index.html dist/ && cp -r src dist/ && cp -r public dist/",
+    "build": "mkdir -p dist && cp static.html dist/index.html",
     "start": "node server-frontend.js",
     "preview": "vite preview"
   },
