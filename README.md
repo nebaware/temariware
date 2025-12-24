@@ -50,11 +50,13 @@
 
 ### Web Platform
 1. Visit: [https://temariware.onrender.com](https://temariware.onrender.com)
-2. **Landing Page Features**:
-   - 💼 Jobs & Internships API access
-   - 💰 Wallet System API access
-   - 📚 Learning Platform API access
-   - 👥 Direct Telegram Bot link
+2. **Complete User Flow**:
+   - Register/Login with secure authentication
+   - Complete your profile setup
+   - Browse jobs and internships
+   - Manage wallet and transactions
+   - Enroll in courses (Gebeta)
+   - Network with other students
 3. **Test Credentials** (Backend API):
    - demo@temariware.com/demo123
    - test@student.com/test123
@@ -104,12 +106,18 @@ npm start
 
 ## 🚀 Deployment
 
-The platform is deployed on cloud infrastructure with:
-- Frontend: Static site deployment
-- Backend: Node.js web service
-- Database: PostgreSQL
-- Cache: Redis
-- Bot: Docker container
+The platform is deployed on Render with optimized services:
+- **Frontend**: Static site deployment at https://temariware.onrender.com
+- **Backend**: Node.js web service at https://temariware-backend-omek.onrender.com
+- **Database**: PostgreSQL with Redis cache
+- **Bot**: Docker container with Telegram integration
+
+**Active Services:**
+- `temariware` - Main React application
+- `temariware-backend-omek` - API server
+- `temariware-bot-omek` - Telegram bot
+- `temariware-redis` - Cache layer
+- `temariware-db` - PostgreSQL database
 
 ## 🧪 Testing
 
