@@ -1,6 +1,6 @@
 # TemariWare - Complete Student Ecosystem Platform
 
-🚀 **Live Platform**: [https://temariware-frontend-omek.onrender.com](https://temariware-frontend-omek.onrender.com)  
+🚀 **Live Platform**: [https://temariware.onrender.com](https://temariware.onrender.com)  
 📱 **Telegram Bot**: Search `@temariwarebot` on Telegram
 
 ## 🌟 Features
@@ -49,7 +49,7 @@
 ## 🚀 Quick Start
 
 ### Web Platform
-1. Visit: [https://temariware-frontend-omek.onrender.com](https://temariware-frontend-omek.onrender.com)
+1. Visit: [https://temariware.onrender.com](https://temariware.onrender.com)
 2. **If "Email already registered"**: Try logging in instead
 3. **Test Account**: Use different email or login with existing account
 4. Complete your profile
