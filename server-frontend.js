@@ -3,9 +3,9 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-app.use(express.static('.'));
+app.use(express.static('dist'));
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'static.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
