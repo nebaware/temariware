@@ -117,17 +117,53 @@
       const email = document.getElementById('login-email').value;
       const password = document.getElementById('login-password').value;
       
-      // Simple demo login
-      if (email === 'demo@temariware.com' && password === 'demo123') {
-        alert('Login successful! Welcome to TemariWare');
-        hideLogin();
-      } else {
-        alert('Invalid credentials. Try: demo@temariware.com / demo123');
-      }
+      // Login via API
+      fetch('https://temariware-backend-omek.onrender.com/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          localStorage.setItem('token', data.token);
+          alert('Login successful! Welcome to TemariWare');
+          hideLogin();
+          loadUserData();
+        } else {
+          alert('Login failed: ' + (data.error || 'Invalid credentials'));
+        }
+      })
+      .catch(err => {
+        console.error('Login error:', err);
+        alert('Login failed. Try: demo@temariware.com / demo123');
+      });
     }
     
     function showJobs() {
-      window.open('https://temariware-backend-omek.onrender.com/api/jobs', '_blank');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login first to view jobs');
+        showLogin();
+        return;
+      }
+      
+      fetch('https://temariware-backend-omek.onrender.com/api/jobs', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.jobs) {
+          let jobsText = 'Available Jobs:\n\n';
+          data.jobs.forEach(job => {
+            jobsText += `• ${job.title} - ${job.company}\n  ${job.location} | ${job.salary}\n\n`;
+          });
+          alert(jobsText || 'No jobs available');
+        } else {
+          window.open('https://temariware-backend-omek.onrender.com/api/jobs', '_blank');
+        }
+      })
+      .catch(() => window.open('https://temariware-backend-omek.onrender.com/api/jobs', '_blank'));
     }
     
     function showWallet() {
@@ -135,8 +171,42 @@
     }
     
     function showCourses() {
-      window.open('https://temariware-backend-omek.onrender.com/api/courses', '_blank');
+      fetch('https://temariware-backend-omek.onrender.com/api/courses')
+      .then(res => res.json())
+      .then(courses => {
+        if (courses && courses.length > 0) {
+          let coursesText = 'Available Courses:\n\n';
+          courses.forEach(course => {
+            coursesText += `• ${course.title || course.name}\n  ${course.description || 'Course description'}\n\n`;
+          });
+          alert(coursesText);
+        } else {
+          alert('No courses available yet. Check back soon!');
+        }
+      })
+      .catch(() => alert('Unable to load courses. Please try again later.'));
     }
+    
+    function loadUserData() {
+      const token = localStorage.getItem('token');
+      if (token) {
+        // Update UI to show logged in state
+        document.querySelector('header .space-x-4').innerHTML = `
+          <span class="text-green-400">Welcome!</span>
+          <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">Logout</button>
+        `;
+      }
+    }
+    
+    function logout() {
+      localStorage.removeItem('token');
+      location.reload();
+    }
+    
+    // Check if user is already logged in
+    window.onload = function() {
+      loadUserData();
+    };
     
     function showProfile() {
       alert('Profile: Use Telegram bot @temariwarebot for profile management');
