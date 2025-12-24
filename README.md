@@ -50,10 +50,16 @@
 
 ### Web Platform
 1. Visit: [https://temariware.onrender.com](https://temariware.onrender.com)
-2. **If "Email already registered"**: Try logging in instead
-3. **Test Account**: Use different email or login with existing account
-4. Complete your profile
-5. Start exploring jobs, courses, and networking!
+2. **Landing Page Features**:
+   - 💼 Jobs & Internships API access
+   - 💰 Wallet System API access
+   - 📚 Learning Platform API access
+   - 👥 Direct Telegram Bot link
+3. **Test Credentials** (Backend API):
+   - demo@temariware.com/demo123
+   - test@student.com/test123
+   - admin@temariware.com/admin123
+4. **API Endpoints**: https://temariware-backend-omek.onrender.com
 
 ### Telegram Bot
 1. Search for `@temariwarebot` on Telegram
