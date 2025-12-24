@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:full": "concurrently \"npm run dev\" \"npm --prefix backend run dev\"",
-    "build": "mkdir -p dist && cp static.html dist/index.html && echo 'Static build complete'",
+    "build": "mkdir -p dist && cp static.html dist/index.html && cp _redirects dist/ && echo 'Static build complete'",
     "preview": "vite preview"
   },
   "dependencies": {
