@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: temariware-frontend
+    env: static
+    buildCommand: cp package-frontend.json package.json && npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://temariware-backend-omek.onrender.com
