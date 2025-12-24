@@ -209,15 +209,37 @@
         <button onclick="refreshWallet()" class="bg-primary/20 p-2 rounded-lg">🔄</button>
       </div>
 
-      <!-- Balance Card -->
+      <!-- Wallet Actions -->
       <div class="glass rounded-xl p-6 mb-6">
         <div class="text-center mb-4">
           <p class="text-gray-400 mb-2">Total Balance</p>
           <p class="text-4xl font-bold text-success" id="wallet-balance">0 ETB</p>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <button onclick="showModal('send-money')" class="bg-success text-white p-3 rounded-lg font-semibold">💸 Send</button>
-          <button onclick="showModal('request-money')" class="bg-primary text-black p-3 rounded-lg font-semibold">📥 Request</button>
+          <button onclick="showSendMoneyFlow()" class="bg-success text-white p-3 rounded-lg font-semibold">💸 Send</button>
+          <button onclick="showAddFundsFlow()" class="bg-primary text-black p-3 rounded-lg font-semibold">💳 Add Funds</button>
+        </div>
+      </div>
+
+      <!-- My Applications -->
+      <div class="glass rounded-xl p-4 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold">💼 My Applications</h3>
+          <button onclick="showPage('work')" class="text-primary text-sm">View All</button>
+        </div>
+        <div id="my-applications">
+          <!-- Applications will be populated here -->
+        </div>
+      </div>
+
+      <!-- My Courses -->
+      <div class="glass rounded-xl p-4 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold">📚 My Courses</h3>
+          <button onclick="showPage('gebeta')" class="text-primary text-sm">Browse More</button>
+        </div>
+        <div id="my-courses">
+          <!-- Enrolled courses will be populated here -->
         </div>
       </div>
 
@@ -425,6 +447,80 @@
       
       // Hide auth section if logged in
       document.getElementById('auth-section').style.display = currentUser ? 'none' : 'block';
+      
+      // Update applications and courses
+      updateMyApplications();
+      updateMyCourses();
+      updateTransactionsList();
+    }
+
+    function updateMyApplications() {
+      const container = document.getElementById('my-applications');
+      if (!currentUser || !currentUser.appliedJobs || currentUser.appliedJobs.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-sm">No applications yet</p>';
+        return;
+      }
+      
+      container.innerHTML = currentUser.appliedJobs.slice(0, 3).map(app => `
+        <div class="bg-white/5 rounded-lg p-3 mb-2">
+          <div class="flex justify-between items-start">
+            <div>
+              <h4 class="font-semibold text-sm">${app.jobTitle}</h4>
+              <p class="text-gray-400 text-xs">${app.company}</p>
+            </div>
+            <span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs">${app.status}</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Applied ${app.appliedAt}</p>
+        </div>
+      `).join('');
+    }
+
+    function updateMyCourses() {
+      const container = document.getElementById('my-courses');
+      if (!currentUser || !currentUser.enrolledCourses || currentUser.enrolledCourses.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-sm">No courses enrolled</p>';
+        return;
+      }
+      
+      container.innerHTML = currentUser.enrolledCourses.slice(0, 3).map(course => `
+        <div class="bg-white/5 rounded-lg p-3 mb-2">
+          <div class="flex justify-between items-start">
+            <div>
+              <h4 class="font-semibold text-sm">${course.title}</h4>
+              <p class="text-gray-400 text-xs">by ${course.instructor}</p>
+            </div>
+            <span class="bg-primary/20 text-primary px-2 py-1 rounded text-xs">${course.progress || 0}%</span>
+          </div>
+          <div class="w-full bg-gray-700 rounded-full h-1 mt-2">
+            <div class="bg-primary h-1 rounded-full" style="width: ${course.progress || 0}%"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateTransactionsList() {
+      const container = document.getElementById('transactions-list');
+      if (!transactions || transactions.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 text-sm">No transactions yet</p>';
+        return;
+      }
+      
+      container.innerHTML = transactions.slice(0, 5).map(tx => `
+        <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg mb-2">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-${tx.type === 'Credit' ? 'success' : 'red-500'} rounded-full flex items-center justify-center text-sm">
+              ${tx.type === 'Credit' ? '+' : '-'}
+            </div>
+            <div>
+              <p class="font-semibold text-sm">${tx.description}</p>
+              <p class="text-xs text-gray-400">${tx.date}</p>
+            </div>
+          </div>
+          <span class="text-${tx.type === 'Credit' ? 'success' : 'red-400'} font-bold">
+            ${tx.type === 'Credit' ? '+' : '-'}${tx.amount} ETB
+          </span>
+        </div>
+      `).join('');
     }
 
     // Authentication
@@ -566,10 +662,78 @@
       
       const job = jobs.find(j => j.id === jobId);
       if (job) {
-        job.applicants++;
-        showNotification(`✅ Applied to ${job.title}!`, 'success');
-        renderJobs();
+        showJobApplicationModal(job);
       }
+    }
+
+    function showJobApplicationModal(job) {
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-md w-full mx-4">
+          <h3 class="text-xl font-bold mb-4">Apply to ${job.title}</h3>
+          <div class="mb-4">
+            <p class="text-gray-400 mb-2">${job.company} • ${job.salary}</p>
+            <p class="text-sm mb-4">${job.description}</p>
+          </div>
+          <form onsubmit="submitJobApplication(event, '${job.id}')">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Cover Letter</label>
+              <textarea id="cover-letter" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" rows="4" placeholder="Why are you interested in this position?" required></textarea>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Resume/CV</label>
+              <input type="file" class="w-full p-3 bg-white/10 rounded-xl border border-white/20" accept=".pdf,.doc,.docx">
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-medium mb-2">Expected Salary</label>
+              <input type="number" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="Amount in ETB">
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" class="flex-1 bg-primary text-black py-3 rounded-xl font-bold">Submit Application</button>
+              <button type="button" onclick="this.closest('.modal').remove()" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function submitJobApplication(event, jobId) {
+      event.preventDefault();
+      const coverLetter = document.getElementById('cover-letter').value;
+      
+      if (!coverLetter.trim()) {
+        showNotification('❌ Please write a cover letter', 'error');
+        return;
+      }
+      
+      const job = jobs.find(j => j.id === jobId);
+      job.applicants++;
+      
+      // Add to user's applied jobs
+      if (!currentUser.appliedJobs) currentUser.appliedJobs = [];
+      currentUser.appliedJobs.push({
+        jobId: jobId,
+        jobTitle: job.title,
+        company: job.company,
+        status: 'Applied',
+        appliedAt: new Date().toLocaleDateString(),
+        coverLetter: coverLetter
+      });
+      
+      currentUser.xp += 10;
+      saveUserData();
+      updateUserUI();
+      
+      event.target.closest('.modal').remove();
+      showNotification(`✅ Application submitted to ${job.company}!`, 'success');
+      renderJobs();
+      
+      // Show application tracking
+      setTimeout(() => {
+        showNotification('📧 You will receive updates via email', 'info');
+      }, 2000);
     }
 
     function filterJobs(filter) {
@@ -674,30 +838,100 @@
       
       const course = courses.find(c => c.id === courseId);
       if (course) {
-        if (course.price > 0 && currentUser.walletBalance < course.price) {
-          showNotification('💰 Insufficient balance', 'error');
-          return;
-        }
-        
-        if (course.price > 0) {
-          currentUser.walletBalance -= course.price;
-          transactions.unshift({
-            id: 't' + Date.now(),
-            type: 'Debit',
-            amount: course.price,
-            description: `Course: ${course.title}`,
-            date: new Date().toLocaleDateString(),
-            status: 'Completed'
-          });
-        }
-        
-        course.students++;
-        currentUser.xp += 50;
-        saveUserData();
-        updateUserUI();
-        showNotification(`🎓 Enrolled in ${course.title}!`, 'success');
-        renderCourses();
+        showCourseEnrollmentModal(course);
       }
+    }
+
+    function showCourseEnrollmentModal(course) {
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-md w-full mx-4">
+          <h3 class="text-xl font-bold mb-4">Enroll in ${course.title}</h3>
+          <div class="mb-4">
+            <p class="text-gray-400 mb-2">by ${course.instructor} • ${course.duration}</p>
+            <p class="text-sm mb-4">${course.description}</p>
+            <div class="bg-white/5 rounded-lg p-3 mb-4">
+              <div class="flex justify-between items-center">
+                <span>Course Fee:</span>
+                <span class="font-bold text-${course.price === 0 ? 'success' : 'accent'}">
+                  ${course.price === 0 ? 'FREE' : course.price + ' ETB'}
+                </span>
+              </div>
+              ${course.price > 0 ? `
+                <div class="flex justify-between items-center mt-2">
+                  <span>Your Balance:</span>
+                  <span class="font-bold ${currentUser.walletBalance >= course.price ? 'text-success' : 'text-red-400'}">
+                    ${currentUser.walletBalance} ETB
+                  </span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+          <div class="mb-6">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" id="terms-checkbox" class="rounded">
+              <span class="text-sm">I agree to the course terms and conditions</span>
+            </label>
+          </div>
+          <div class="flex gap-3">
+            <button onclick="confirmCourseEnrollment('${course.id}')" class="flex-1 bg-primary text-black py-3 rounded-xl font-bold">Confirm Enrollment</button>
+            <button onclick="this.closest('.modal').remove()" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function confirmCourseEnrollment(courseId) {
+      const termsChecked = document.getElementById('terms-checkbox').checked;
+      if (!termsChecked) {
+        showNotification('❌ Please accept the terms and conditions', 'error');
+        return;
+      }
+      
+      const course = courses.find(c => c.id === courseId);
+      
+      if (course.price > 0 && currentUser.walletBalance < course.price) {
+        showNotification('💰 Insufficient balance. Please add funds to your wallet.', 'error');
+        return;
+      }
+      
+      if (course.price > 0) {
+        currentUser.walletBalance -= course.price;
+        transactions.unshift({
+          id: 't' + Date.now(),
+          type: 'Debit',
+          amount: course.price,
+          description: `Course Enrollment: ${course.title}`,
+          date: new Date().toLocaleDateString(),
+          status: 'Completed'
+        });
+      }
+      
+      // Add to enrolled courses
+      if (!currentUser.enrolledCourses) currentUser.enrolledCourses = [];
+      currentUser.enrolledCourses.push({
+        courseId: courseId,
+        title: course.title,
+        instructor: course.instructor,
+        enrolledAt: new Date().toLocaleDateString(),
+        progress: 0
+      });
+      
+      course.students++;
+      currentUser.xp += 25;
+      saveUserData();
+      updateUserUI();
+      
+      document.querySelector('.modal.active').remove();
+      showNotification(`🎓 Successfully enrolled in ${course.title}!`, 'success');
+      renderCourses();
+      
+      // Show course access
+      setTimeout(() => {
+        showNotification('📚 Course materials are now available in your dashboard', 'info');
+      }, 2000);
     }
 
     function filterCourses(filter) {
@@ -767,7 +1001,167 @@
       document.getElementById(modalName + '-modal').classList.remove('active');
     }
 
-    // Utility Functions
+    // Wallet Functions
+    function showSendMoneyFlow() {
+      if (!currentUser) {
+        showNotification('🔒 Please sign in first', 'warning');
+        showModal('login');
+        return;
+      }
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-sm w-full mx-4">
+          <h3 class="text-xl font-bold mb-4">💸 Send Money</h3>
+          <form onsubmit="processSendMoney(event)">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Recipient</label>
+              <input type="text" id="recipient" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="Phone number or email" required>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Amount (ETB)</label>
+              <input type="number" id="send-amount" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="0.00" min="1" max="${currentUser.walletBalance}" required>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Payment Method</label>
+              <select class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none">
+                <option>Wallet Balance</option>
+                <option>Telebirr</option>
+                <option>CBE Birr</option>
+              </select>
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-medium mb-2">Note (Optional)</label>
+              <input type="text" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="Payment for...">
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" class="flex-1 bg-success py-3 rounded-xl font-bold">Send Money</button>
+              <button type="button" onclick="this.closest('.modal').remove()" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function processSendMoney(event) {
+      event.preventDefault();
+      const recipient = document.getElementById('recipient').value;
+      const amount = parseFloat(document.getElementById('send-amount').value);
+      
+      if (amount > currentUser.walletBalance) {
+        showNotification('💰 Insufficient balance', 'error');
+        return;
+      }
+      
+      currentUser.walletBalance -= amount;
+      transactions.unshift({
+        id: 't' + Date.now(),
+        type: 'Debit',
+        amount: amount,
+        description: `Sent to ${recipient}`,
+        date: new Date().toLocaleDateString(),
+        status: 'Completed'
+      });
+      
+      saveUserData();
+      updateUserUI();
+      event.target.closest('.modal').remove();
+      showNotification(`✅ ${amount} ETB sent successfully!`, 'success');
+    }
+
+    function showAddFundsFlow() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-sm w-full mx-4">
+          <h3 class="text-xl font-bold mb-4">💳 Add Funds</h3>
+          <div class="space-y-3">
+            <button onclick="addFundsMethod('telebirr')" class="w-full bg-blue-600 p-4 rounded-xl text-left flex items-center gap-3">
+              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-blue-600 font-bold">T</div>
+              <div>
+                <div class="font-bold">Telebirr</div>
+                <div class="text-sm text-gray-300">Mobile payment</div>
+              </div>
+            </button>
+            <button onclick="addFundsMethod('cbe')" class="w-full bg-green-600 p-4 rounded-xl text-left flex items-center gap-3">
+              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-green-600 font-bold">C</div>
+              <div>
+                <div class="font-bold">CBE Birr</div>
+                <div class="text-sm text-gray-300">Bank transfer</div>
+              </div>
+            </button>
+            <button onclick="addFundsMethod('bank')" class="w-full bg-purple-600 p-4 rounded-xl text-left flex items-center gap-3">
+              <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-purple-600 font-bold">B</div>
+              <div>
+                <div class="font-bold">Bank Transfer</div>
+                <div class="text-sm text-gray-300">Direct deposit</div>
+              </div>
+            </button>
+          </div>
+          <button onclick="this.closest('.modal').remove()" class="w-full mt-4 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function addFundsMethod(method) {
+      document.querySelector('.modal.active').remove();
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-sm w-full mx-4">
+          <h3 class="text-xl font-bold mb-4">Add Funds via ${method.toUpperCase()}</h3>
+          <form onsubmit="processAddFunds(event, '${method}')">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Amount (ETB)</label>
+              <input type="number" id="add-amount" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="0.00" min="10" required>
+            </div>
+            ${method === 'telebirr' ? `
+              <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Phone Number</label>
+                <input type="tel" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="+251..." required>
+              </div>
+            ` : ''}
+            <div class="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-3 mb-4">
+              <p class="text-sm text-yellow-200">⚠️ You will be redirected to complete the payment</p>
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" class="flex-1 bg-primary text-black py-3 rounded-xl font-bold">Continue</button>
+              <button type="button" onclick="this.closest('.modal').remove()" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function processAddFunds(event, method) {
+      event.preventDefault();
+      const amount = parseFloat(document.getElementById('add-amount').value);
+      
+      event.target.closest('.modal').remove();
+      showNotification('🔄 Processing payment...', 'info');
+      
+      // Simulate payment processing
+      setTimeout(() => {
+        currentUser.walletBalance += amount;
+        transactions.unshift({
+          id: 't' + Date.now(),
+          type: 'Credit',
+          amount: amount,
+          description: `Added funds via ${method.toUpperCase()}`,
+          date: new Date().toLocaleDateString(),
+          status: 'Completed'
+        });
+        
+        saveUserData();
+        updateUserUI();
+        showNotification(`✅ ${amount} ETB added successfully!`, 'success');
+      }, 2000);
+    }
     function showNotification(message, type) {
       const colors = {
         success: 'bg-green-500',
