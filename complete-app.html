@@ -246,11 +246,37 @@
       <!-- Ekub Section -->
       <div class="glass rounded-xl p-4 mb-6">
         <div class="flex justify-between items-center mb-4">
-          <h3 class="font-bold">🤝 My Ekubs</h3>
-          <button onclick="showCreateEkubModal()" class="bg-primary/20 px-3 py-1 rounded text-sm">+ New</button>
+          <h3 class="font-bold">🤝 Available Ekubs</h3>
+          <button onclick="showCreateEkubModal()" class="bg-primary/20 px-3 py-1 rounded text-sm">+ Create</button>
         </div>
         <div id="ekubs-list">
-          <!-- Ekubs will be populated here -->
+          <div class="bg-white/5 rounded-lg p-3 mb-3">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h4 class="font-semibold">Laptop Fund Ekub</h4>
+                <p class="text-xs text-gray-400">12 members • 2,000 ETB/month</p>
+              </div>
+              <span class="bg-success/20 text-success px-2 py-1 rounded text-xs">Active</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm">Next payout: Dec 30</span>
+              <button onclick="joinEkub('laptop-fund')" class="bg-primary text-black px-3 py-1 rounded text-sm font-semibold">Join</button>
+            </div>
+          </div>
+          
+          <div class="bg-white/5 rounded-lg p-3 mb-3">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h4 class="font-semibold">Business Startup</h4>
+                <p class="text-xs text-gray-400">8/10 members • 5,000 ETB/month</p>
+              </div>
+              <span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs">Filling</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm">Starts: Jan 15</span>
+              <button onclick="joinEkub('business-startup')" class="bg-primary text-black px-3 py-1 rounded text-sm font-semibold">Join</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -909,14 +935,16 @@
         });
       }
       
-      // Add to enrolled courses
+      // Add to enrolled courses with direct access
       if (!currentUser.enrolledCourses) currentUser.enrolledCourses = [];
       currentUser.enrolledCourses.push({
         courseId: courseId,
         title: course.title,
         instructor: course.instructor,
         enrolledAt: new Date().toLocaleDateString(),
-        progress: 0
+        progress: 0,
+        status: 'Active',
+        accessUrl: `#course-${courseId}` // Direct access link
       });
       
       course.students++;
@@ -928,9 +956,107 @@
       showNotification(`🎓 Successfully enrolled in ${course.title}!`, 'success');
       renderCourses();
       
-      // Show course access
+      // Show course access with direct link
       setTimeout(() => {
-        showNotification('📚 Course materials are now available in your dashboard', 'info');
+        const accessModal = document.createElement('div');
+        accessModal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+        accessModal.innerHTML = `
+          <div class="glass rounded-2xl p-6 max-w-md w-full mx-4 text-center">
+            <div class="text-6xl mb-4">🎓</div>
+            <h3 class="text-xl font-bold mb-4">Welcome to ${course.title}!</h3>
+            <p class="text-gray-400 mb-6">Your course materials are now ready</p>
+            <div class="space-y-3">
+              <button onclick="accessCourse('${courseId}')" class="w-full bg-primary text-black py-3 rounded-xl font-bold">📚 Start Learning</button>
+              <button onclick="this.closest('.modal').remove()" class="w-full bg-white/10 py-3 rounded-xl font-bold">Later</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(accessModal);
+      }, 1500);
+    }
+
+    function accessCourse(courseId) {
+      document.querySelector('.modal.active')?.remove();
+      
+      const course = courses.find(c => c.id === courseId);
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold">📚 ${course.title}</h3>
+            <button onclick="this.closest('.modal').remove()" class="bg-gray-600 px-3 py-1 rounded">×</button>
+          </div>
+          
+          <!-- Course Progress -->
+          <div class="bg-white/5 rounded-lg p-4 mb-6">
+            <div class="flex justify-between items-center mb-2">
+              <span>Progress</span>
+              <span class="font-bold">0%</span>
+            </div>
+            <div class="w-full bg-gray-700 rounded-full h-2">
+              <div class="bg-primary h-2 rounded-full" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <!-- Course Modules -->
+          <div class="space-y-4">
+            <div class="bg-white/5 rounded-lg p-4">
+              <h4 class="font-bold mb-3">📝 Module 1: Introduction</h4>
+              <div class="space-y-2">
+                <div class="flex items-center gap-3 p-2 bg-white/5 rounded">
+                  <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-black font-bold text-sm">1</div>
+                  <div class="flex-1">
+                    <p class="font-semibold">Welcome & Course Overview</p>
+                    <p class="text-xs text-gray-400">5 min video</p>
+                  </div>
+                  <button onclick="playLesson('intro-1')" class="bg-primary text-black px-3 py-1 rounded text-sm">▶️ Play</button>
+                </div>
+                <div class="flex items-center gap-3 p-2 bg-white/5 rounded opacity-50">
+                  <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white font-bold text-sm">2</div>
+                  <div class="flex-1">
+                    <p class="font-semibold">Setting Up Your Environment</p>
+                    <p class="text-xs text-gray-400">12 min video</p>
+                  </div>
+                  <span class="text-gray-400 text-sm">🔒 Locked</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-white/5 rounded-lg p-4 opacity-50">
+              <h4 class="font-bold mb-3">📝 Module 2: Fundamentals</h4>
+              <p class="text-sm text-gray-400">Complete Module 1 to unlock</p>
+            </div>
+          </div>
+          
+          <!-- Course Resources -->
+          <div class="mt-6 bg-blue-500/20 rounded-lg p-4">
+            <h4 class="font-bold mb-2">📎 Course Resources</h4>
+            <div class="space-y-2">
+              <a href="#" class="block text-blue-400 hover:text-blue-300 text-sm">📄 Course Slides (PDF)</a>
+              <a href="#" class="block text-blue-400 hover:text-blue-300 text-sm">💻 Code Examples (GitHub)</a>
+              <a href="#" class="block text-blue-400 hover:text-blue-300 text-sm">💬 Discussion Forum</a>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function playLesson(lessonId) {
+      showNotification('🎥 Loading lesson...', 'info');
+      
+      // Update progress
+      const enrolledCourse = currentUser.enrolledCourses.find(c => c.courseId === lessonId.split('-')[0]);
+      if (enrolledCourse) {
+        enrolledCourse.progress = 10;
+        currentUser.xp = (currentUser.xp || 0) + 15;
+        saveUserData();
+        updateUserUI();
+      }
+      
+      setTimeout(() => {
+        showNotification('✅ Lesson completed! +15 XP', 'success');
       }, 2000);
     }
 
@@ -1218,31 +1344,131 @@
       const modal = document.createElement('div');
       modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
       modal.innerHTML = `
-        <div class="glass rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-          <h3 class="text-xl font-bold mb-6">Edit Profile</h3>
+        <div class="glass rounded-2xl p-6 max-w-lg w-full mx-4 max-h-[95vh] overflow-y-auto">
+          <h3 class="text-xl font-bold mb-6">✏️ Edit Profile</h3>
           <form onsubmit="saveProfileChanges(event)">
-            <div class="mb-4">
-              <label class="block text-sm font-medium mb-2">Full Name</label>
-              <input type="text" id="edit-name" value="${currentUser.name}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+            <!-- Profile Picture -->
+            <div class="mb-6 text-center">
+              <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-3xl font-bold text-black mx-auto mb-3" id="preview-avatar">
+                ${currentUser.avatar || '👤'}
+              </div>
+              <input type="file" id="profile-picture" accept="image/*" onchange="previewProfilePicture(this)" class="hidden">
+              <button type="button" onclick="document.getElementById('profile-picture').click()" class="bg-primary/20 px-4 py-2 rounded-lg text-sm">📷 Change Photo</button>
             </div>
-            <div class="mb-4">
-              <label class="block text-sm font-medium mb-2">Headline</label>
-              <input type="text" id="edit-headline" value="${currentUser.headline || ''}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="e.g., Full Stack Developer">
+            
+            <!-- Basic Info -->
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">First Name</label>
+                <input type="text" id="edit-firstname" value="${currentUser.name?.split(' ')[0] || ''}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Last Name</label>
+                <input type="text" id="edit-lastname" value="${currentUser.name?.split(' ').slice(1).join(' ') || ''}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+              </div>
             </div>
+            
             <div class="mb-4">
-              <label class="block text-sm font-medium mb-2">University</label>
-              <select id="edit-university" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none">
-                <option value="Addis Ababa University" ${currentUser.university === 'Addis Ababa University' ? 'selected' : ''}>Addis Ababa University</option>
-                <option value="Jimma University" ${currentUser.university === 'Jimma University' ? 'selected' : ''}>Jimma University</option>
-                <option value="Bahir Dar University" ${currentUser.university === 'Bahir Dar University' ? 'selected' : ''}>Bahir Dar University</option>
-              </select>
+              <label class="block text-sm font-medium mb-2">Professional Headline</label>
+              <input type="text" id="edit-headline" value="${currentUser.headline || ''}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="e.g., Full Stack Developer | CS Senior @ AAU">
             </div>
+            
+            <!-- Education -->
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">University</label>
+                <select id="edit-university" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none">
+                  <option value="Addis Ababa University" ${currentUser.university === 'Addis Ababa University' ? 'selected' : ''}>Addis Ababa University</option>
+                  <option value="Jimma University" ${currentUser.university === 'Jimma University' ? 'selected' : ''}>Jimma University</option>
+                  <option value="Bahir Dar University" ${currentUser.university === 'Bahir Dar University' ? 'selected' : ''}>Bahir Dar University</option>
+                  <option value="Hawassa University" ${currentUser.university === 'Hawassa University' ? 'selected' : ''}>Hawassa University</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Department</label>
+                <input type="text" id="edit-department" value="${currentUser.department || ''}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="Computer Science">
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Year of Study</label>
+                <select id="edit-year" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none">
+                  <option value="1st Year" ${currentUser.yearOfStudy === '1st Year' ? 'selected' : ''}>1st Year</option>
+                  <option value="2nd Year" ${currentUser.yearOfStudy === '2nd Year' ? 'selected' : ''}>2nd Year</option>
+                  <option value="3rd Year" ${currentUser.yearOfStudy === '3rd Year' ? 'selected' : ''}>3rd Year</option>
+                  <option value="4th Year" ${currentUser.yearOfStudy === '4th Year' ? 'selected' : ''}>4th Year</option>
+                  <option value="Graduate" ${currentUser.yearOfStudy === 'Graduate' ? 'selected' : ''}>Graduate</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">GPA</label>
+                <input type="number" id="edit-gpa" value="${currentUser.gpa || ''}" step="0.01" min="0" max="4" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="3.50">
+              </div>
+            </div>
+            
+            <!-- Contact Info -->
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm font-medium mb-2">Phone Number</label>
+                <input type="tel" id="edit-phone" value="${currentUser.phone || ''}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="+251...">
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2">Location</label>
+                <input type="text" id="edit-location" value="${currentUser.location || ''}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="Addis Ababa">
+              </div>
+            </div>
+            
+            <!-- Bio -->
             <div class="mb-4">
-              <label class="block text-sm font-medium mb-2">Skills (comma separated)</label>
-              <input type="text" id="edit-skills" value="${(currentUser.skills || []).join(', ')}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="React, Python, Design...">
+              <label class="block text-sm font-medium mb-2">About Me</label>
+              <textarea id="edit-bio" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" rows="4" placeholder="Tell us about yourself, your interests, and career goals...">${currentUser.bio || ''}</textarea>
             </div>
+            
+            <!-- Skills -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Skills</label>
+              <div id="skills-container" class="mb-2">
+                ${(currentUser.skills || []).map((skill, index) => `
+                  <div class="flex items-center gap-2 mb-2">
+                    <input type="text" value="${skill}" class="flex-1 p-2 bg-white/10 rounded-lg border border-white/20 focus:border-primary focus:outline-none skill-input">
+                    <select class="p-2 bg-white/10 rounded-lg border border-white/20 skill-level">
+                      <option value="Beginner">Beginner</option>
+                      <option value="Intermediate" selected>Intermediate</option>
+                      <option value="Expert">Expert</option>
+                    </select>
+                    <button type="button" onclick="this.parentElement.remove()" class="bg-red-500/20 text-red-400 px-2 py-1 rounded">×</button>
+                  </div>
+                `).join('')}
+              </div>
+              <button type="button" onclick="addSkillField()" class="bg-primary/20 px-3 py-2 rounded-lg text-sm">+ Add Skill</button>
+            </div>
+            
+            <!-- Social Links -->
+            <div class="mb-6">
+              <label class="block text-sm font-medium mb-2">Social Links</label>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">GitHub</label>
+                  <input type="url" id="edit-github" value="${currentUser.socialLinks?.github || ''}" class="w-full p-2 bg-white/10 rounded-lg border border-white/20 focus:border-primary focus:outline-none" placeholder="https://github.com/username">
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">LinkedIn</label>
+                  <input type="url" id="edit-linkedin" value="${currentUser.socialLinks?.linkedin || ''}" class="w-full p-2 bg-white/10 rounded-lg border border-white/20 focus:border-primary focus:outline-none" placeholder="https://linkedin.com/in/username">
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Telegram</label>
+                  <input type="text" id="edit-telegram" value="${currentUser.socialLinks?.telegram || ''}" class="w-full p-2 bg-white/10 rounded-lg border border-white/20 focus:border-primary focus:outline-none" placeholder="@username">
+                </div>
+                <div>
+                  <label class="block text-xs text-gray-400 mb-1">Portfolio</label>
+                  <input type="url" id="edit-portfolio" value="${currentUser.socialLinks?.portfolio || ''}" class="w-full p-2 bg-white/10 rounded-lg border border-white/20 focus:border-primary focus:outline-none" placeholder="https://myportfolio.com">
+                </div>
+              </div>
+            </div>
+            
             <div class="flex gap-3">
-              <button type="submit" class="flex-1 bg-primary text-black py-3 rounded-xl font-bold">Save Changes</button>
+              <button type="submit" class="flex-1 bg-primary text-black py-3 rounded-xl font-bold">💾 Save Changes</button>
               <button type="button" onclick="this.closest('.modal').remove()" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
             </div>
           </form>
@@ -1251,22 +1477,93 @@
       document.body.appendChild(modal);
     }
 
+    function previewProfilePicture(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const preview = document.getElementById('preview-avatar');
+          preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-full">`;
+          currentUser.profilePicture = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function addSkillField() {
+      const container = document.getElementById('skills-container');
+      const skillDiv = document.createElement('div');
+      skillDiv.className = 'flex items-center gap-2 mb-2';
+      skillDiv.innerHTML = `
+        <input type="text" placeholder="Skill name" class="flex-1 p-2 bg-white/10 rounded-lg border border-white/20 focus:border-primary focus:outline-none skill-input">
+        <select class="p-2 bg-white/10 rounded-lg border border-white/20 skill-level">
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate" selected>Intermediate</option>
+          <option value="Expert">Expert</option>
+        </select>
+        <button type="button" onclick="this.parentElement.remove()" class="bg-red-500/20 text-red-400 px-2 py-1 rounded">×</button>
+      `;
+      container.appendChild(skillDiv);
+    }
+
     function saveProfileChanges(event) {
       event.preventDefault();
       
-      currentUser.name = document.getElementById('edit-name').value;
+      const oldStrength = currentUser.profileStrength || 0;
+      
+      // Collect all form data
+      currentUser.name = `${document.getElementById('edit-firstname').value} ${document.getElementById('edit-lastname').value}`;
       currentUser.headline = document.getElementById('edit-headline').value;
       currentUser.university = document.getElementById('edit-university').value;
-      currentUser.skills = document.getElementById('edit-skills').value.split(',').map(s => s.trim()).filter(s => s);
+      currentUser.department = document.getElementById('edit-department').value;
+      currentUser.yearOfStudy = document.getElementById('edit-year').value;
+      currentUser.gpa = parseFloat(document.getElementById('edit-gpa').value) || null;
+      currentUser.phone = document.getElementById('edit-phone').value;
+      currentUser.location = document.getElementById('edit-location').value;
+      currentUser.bio = document.getElementById('edit-bio').value;
       
-      // Calculate profile strength
-      let strength = 25;
-      if (currentUser.headline) strength += 25;
-      if (currentUser.skills && currentUser.skills.length > 0) strength += 25;
-      if (currentUser.skills && currentUser.skills.length >= 3) strength += 25;
+      // Collect skills with levels
+      const skillInputs = document.querySelectorAll('.skill-input');
+      const skillLevels = document.querySelectorAll('.skill-level');
+      currentUser.skills = [];
+      skillInputs.forEach((input, index) => {
+        if (input.value.trim()) {
+          currentUser.skills.push({
+            name: input.value.trim(),
+            level: skillLevels[index].value
+          });
+        }
+      });
       
-      currentUser.profileStrength = strength;
-      currentUser.xp = (currentUser.xp || 0) + 15;
+      // Collect social links
+      currentUser.socialLinks = {
+        github: document.getElementById('edit-github').value,
+        linkedin: document.getElementById('edit-linkedin').value,
+        telegram: document.getElementById('edit-telegram').value,
+        portfolio: document.getElementById('edit-portfolio').value
+      };
+      
+      // Calculate advanced profile strength
+      let strength = 10; // Base
+      if (currentUser.headline) strength += 15;
+      if (currentUser.department) strength += 10;
+      if (currentUser.yearOfStudy) strength += 5;
+      if (currentUser.gpa) strength += 10;
+      if (currentUser.phone) strength += 5;
+      if (currentUser.location) strength += 5;
+      if (currentUser.bio && currentUser.bio.length > 50) strength += 15;
+      if (currentUser.skills && currentUser.skills.length > 0) strength += 10;
+      if (currentUser.skills && currentUser.skills.length >= 3) strength += 10;
+      if (currentUser.profilePicture) strength += 10;
+      if (Object.values(currentUser.socialLinks).some(link => link)) strength += 10;
+      
+      currentUser.profileStrength = Math.min(strength, 100);
+      
+      // Award XP for profile improvements
+      if (strength > oldStrength) {
+        const xpGain = (strength - oldStrength) * 3;
+        currentUser.xp = (currentUser.xp || 0) + xpGain;
+        showNotification(`+${xpGain} XP for improving your profile!`, 'success');
+      }
       
       saveUserData();
       updateUserUI();
@@ -1385,7 +1682,99 @@
       document.body.appendChild(modal);
     }
 
-    function connectWithUser(userId) {
+    function joinEkub(ekubId) {
+      if (!currentUser) {
+        showNotification('🔒 Please sign in to join ekub', 'warning');
+        showModal('login');
+        return;
+      }
+      
+      const ekubDetails = {
+        'laptop-fund': { name: 'Laptop Fund Ekub', amount: 2000, members: 12 },
+        'business-startup': { name: 'Business Startup', amount: 5000, members: 8 }
+      };
+      
+      const ekub = ekubDetails[ekubId];
+      if (!ekub) return;
+      
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-md w-full mx-4">
+          <h3 class="text-xl font-bold mb-4">🤝 Join ${ekub.name}</h3>
+          <div class="bg-white/5 rounded-lg p-4 mb-4">
+            <div class="flex justify-between items-center mb-2">
+              <span>Monthly Contribution:</span>
+              <span class="font-bold text-accent">${ekub.amount} ETB</span>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+              <span>Current Members:</span>
+              <span class="font-bold">${ekub.members}/12</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span>Your Balance:</span>
+              <span class="font-bold ${currentUser.walletBalance >= ekub.amount ? 'text-success' : 'text-red-400'}">${currentUser.walletBalance} ETB</span>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" id="ekub-terms" class="rounded">
+              <span class="text-sm">I understand the ekub terms and commit to monthly payments</span>
+            </label>
+          </div>
+          
+          <div class="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-3 mb-4">
+            <p class="text-sm text-yellow-200">⚠️ First payment of ${ekub.amount} ETB will be deducted immediately</p>
+          </div>
+          
+          <div class="flex gap-3">
+            <button onclick="confirmJoinEkub('${ekubId}', ${ekub.amount})" class="flex-1 bg-primary text-black py-3 rounded-xl font-bold">Join Ekub</button>
+            <button onclick="this.closest('.modal').remove()" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function confirmJoinEkub(ekubId, amount) {
+      const termsChecked = document.getElementById('ekub-terms').checked;
+      if (!termsChecked) {
+        showNotification('❌ Please accept the ekub terms', 'error');
+        return;
+      }
+      
+      if (currentUser.walletBalance < amount) {
+        showNotification('💰 Insufficient balance. Please add funds first.', 'error');
+        return;
+      }
+      
+      currentUser.walletBalance -= amount;
+      
+      if (!currentUser.joinedEkubs) currentUser.joinedEkubs = [];
+      currentUser.joinedEkubs.push({
+        id: ekubId,
+        joinedAt: new Date().toLocaleDateString(),
+        monthlyAmount: amount,
+        status: 'Active'
+      });
+      
+      transactions.unshift({
+        id: 't' + Date.now(),
+        type: 'Debit',
+        amount: amount,
+        description: `Ekub Payment - ${ekubId}`,
+        date: new Date().toLocaleDateString(),
+        status: 'Completed'
+      });
+      
+      currentUser.xp = (currentUser.xp || 0) + 30;
+      saveUserData();
+      updateUserUI();
+      
+      document.querySelector('.modal.active').remove();
+      showNotification('🤝 Successfully joined ekub!', 'success');
+    }
       if (!currentUser.connections) currentUser.connections = [];
       currentUser.connections.push(userId);
       currentUser.xp = (currentUser.xp || 0) + 5;
