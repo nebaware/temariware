@@ -262,6 +262,9 @@ Quick access to all features:
         parse_mode: 'Markdown'
     };
     
+    bot.sendMessage(chatId, menuMessage, options);
+});
+
 bot.onText(/\/help/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, `
