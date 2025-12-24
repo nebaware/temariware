@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TemariWare - Complete Student Ecosystem</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#14F195',
+            secondary: '#9945FF',
+            accent: '#F59E0B',
+            success: '#10B981',
+            dark: '#0F172A'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .gradient-bg { background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%); }
+    .page { display: none; }
+    .page.active { display: block; }
+    .modal { display: none; }
+    .modal.active { display: flex; }
+  </style>
+</head>
+<body class="gradient-bg text-white min-h-screen">
+  <div class="container mx-auto px-4 py-6 max-w-md">
+    
+    <!-- Navigation Bar -->
+    <nav class="glass rounded-xl p-4 mb-6 fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto">
+      <div class="flex justify-around">
+        <button onclick="showPage('home')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="home">
+          <span class="text-xl mb-1">🏠</span>
+          <span class="text-xs">Home</span>
+        </button>
+        <button onclick="showPage('work')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="work">
+          <span class="text-xl mb-1">💼</span>
+          <span class="text-xs">Work</span>
+        </button>
+        <button onclick="showPage('gebeta')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="gebeta">
+          <span class="text-xl mb-1">📚</span>
+          <span class="text-xs">Gebeta</span>
+        </button>
+        <button onclick="showPage('wallet')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="wallet">
+          <span class="text-xl mb-1">💰</span>
+          <span class="text-xs">Wallet</span>
+        </button>
+        <button onclick="showPage('profile')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="profile">
+          <span class="text-xl mb-1">👤</span>
+          <span class="text-xs">Me</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page active">
+      <div class="text-center mb-6">
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">TemariWare</h1>
+        <p class="text-gray-400">Complete Student Ecosystem</p>
+      </div>
+
+      <!-- User Card -->
+      <div class="glass rounded-2xl p-6 mb-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-xl font-bold text-black" id="user-avatar">
+            👤
+          </div>
+          <div>
+            <h2 class="text-xl font-bold" id="user-name">Welcome!</h2>
+            <p class="text-gray-400" id="user-headline">Ready to explore?</p>
+          </div>
+        </div>
+        
+        <div class="bg-gradient-to-r from-success/20 to-primary/20 rounded-xl p-4 border border-success/30">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-300">Wallet Balance</p>
+              <p class="text-2xl font-bold text-success" id="balance-display">0 ETB</p>
+            </div>
+            <div class="text-3xl">💰</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auth Section -->
+      <div id="auth-section" class="mb-6">
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="showModal('login')" class="bg-gradient-to-r from-primary to-blue-500 p-4 rounded-xl font-semibold">
+            🔐 Sign In
+          </button>
+          <button onclick="showModal('register')" class="bg-gradient-to-r from-secondary to-purple-500 p-4 rounded-xl font-semibold">
+            ✨ Register
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <button onclick="showPage('work')" class="glass rounded-xl p-6 text-center hover:bg-white/10 transition-all">
+          <div class="text-4xl mb-3">💼</div>
+          <h3 class="font-bold text-lg mb-1">Find Work</h3>
+          <p class="text-xs text-gray-400">Jobs & Internships</p>
+        </button>
+        
+        <button onclick="showPage('gebeta')" class="glass rounded-xl p-6 text-center hover:bg-white/10 transition-all">
+          <div class="text-4xl mb-3">📚</div>
+          <h3 class="font-bold text-lg mb-1">Learn</h3>
+          <p class="text-xs text-gray-400">Courses & Skills</p>
+        </button>
+        
+        <button onclick="showPage('wallet')" class="glass rounded-xl p-6 text-center hover:bg-white/10 transition-all">
+          <div class="text-4xl mb-3">💳</div>
+          <h3 class="font-bold text-lg mb-1">Ekub</h3>
+          <p class="text-xs text-gray-400">Savings Groups</p>
+        </button>
+        
+        <button onclick="showModal('network')" class="glass rounded-xl p-6 text-center hover:bg-white/10 transition-all">
+          <div class="text-4xl mb-3">👥</div>
+          <h3 class="font-bold text-lg mb-1">Network</h3>
+          <p class="text-xs text-gray-400">Connect & Chat</p>
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="glass rounded-xl p-4 mb-6">
+        <h3 class="font-bold mb-4 text-center">📊 Your Progress</h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-accent" id="user-xp">0</div>
+            <div class="text-xs text-gray-400">XP Points</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-primary" id="user-level">1</div>
+            <div class="text-xs text-gray-400">Level</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-success" id="user-streak">0</div>
+            <div class="text-xs text-gray-400">Day Streak</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Reward -->
+      <div class="glass rounded-xl p-6 text-center mb-20">
+        <div class="text-5xl mb-3">🎁</div>
+        <h3 class="text-xl font-bold mb-2">Daily Bonus</h3>
+        <p class="text-gray-400 mb-4">Claim your reward now!</p>
+        <button onclick="claimDailyReward()" class="bg-gradient-to-r from-accent to-orange-500 px-8 py-3 rounded-xl font-bold">
+          Claim 150 ETB
+        </button>
+      </div>
+    </div>
+
+    <!-- Work Page -->
+    <div id="work-page" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">💼 Find Work</h1>
+        <button onclick="refreshJobs()" class="bg-primary/20 p-2 rounded-lg">🔄</button>
+      </div>
+
+      <!-- Job Filters -->
+      <div class="mb-4">
+        <div class="flex gap-2 mb-3 overflow-x-auto">
+          <button onclick="filterJobs('all')" class="filter-btn bg-primary/20 px-4 py-2 rounded-lg text-sm whitespace-nowrap">All</button>
+          <button onclick="filterJobs('Internship')" class="filter-btn bg-white/10 px-4 py-2 rounded-lg text-sm whitespace-nowrap">Internships</button>
+          <button onclick="filterJobs('Freelance')" class="filter-btn bg-white/10 px-4 py-2 rounded-lg text-sm whitespace-nowrap">Freelance</button>
+          <button onclick="filterJobs('Remote')" class="filter-btn bg-white/10 px-4 py-2 rounded-lg text-sm whitespace-nowrap">Remote</button>
+        </div>
+        <input type="text" placeholder="Search jobs..." class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" onkeyup="searchJobs(this.value)">
+      </div>
+
+      <!-- Jobs List -->
+      <div class="space-y-4 mb-20" id="jobs-list">
+        <!-- Jobs will be populated here -->
+      </div>
+    </div>
+
+    <!-- Gebeta (Learning) Page -->
+    <div id="gebeta-page" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">📚 Gebeta Learning</h1>
+        <button onclick="showModal('create-course')" class="bg-primary/20 p-2 rounded-lg">➕</button>
+      </div>
+
+      <!-- Course Categories -->
+      <div class="flex gap-2 mb-4 overflow-x-auto">
+        <button onclick="filterCourses('all')" class="course-filter-btn bg-primary/20 px-4 py-2 rounded-lg text-sm whitespace-nowrap">All</button>
+        <button onclick="filterCourses('Design')" class="course-filter-btn bg-white/10 px-4 py-2 rounded-lg text-sm whitespace-nowrap">Design</button>
+        <button onclick="filterCourses('Development')" class="course-filter-btn bg-white/10 px-4 py-2 rounded-lg text-sm whitespace-nowrap">Development</button>
+        <button onclick="filterCourses('Business')" class="course-filter-btn bg-white/10 px-4 py-2 rounded-lg text-sm whitespace-nowrap">Business</button>
+      </div>
+
+      <!-- Courses List -->
+      <div class="space-y-4 mb-20" id="courses-list">
+        <!-- Courses will be populated here -->
+      </div>
+    </div>
+
+    <!-- Wallet Page -->
+    <div id="wallet-page" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">💰 My Wallet</h1>
+        <button onclick="refreshWallet()" class="bg-primary/20 p-2 rounded-lg">🔄</button>
+      </div>
+
+      <!-- Balance Card -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="text-center mb-4">
+          <p class="text-gray-400 mb-2">Total Balance</p>
+          <p class="text-4xl font-bold text-success" id="wallet-balance">0 ETB</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <button onclick="showModal('send-money')" class="bg-success text-white p-3 rounded-lg font-semibold">💸 Send</button>
+          <button onclick="showModal('request-money')" class="bg-primary text-black p-3 rounded-lg font-semibold">📥 Request</button>
+        </div>
+      </div>
+
+      <!-- Ekub Section -->
+      <div class="glass rounded-xl p-4 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold">🤝 My Ekubs</h3>
+          <button onclick="showModal('create-ekub')" class="bg-primary/20 px-3 py-1 rounded text-sm">+ New</button>
+        </div>
+        <div id="ekubs-list">
+          <!-- Ekubs will be populated here -->
+        </div>
+      </div>
+
+      <!-- Transactions -->
+      <div class="glass rounded-xl p-4 mb-20">
+        <h3 class="font-bold mb-4">📋 Recent Transactions</h3>
+        <div id="transactions-list">
+          <!-- Transactions will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="profile-page" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">👤 My Profile</h1>
+        <button onclick="showModal('edit-profile')" class="bg-primary/20 p-2 rounded-lg">✏️</button>
+      </div>
+
+      <!-- Profile Card -->
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-20 h-20 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-2xl font-bold text-black" id="profile-avatar">
+            👤
+          </div>
+          <div>
+            <h2 class="text-xl font-bold" id="profile-name">User</h2>
+            <p class="text-gray-400" id="profile-email">user@example.com</p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="bg-success/20 text-success px-2 py-1 rounded text-xs" id="profile-level">Level 1</span>
+              <span class="text-accent text-sm" id="profile-xp">0 XP</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white/5 rounded-lg p-3">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm">Profile Strength</span>
+            <span class="text-sm font-bold" id="profile-strength">0%</span>
+          </div>
+          <div class="w-full bg-gray-700 rounded-full h-2">
+            <div class="bg-gradient-to-r from-primary to-success h-2 rounded-full" id="profile-progress" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Sections -->
+      <div class="space-y-4 mb-20">
+        <div class="glass rounded-xl p-4">
+          <h3 class="font-bold mb-3">🎯 Skills & Projects</h3>
+          <div id="skills-list" class="mb-4">
+            <!-- Skills will be populated here -->
+          </div>
+          <button onclick="showModal('add-skill')" class="w-full bg-primary/20 p-3 rounded-lg text-sm">+ Add Skill</button>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+          <h3 class="font-bold mb-3">🏆 Achievements</h3>
+          <div class="grid grid-cols-3 gap-3" id="achievements-list">
+            <!-- Achievements will be populated here -->
+          </div>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+          <h3 class="font-bold mb-3">⚙️ Settings</h3>
+          <div class="space-y-3">
+            <button onclick="toggleNotifications()" class="w-full text-left p-3 bg-white/5 rounded-lg flex justify-between items-center">
+              <span>🔔 Notifications</span>
+              <span class="text-primary" id="notifications-status">On</span>
+            </button>
+            <button onclick="showModal('security')" class="w-full text-left p-3 bg-white/5 rounded-lg flex justify-between items-center">
+              <span>🔐 Security</span>
+              <span class="text-gray-400">→</span>
+            </button>
+            <button onclick="logout()" class="w-full bg-red-500/20 text-red-400 p-3 rounded-lg font-semibold">
+              🚪 Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm items-center justify-center z-50">
+      <div class="glass rounded-2xl p-6 max-w-sm w-full mx-4">
+        <h3 class="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Welcome Back</h3>
+        <form onsubmit="handleLogin(event)">
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Email</label>
+            <input type="email" id="login-email" class="w-full p-4 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2">Password</label>
+            <input type="password" id="login-password" class="w-full p-4 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+          </div>
+          <div class="flex gap-3">
+            <button type="submit" class="flex-1 bg-gradient-to-r from-primary to-blue-500 py-3 rounded-xl font-bold">Sign In</button>
+            <button type="button" onclick="hideModal('login')" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+          </div>
+        </form>
+        <p class="mt-4 text-xs text-center text-gray-400">Demo: demo@temariware.com / demo123</p>
+      </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="modal fixed inset-0 bg-black/80 backdrop-blur-sm items-center justify-center z-50">
+      <div class="glass rounded-2xl p-6 max-w-sm w-full mx-4">
+        <h3 class="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Join TemariWare</h3>
+        <form onsubmit="handleRegister(event)">
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Full Name</label>
+            <input type="text" id="register-name" class="w-full p-4 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Email</label>
+            <input type="email" id="register-email" class="w-full p-4 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">University</label>
+            <select id="register-university" class="w-full p-4 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+              <option value="">Select University</option>
+              <option value="Addis Ababa University">Addis Ababa University</option>
+              <option value="Jimma University">Jimma University</option>
+              <option value="Bahir Dar University">Bahir Dar University</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2">Password</label>
+            <input type="password" id="register-password" class="w-full p-4 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+          </div>
+          <div class="flex gap-3">
+            <button type="submit" class="flex-1 bg-gradient-to-r from-primary to-blue-500 py-3 rounded-xl font-bold">Register</button>
+            <button type="button" onclick="hideModal('register')" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Global State
+    let currentUser = null;
+    let currentPage = 'home';
+    let jobs = [];
+    let courses = [];
+    let ekubs = [];
+    let transactions = [];
+
+    // Initialize App
+    function initApp() {
+      loadUserData();
+      loadJobs();
+      loadCourses();
+      updateUI();
+    }
+
+    // User Management
+    function loadUserData() {
+      const userData = localStorage.getItem('temariware_user');
+      if (userData) {
+        currentUser = JSON.parse(userData);
+        updateUserUI();
+      }
+    }
+
+    function saveUserData() {
+      if (currentUser) {
+        localStorage.setItem('temariware_user', JSON.stringify(currentUser));
+      }
+    }
+
+    function updateUserUI() {
+      if (!currentUser) return;
+      
+      document.getElementById('user-name').textContent = currentUser.name;
+      document.getElementById('user-headline').textContent = currentUser.headline || 'Student';
+      document.getElementById('balance-display').textContent = `${currentUser.walletBalance || 0} ETB`;
+      document.getElementById('user-xp').textContent = currentUser.xp || 0;
+      document.getElementById('user-level').textContent = currentUser.level || 1;
+      document.getElementById('user-streak').textContent = currentUser.streak || 0;
+      
+      // Update profile page
+      document.getElementById('profile-name').textContent = currentUser.name;
+      document.getElementById('profile-email').textContent = currentUser.email;
+      document.getElementById('profile-level').textContent = `Level ${currentUser.level || 1}`;
+      document.getElementById('profile-xp').textContent = `${currentUser.xp || 0} XP`;
+      document.getElementById('profile-strength').textContent = `${currentUser.profileStrength || 0}%`;
+      document.getElementById('profile-progress').style.width = `${currentUser.profileStrength || 0}%`;
+      
+      // Update wallet
+      document.getElementById('wallet-balance').textContent = `${currentUser.walletBalance || 0} ETB`;
+      
+      // Hide auth section if logged in
+      document.getElementById('auth-section').style.display = currentUser ? 'none' : 'block';
+    }
+
+    // Authentication
+    function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      // Demo login
+      if (email === 'demo@temariware.com' && password === 'demo123') {
+        currentUser = {
+          id: 'demo-user',
+          name: 'Abebe Kebede',
+          email: email,
+          headline: 'Full Stack Developer | CS Senior @ AAU',
+          university: 'Addis Ababa University',
+          walletBalance: 2450,
+          xp: 1250,
+          level: 5,
+          streak: 3,
+          profileStrength: 85,
+          skills: ['React', 'TypeScript', 'Python'],
+          achievements: ['🔥', '💼', '📚']
+        };
+        saveUserData();
+        updateUserUI();
+        hideModal('login');
+        showNotification('✅ Welcome back, Abebe!', 'success');
+      } else {
+        showNotification('❌ Invalid credentials', 'error');
+      }
+    }
+
+    function handleRegister(event) {
+      event.preventDefault();
+      const name = document.getElementById('register-name').value;
+      const email = document.getElementById('register-email').value;
+      const university = document.getElementById('register-university').value;
+      
+      currentUser = {
+        id: 'new-user-' + Date.now(),
+        name: name,
+        email: email,
+        university: university,
+        walletBalance: 500, // Welcome bonus
+        xp: 0,
+        level: 1,
+        streak: 0,
+        profileStrength: 25,
+        skills: [],
+        achievements: []
+      };
+      
+      saveUserData();
+      updateUserUI();
+      hideModal('register');
+      showNotification('🎉 Welcome to TemariWare!', 'success');
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('temariware_user');
+      location.reload();
+    }
+
+    // Jobs Management
+    function loadJobs() {
+      jobs = [
+        {
+          id: 'j1',
+          title: 'Frontend Developer Intern',
+          company: 'Ride Ethiopia',
+          type: 'Internship',
+          location: 'Hybrid',
+          salary: '4,000 ETB/month',
+          description: 'Build modern web applications using React and TypeScript. Perfect for CS students.',
+          tags: ['React', 'TypeScript', 'Web'],
+          postedAt: '2 days ago',
+          applicants: 12
+        },
+        {
+          id: 'j2',
+          title: 'UI/UX Designer',
+          company: 'Ahadoo Tec',
+          type: 'Freelance',
+          location: 'Remote',
+          salary: '8,000 ETB/project',
+          description: 'Design mobile app interfaces for fintech startup.',
+          tags: ['Figma', 'Mobile', 'Design'],
+          postedAt: '1 day ago',
+          applicants: 8
+        },
+        {
+          id: 'j3',
+          title: 'Content Writer',
+          company: 'EthioTech Blog',
+          type: 'Part-time',
+          location: 'Remote',
+          salary: '2,500 ETB/month',
+          description: 'Write tech articles in Amharic and English.',
+          tags: ['Writing', 'Tech', 'Amharic'],
+          postedAt: '3 hours ago',
+          applicants: 3
+        }
+      ];
+      renderJobs();
+    }
+
+    function renderJobs(filteredJobs = jobs) {
+      const jobsList = document.getElementById('jobs-list');
+      jobsList.innerHTML = filteredJobs.map(job => `
+        <div class="glass rounded-xl p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg">${job.title}</h3>
+            <span class="bg-primary/20 text-primary px-2 py-1 rounded text-xs">${job.type}</span>
+          </div>
+          <p class="text-gray-400 text-sm mb-2">${job.company} • ${job.location}</p>
+          <p class="text-sm mb-3">${job.description}</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            ${job.tags.map(tag => `<span class="bg-white/10 px-2 py-1 rounded text-xs">${tag}</span>`).join('')}
+          </div>
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="text-primary font-bold">${job.salary}</span>
+              <span class="text-gray-400 text-sm ml-2">${job.applicants} applied</span>
+            </div>
+            <button onclick="applyToJob('${job.id}')" class="bg-primary text-black px-4 py-2 rounded-lg font-semibold">Apply</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function applyToJob(jobId) {
+      if (!currentUser) {
+        showNotification('🔒 Please sign in to apply', 'warning');
+        showModal('login');
+        return;
+      }
+      
+      const job = jobs.find(j => j.id === jobId);
+      if (job) {
+        job.applicants++;
+        showNotification(`✅ Applied to ${job.title}!`, 'success');
+        renderJobs();
+      }
+    }
+
+    function filterJobs(filter) {
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('bg-primary/20'));
+      event.target.classList.add('bg-primary/20');
+      
+      if (filter === 'all') {
+        renderJobs();
+      } else {
+        const filtered = jobs.filter(job => job.type === filter || job.location === filter);
+        renderJobs(filtered);
+      }
+    }
+
+    function searchJobs(query) {
+      if (!query) {
+        renderJobs();
+        return;
+      }
+      
+      const filtered = jobs.filter(job => 
+        job.title.toLowerCase().includes(query.toLowerCase()) ||
+        job.company.toLowerCase().includes(query.toLowerCase()) ||
+        job.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+      );
+      renderJobs(filtered);
+    }
+
+    // Courses Management
+    function loadCourses() {
+      courses = [
+        {
+          id: 'c1',
+          title: 'React Development Masterclass',
+          instructor: 'Sara Tadesse',
+          price: 500,
+          category: 'Development',
+          rating: 4.8,
+          students: 120,
+          duration: '4 weeks',
+          description: 'Learn modern React with hooks, context, and best practices.'
+        },
+        {
+          id: 'c2',
+          title: 'UI/UX Design with Figma',
+          instructor: 'Michael Belay',
+          price: 0,
+          category: 'Design',
+          rating: 4.9,
+          students: 89,
+          duration: '3 weeks',
+          description: 'Master interface design and user experience principles.'
+        },
+        {
+          id: 'c3',
+          title: 'Digital Marketing for Startups',
+          instructor: 'Hanan Ahmed',
+          price: 800,
+          category: 'Business',
+          rating: 4.7,
+          students: 67,
+          duration: '6 weeks',
+          description: 'Learn social media marketing and growth strategies.'
+        }
+      ];
+      renderCourses();
+    }
+
+    function renderCourses(filteredCourses = courses) {
+      const coursesList = document.getElementById('courses-list');
+      coursesList.innerHTML = filteredCourses.map(course => `
+        <div class="glass rounded-xl p-4">
+          <div class="flex items-start gap-3">
+            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-2xl">
+              ${course.category === 'Design' ? '🎨' : course.category === 'Development' ? '💻' : '📈'}
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-lg mb-1">${course.title}</h3>
+              <p class="text-gray-400 text-sm mb-2">by ${course.instructor} • ${course.duration}</p>
+              <p class="text-sm mb-3">${course.description}</p>
+              <div class="flex justify-between items-center">
+                <div>
+                  <span class="text-${course.price === 0 ? 'success' : 'accent'} font-bold">
+                    ${course.price === 0 ? 'Free' : course.price + ' ETB'}
+                  </span>
+                  <span class="text-gray-400 text-sm ml-2">⭐ ${course.rating} (${course.students})</span>
+                </div>
+                <button onclick="enrollInCourse('${course.id}')" class="bg-primary text-black px-4 py-2 rounded-lg font-semibold">Enroll</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function enrollInCourse(courseId) {
+      if (!currentUser) {
+        showNotification('🔒 Please sign in to enroll', 'warning');
+        showModal('login');
+        return;
+      }
+      
+      const course = courses.find(c => c.id === courseId);
+      if (course) {
+        if (course.price > 0 && currentUser.walletBalance < course.price) {
+          showNotification('💰 Insufficient balance', 'error');
+          return;
+        }
+        
+        if (course.price > 0) {
+          currentUser.walletBalance -= course.price;
+          transactions.unshift({
+            id: 't' + Date.now(),
+            type: 'Debit',
+            amount: course.price,
+            description: `Course: ${course.title}`,
+            date: new Date().toLocaleDateString(),
+            status: 'Completed'
+          });
+        }
+        
+        course.students++;
+        currentUser.xp += 50;
+        saveUserData();
+        updateUserUI();
+        showNotification(`🎓 Enrolled in ${course.title}!`, 'success');
+        renderCourses();
+      }
+    }
+
+    function filterCourses(filter) {
+      document.querySelectorAll('.course-filter-btn').forEach(btn => btn.classList.remove('bg-primary/20'));
+      event.target.classList.add('bg-primary/20');
+      
+      if (filter === 'all') {
+        renderCourses();
+      } else {
+        const filtered = courses.filter(course => course.category === filter);
+        renderCourses(filtered);
+      }
+    }
+
+    // Wallet & Ekub Management
+    function claimDailyReward() {
+      if (!currentUser) {
+        showNotification('🔒 Please sign in first', 'warning');
+        showModal('login');
+        return;
+      }
+      
+      if (currentUser.dailyClaimed) {
+        showNotification('⏰ Already claimed today!', 'warning');
+        return;
+      }
+      
+      currentUser.walletBalance += 150;
+      currentUser.xp += 25;
+      currentUser.streak += 1;
+      currentUser.dailyClaimed = true;
+      
+      transactions.unshift({
+        id: 't' + Date.now(),
+        type: 'Credit',
+        amount: 150,
+        description: 'Daily Bonus Reward',
+        date: new Date().toLocaleDateString(),
+        status: 'Completed'
+      });
+      
+      saveUserData();
+      updateUserUI();
+      showNotification('🎁 Daily reward claimed! +150 ETB', 'success');
+    }
+
+    // Navigation
+    function showPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(page + '-page').classList.add('active');
+      
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-primary/20');
+        if (btn.dataset.page === page) {
+          btn.classList.add('bg-primary/20');
+        }
+      });
+      
+      currentPage = page;
+    }
+
+    function showModal(modalName) {
+      document.getElementById(modalName + '-modal').classList.add('active');
+    }
+
+    function hideModal(modalName) {
+      document.getElementById(modalName + '-modal').classList.remove('active');
+    }
+
+    // Utility Functions
+    function showNotification(message, type) {
+      const colors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500',
+        warning: 'bg-yellow-500',
+        info: 'bg-blue-500'
+      };
+      
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg z-50`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.remove(), 3000);
+    }
+
+    function refreshJobs() {
+      showNotification('🔄 Refreshing jobs...', 'info');
+      loadJobs();
+    }
+
+    function refreshWallet() {
+      showNotification('🔄 Refreshing wallet...', 'info');
+      updateUserUI();
+    }
+
+    function updateUI() {
+      updateUserUI();
+    }
+
+    // Initialize app when page loads
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
