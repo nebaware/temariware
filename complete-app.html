@@ -120,7 +120,7 @@
           <p class="text-xs text-gray-400">Savings Groups</p>
         </button>
         
-        <button onclick="showModal('network')" class="glass rounded-xl p-6 text-center hover:bg-white/10 transition-all">
+        <button onclick="showNetworkModal()" class="glass rounded-xl p-6 text-center hover:bg-white/10 transition-all">
           <div class="text-4xl mb-3">👥</div>
           <h3 class="font-bold text-lg mb-1">Network</h3>
           <p class="text-xs text-gray-400">Connect & Chat</p>
@@ -247,7 +247,7 @@
       <div class="glass rounded-xl p-4 mb-6">
         <div class="flex justify-between items-center mb-4">
           <h3 class="font-bold">🤝 My Ekubs</h3>
-          <button onclick="showModal('create-ekub')" class="bg-primary/20 px-3 py-1 rounded text-sm">+ New</button>
+          <button onclick="showCreateEkubModal()" class="bg-primary/20 px-3 py-1 rounded text-sm">+ New</button>
         </div>
         <div id="ekubs-list">
           <!-- Ekubs will be populated here -->
@@ -267,7 +267,7 @@
     <div id="profile-page" class="page">
       <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold">👤 My Profile</h1>
-        <button onclick="showModal('edit-profile')" class="bg-primary/20 p-2 rounded-lg">✏️</button>
+        <button onclick="showEditProfileModal()" class="bg-primary/20 p-2 rounded-lg">✏️</button>
       </div>
 
       <!-- Profile Card -->
@@ -954,28 +954,79 @@
         return;
       }
       
-      if (currentUser.dailyClaimed) {
-        showNotification('⏰ Already claimed today!', 'warning');
+      const today = new Date().toDateString();
+      if (currentUser.lastClaimDate === today) {
+        showNotification('⏰ Already claimed today! Come back tomorrow.', 'warning');
         return;
       }
       
-      currentUser.walletBalance += 150;
+      // Show claim animation modal
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-8 max-w-sm w-full mx-4 text-center">
+          <div class="text-8xl mb-4 animate-bounce">🎁</div>
+          <h3 class="text-2xl font-bold mb-4">Daily Reward!</h3>
+          <div class="bg-gradient-to-r from-accent/20 to-orange-500/20 rounded-xl p-4 mb-6">
+            <div class="text-3xl font-bold text-accent mb-2">+150 ETB</div>
+            <div class="text-sm text-gray-300">Base reward</div>
+          </div>
+          <div class="space-y-2 mb-6">
+            <div class="flex justify-between items-center">
+              <span>Streak Bonus (${currentUser.streak || 0} days):</span>
+              <span class="text-primary font-bold">+${(currentUser.streak || 0) * 10} ETB</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span>Level Bonus (Lv.${currentUser.level || 1}):</span>
+              <span class="text-secondary font-bold">+${(currentUser.level || 1) * 5} ETB</span>
+            </div>
+            <hr class="border-white/20">
+            <div class="flex justify-between items-center font-bold text-lg">
+              <span>Total:</span>
+              <span class="text-success">+${150 + ((currentUser.streak || 0) * 10) + ((currentUser.level || 1) * 5)} ETB</span>
+            </div>
+          </div>
+          <button onclick="processDailyClaim()" class="w-full bg-gradient-to-r from-accent to-orange-500 py-3 rounded-xl font-bold text-lg">
+            Claim Reward! 🎉
+          </button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function processDailyClaim() {
+      const totalReward = 150 + ((currentUser.streak || 0) * 10) + ((currentUser.level || 1) * 5);
+      
+      currentUser.walletBalance += totalReward;
       currentUser.xp += 25;
-      currentUser.streak += 1;
-      currentUser.dailyClaimed = true;
+      currentUser.streak = (currentUser.streak || 0) + 1;
+      currentUser.lastClaimDate = new Date().toDateString();
+      
+      // Check for level up
+      const newLevel = Math.floor((currentUser.xp || 0) / 250) + 1;
+      const leveledUp = newLevel > (currentUser.level || 1);
+      currentUser.level = newLevel;
       
       transactions.unshift({
         id: 't' + Date.now(),
         type: 'Credit',
-        amount: 150,
-        description: 'Daily Bonus Reward',
+        amount: totalReward,
+        description: `Daily Bonus (${currentUser.streak} day streak)`,
         date: new Date().toLocaleDateString(),
         status: 'Completed'
       });
       
       saveUserData();
       updateUserUI();
-      showNotification('🎁 Daily reward claimed! +150 ETB', 'success');
+      document.querySelector('.modal.active').remove();
+      
+      showNotification(`🎁 Claimed ${totalReward} ETB! Streak: ${currentUser.streak} days`, 'success');
+      
+      if (leveledUp) {
+        setTimeout(() => {
+          showNotification(`🎉 Level Up! You're now Level ${currentUser.level}!`, 'success');
+        }, 1000);
+      }
     }
 
     // Navigation
@@ -1162,6 +1213,194 @@
         showNotification(`✅ ${amount} ETB added successfully!`, 'success');
       }, 2000);
     }
+    // Profile & Settings Functions
+    function showEditProfileModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold mb-6">Edit Profile</h3>
+          <form onsubmit="saveProfileChanges(event)">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Full Name</label>
+              <input type="text" id="edit-name" value="${currentUser.name}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" required>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Headline</label>
+              <input type="text" id="edit-headline" value="${currentUser.headline || ''}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="e.g., Full Stack Developer">
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">University</label>
+              <select id="edit-university" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none">
+                <option value="Addis Ababa University" ${currentUser.university === 'Addis Ababa University' ? 'selected' : ''}>Addis Ababa University</option>
+                <option value="Jimma University" ${currentUser.university === 'Jimma University' ? 'selected' : ''}>Jimma University</option>
+                <option value="Bahir Dar University" ${currentUser.university === 'Bahir Dar University' ? 'selected' : ''}>Bahir Dar University</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Skills (comma separated)</label>
+              <input type="text" id="edit-skills" value="${(currentUser.skills || []).join(', ')}" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="React, Python, Design...">
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" class="flex-1 bg-primary text-black py-3 rounded-xl font-bold">Save Changes</button>
+              <button type="button" onclick="this.closest('.modal').remove()" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function saveProfileChanges(event) {
+      event.preventDefault();
+      
+      currentUser.name = document.getElementById('edit-name').value;
+      currentUser.headline = document.getElementById('edit-headline').value;
+      currentUser.university = document.getElementById('edit-university').value;
+      currentUser.skills = document.getElementById('edit-skills').value.split(',').map(s => s.trim()).filter(s => s);
+      
+      // Calculate profile strength
+      let strength = 25;
+      if (currentUser.headline) strength += 25;
+      if (currentUser.skills && currentUser.skills.length > 0) strength += 25;
+      if (currentUser.skills && currentUser.skills.length >= 3) strength += 25;
+      
+      currentUser.profileStrength = strength;
+      currentUser.xp = (currentUser.xp || 0) + 15;
+      
+      saveUserData();
+      updateUserUI();
+      event.target.closest('.modal').remove();
+      showNotification('✅ Profile updated successfully!', 'success');
+    }
+
+    // Ekub Functions
+    function showCreateEkubModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-md w-full mx-4">
+          <h3 class="text-xl font-bold mb-6">🤝 Create New Ekub</h3>
+          <form onsubmit="createEkub(event)">
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Ekub Name</label>
+              <input type="text" id="ekub-name" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="e.g., Laptop Fund" required>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Monthly Contribution (ETB)</label>
+              <input type="number" id="ekub-amount" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="1000" min="100" required>
+            </div>
+            <div class="mb-4">
+              <label class="block text-sm font-medium mb-2">Maximum Members</label>
+              <input type="number" id="ekub-members" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" placeholder="12" min="3" max="20" required>
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-medium mb-2">Description</label>
+              <textarea id="ekub-description" class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none" rows="3" placeholder="What is this ekub for?"></textarea>
+            </div>
+            <div class="flex gap-3">
+              <button type="submit" class="flex-1 bg-primary text-black py-3 rounded-xl font-bold">Create Ekub</button>
+              <button type="button" onclick="this.closest('.modal').remove()" class="flex-1 bg-gray-600 py-3 rounded-xl font-bold">Cancel</button>
+            </div>
+          </form>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function createEkub(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('ekub-name').value;
+      const amount = parseInt(document.getElementById('ekub-amount').value);
+      const maxMembers = parseInt(document.getElementById('ekub-members').value);
+      const description = document.getElementById('ekub-description').value;
+      
+      const newEkub = {
+        id: 'e' + Date.now(),
+        name: name,
+        contributionAmount: amount,
+        totalAmount: amount * maxMembers,
+        maxMembers: maxMembers,
+        currentMembers: 1,
+        description: description,
+        creator: currentUser.name,
+        status: 'Active',
+        nextPayout: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()
+      };
+      
+      if (!ekubs) ekubs = [];
+      ekubs.push(newEkub);
+      
+      if (!currentUser.createdEkubs) currentUser.createdEkubs = [];
+      currentUser.createdEkubs.push(newEkub.id);
+      
+      currentUser.xp = (currentUser.xp || 0) + 50;
+      saveUserData();
+      updateUserUI();
+      
+      event.target.closest('.modal').remove();
+      showNotification(`🤝 Ekub "${name}" created successfully!`, 'success');
+    }
+
+    // Network Functions
+    function showNetworkModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50';
+      modal.innerHTML = `
+        <div class="glass rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+          <h3 class="text-xl font-bold mb-6">👥 Network & Connect</h3>
+          <div class="space-y-4">
+            <div class="bg-white/5 rounded-xl p-4">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center font-bold">ST</div>
+                <div>
+                  <h4 class="font-bold">Sara Tadesse</h4>
+                  <p class="text-sm text-gray-400">UI/UX Designer @ AAU</p>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="connectWithUser('sara')" class="flex-1 bg-primary text-black py-2 rounded-lg font-semibold">Connect</button>
+                <button onclick="messageUser('sara')" class="flex-1 bg-white/10 py-2 rounded-lg font-semibold">Message</button>
+              </div>
+            </div>
+            
+            <div class="bg-white/5 rounded-xl p-4">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center font-bold">MB</div>
+                <div>
+                  <h4 class="font-bold">Michael Belay</h4>
+                  <p class="text-sm text-gray-400">Backend Developer @ JU</p>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="connectWithUser('michael')" class="flex-1 bg-primary text-black py-2 rounded-lg font-semibold">Connect</button>
+                <button onclick="messageUser('michael')" class="flex-1 bg-white/10 py-2 rounded-lg font-semibold">Message</button>
+              </div>
+            </div>
+          </div>
+          <button onclick="this.closest('.modal').remove()" class="w-full mt-6 bg-gray-600 py-3 rounded-xl font-bold">Close</button>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function connectWithUser(userId) {
+      if (!currentUser.connections) currentUser.connections = [];
+      currentUser.connections.push(userId);
+      currentUser.xp = (currentUser.xp || 0) + 5;
+      saveUserData();
+      updateUserUI();
+      showNotification('🤝 Connection request sent!', 'success');
+    }
+
+    function messageUser(userId) {
+      showNotification('💬 Opening chat...', 'info');
+      setTimeout(() => {
+        showNotification('📱 Chat feature coming soon!', 'info');
+      }, 1000);
+    }
+
     function showNotification(message, type) {
       const colors = {
         success: 'bg-green-500',
