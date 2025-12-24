@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TemariWare - Student Ecosystem</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#00D9FF',
+            secondary: '#7C3AED',
+            accent: '#F59E0B',
+            success: '#10B981',
+            dark: '#0F172A'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .gradient-bg { background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%); }
+    .page { display: none; }
+    .page.active { display: block; }
+  </style>
+</head>
+<body class="gradient-bg text-white min-h-screen">
+  <div class="container mx-auto px-4 py-6 max-w-md">
+    
+    <!-- Navigation Bar -->
+    <nav class="glass rounded-xl p-4 mb-6 fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto">
+      <div class="flex justify-around">
+        <button onclick="showPage('home')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="home">
+          <span class="text-xl mb-1">🏠</span>
+          <span class="text-xs">Home</span>
+        </button>
+        <button onclick="showPage('jobs')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="jobs">
+          <span class="text-xl mb-1">💼</span>
+          <span class="text-xs">Jobs</span>
+        </button>
+        <button onclick="showPage('courses')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="courses">
+          <span class="text-xl mb-1">📚</span>
+          <span class="text-xs">Learn</span>
+        </button>
+        <button onclick="showPage('wallet')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="wallet">
+          <span class="text-xl mb-1">💰</span>
+          <span class="text-xs">Wallet</span>
+        </button>
+        <button onclick="showPage('profile')" class="nav-btn flex flex-col items-center p-2 rounded-lg transition-colors" data-page="profile">
+          <span class="text-xl mb-1">👤</span>
+          <span class="text-xs">Profile</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Home Page -->
+    <div id="home-page" class="page active">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
+            <span class="text-2xl">🎓</span>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">TemariWare</h1>
+            <p class="text-gray-400 text-sm">Student Ecosystem Platform</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-2xl p-6 mb-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-xl font-bold text-black">
+            👤
+          </div>
+          <div>
+            <h2 class="text-xl font-bold" id="welcome-text">Welcome Back!</h2>
+            <p class="text-gray-400">Ready to explore?</p>
+          </div>
+        </div>
+        
+        <div class="bg-gradient-to-r from-success/20 to-primary/20 rounded-xl p-4 border border-success/30">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-sm text-gray-300">Wallet Balance</p>
+              <p class="text-2xl font-bold text-success" id="balance-display">1,250 ETB</p>
+            </div>
+            <div class="text-3xl">💰</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="auth-section" class="mb-6">
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="handleLogin()" class="bg-gradient-to-r from-primary to-blue-500 hover:from-primary/80 hover:to-blue-500/80 p-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+            🔐 Sign In
+          </button>
+          <button onclick="handleRegister()" class="bg-gradient-to-r from-secondary to-purple-500 hover:from-secondary/80 hover:to-purple-500/80 p-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105">
+            ✨ Register
+          </button>
+        </div>
+      </div>
+
+      <div class="glass rounded-xl p-4 mb-6">
+        <h3 class="font-bold mb-4 text-center">📊 Your Stats</h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-accent">120</div>
+            <div class="text-xs text-gray-400">XP Today</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-primary">5</div>
+            <div class="text-xs text-gray-400">Day Streak</div>
+          </div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-success">12</div>
+            <div class="text-xs text-gray-400">Completed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-xl p-6 text-center mb-20">
+        <div class="text-5xl mb-3">🎁</div>
+        <h3 class="text-xl font-bold mb-2">Daily Bonus</h3>
+        <p class="text-gray-400 mb-4">Claim your reward now!</p>
+        <button onclick="claimReward()" class="bg-gradient-to-r from-accent to-orange-500 hover:from-accent/80 hover:to-orange-500/80 px-8 py-3 rounded-xl font-bold transition-all duration-300 transform hover:scale-105">
+          Claim 150 ETB
+        </button>
+      </div>
+    </div>
+
+    <!-- Jobs Page -->
+    <div id="jobs-page" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">💼 Job Opportunities</h1>
+        <button onclick="refreshJobs()" class="bg-primary/20 p-2 rounded-lg">🔄</button>
+      </div>
+
+      <div class="mb-4">
+        <input type="text" placeholder="Search jobs..." class="w-full p-3 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none">
+      </div>
+
+      <div class="space-y-4 mb-20" id="jobs-list">
+        <div class="glass rounded-xl p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg">Frontend Developer</h3>
+            <span class="bg-success/20 text-success px-2 py-1 rounded text-xs">Remote</span>
+          </div>
+          <p class="text-gray-400 text-sm mb-2">TechCorp Inc.</p>
+          <p class="text-sm mb-3">Build modern web applications using React and TypeScript...</p>
+          <div class="flex justify-between items-center">
+            <span class="text-primary font-bold">15,000 ETB/month</span>
+            <button class="bg-primary text-black px-4 py-2 rounded-lg font-semibold">Apply</button>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg">Marketing Intern</h3>
+            <span class="bg-accent/20 text-accent px-2 py-1 rounded text-xs">Hybrid</span>
+          </div>
+          <p class="text-gray-400 text-sm mb-2">StartupX</p>
+          <p class="text-sm mb-3">Join our marketing team and learn digital marketing strategies...</p>
+          <div class="flex justify-between items-center">
+            <span class="text-primary font-bold">8,000 ETB/month</span>
+            <button class="bg-primary text-black px-4 py-2 rounded-lg font-semibold">Apply</button>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-lg">Data Analyst</h3>
+            <span class="bg-secondary/20 text-secondary px-2 py-1 rounded text-xs">On-site</span>
+          </div>
+          <p class="text-gray-400 text-sm mb-2">DataCorp</p>
+          <p class="text-sm mb-3">Analyze business data and create insightful reports...</p>
+          <div class="flex justify-between items-center">
+            <span class="text-primary font-bold">12,000 ETB/month</span>
+            <button class="bg-primary text-black px-4 py-2 rounded-lg font-semibold">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Courses Page -->
+    <div id="courses-page" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">📚 Learning Hub</h1>
+        <button onclick="refreshCourses()" class="bg-primary/20 p-2 rounded-lg">🔄</button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <button class="bg-primary/20 p-3 rounded-lg text-sm font-semibold">All Courses</button>
+        <button class="bg-white/10 p-3 rounded-lg text-sm">My Courses</button>
+      </div>
+
+      <div class="space-y-4 mb-20" id="courses-list">
+        <div class="glass rounded-xl p-4">
+          <div class="flex items-start gap-3">
+            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-2xl">
+              ⚛️
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-lg mb-1">React Development</h3>
+              <p class="text-gray-400 text-sm mb-2">Learn modern React with hooks and context</p>
+              <div class="flex justify-between items-center">
+                <span class="text-success font-bold">Free</span>
+                <button class="bg-primary text-black px-4 py-2 rounded-lg font-semibold">Enroll</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+          <div class="flex items-start gap-3">
+            <div class="w-16 h-16 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg flex items-center justify-center text-2xl">
+              📈
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-lg mb-1">Digital Marketing</h3>
+              <p class="text-gray-400 text-sm mb-2">Master social media and content marketing</p>
+              <div class="flex justify-between items-center">
+                <span class="text-accent font-bold">500 ETB</span>
+                <button class="bg-primary text-black px-4 py-2 rounded-lg font-semibold">Enroll</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+          <div class="flex items-start gap-3">
+            <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center text-2xl">
+              📊
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-lg mb-1">Data Science</h3>
+              <p class="text-gray-400 text-sm mb-2">Python, pandas, and machine learning basics</p>
+              <div class="flex justify-between items-center">
+                <span class="text-accent font-bold">800 ETB</span>
+                <button class="bg-primary text-black px-4 py-2 rounded-lg font-semibold">Enroll</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallet Page -->
+    <div id="wallet-page" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">💰 My Wallet</h1>
+        <button onclick="refreshWallet()" class="bg-primary/20 p-2 rounded-lg">🔄</button>
+      </div>
+
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="text-center mb-4">
+          <p class="text-gray-400 mb-2">Total Balance</p>
+          <p class="text-4xl font-bold text-success">1,250 ETB</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <button class="bg-success text-white p-3 rounded-lg font-semibold">💸 Send Money</button>
+          <button class="bg-primary text-black p-3 rounded-lg font-semibold">📥 Request</button>
+        </div>
+      </div>
+
+      <div class="glass rounded-xl p-4 mb-6">
+        <h3 class="font-bold mb-4">📊 Quick Stats</h3>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="text-center">
+            <div class="text-xl font-bold text-success">+450</div>
+            <div class="text-xs text-gray-400">This Month</div>
+          </div>
+          <div class="text-center">
+            <div class="text-xl font-bold text-accent">2,500</div>
+            <div class="text-xs text-gray-400">Total Earned</div>
+          </div>
+          <div class="text-center">
+            <div class="text-xl font-bold text-primary">0</div>
+            <div class="text-xs text-gray-400">Pending</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass rounded-xl p-4 mb-20">
+        <h3 class="font-bold mb-4">📋 Recent Transactions</h3>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-success rounded-full flex items-center justify-center text-sm">+</div>
+              <div>
+                <p class="font-semibold">Job Payment</p>
+                <p class="text-xs text-gray-400">Frontend Project</p>
+              </div>
+            </div>
+            <span class="text-success font-bold">+500 ETB</span>
+          </div>
+          
+          <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-sm">🎁</div>
+              <div>
+                <p class="font-semibold">Daily Bonus</p>
+                <p class="text-xs text-gray-400">Streak reward</p>
+              </div>
+            </div>
+            <span class="text-success font-bold">+150 ETB</span>
+          </div>
+          
+          <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-sm">-</div>
+              <div>
+                <p class="font-semibold">Course Purchase</p>
+                <p class="text-xs text-gray-400">Digital Marketing</p>
+              </div>
+            </div>
+            <span class="text-red-400 font-bold">-500 ETB</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="profile-page" class="page">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold">👤 My Profile</h1>
+        <button onclick="editProfile()" class="bg-primary/20 p-2 rounded-lg">✏️</button>
+      </div>
+
+      <div class="glass rounded-xl p-6 mb-6">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-20 h-20 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center text-2xl font-bold text-black">
+            DU
+          </div>
+          <div>
+            <h2 class="text-xl font-bold" id="profile-name">Demo User</h2>
+            <p class="text-gray-400" id="profile-email">demo@temariware.com</p>
+            <div class="flex items-center gap-2 mt-1">
+              <span class="bg-success/20 text-success px-2 py-1 rounded text-xs">Level 1</span>
+              <span class="text-accent text-sm">120 XP</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white/5 rounded-lg p-3">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-sm">Profile Strength</span>
+            <span class="text-sm font-bold">75%</span>
+          </div>
+          <div class="w-full bg-gray-700 rounded-full h-2">
+            <div class="bg-gradient-to-r from-primary to-success h-2 rounded-full" style="width: 75%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4 mb-20">
+        <div class="glass rounded-xl p-4">
+          <h3 class="font-bold mb-3">🎯 Achievements</h3>
+          <div class="grid grid-cols-3 gap-3">
+            <div class="text-center p-3 bg-white/5 rounded-lg">
+              <div class="text-2xl mb-1">🔥</div>
+              <div class="text-xs">5 Day Streak</div>
+            </div>
+            <div class="text-center p-3 bg-white/5 rounded-lg">
+              <div class="text-2xl mb-1">💼</div>
+              <div class="text-xs">First Job</div>
+            </div>
+            <div class="text-center p-3 bg-white/5 rounded-lg">
+              <div class="text-2xl mb-1">📚</div>
+              <div class="text-xs">Course Complete</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+          <h3 class="font-bold mb-3">⚙️ Settings</h3>
+          <div class="space-y-3">
+            <button class="w-full text-left p-3 bg-white/5 rounded-lg flex justify-between items-center">
+              <span>🔔 Notifications</span>
+              <span class="text-primary">On</span>
+            </button>
+            <button class="w-full text-left p-3 bg-white/5 rounded-lg flex justify-between items-center">
+              <span>🌙 Dark Mode</span>
+              <span class="text-primary">On</span>
+            </button>
+            <button class="w-full text-left p-3 bg-white/5 rounded-lg flex justify-between items-center">
+              <span>🔐 Privacy</span>
+              <span class="text-gray-400">→</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl p-4">
+          <button id="logout-btn" onclick="logout()" class="w-full bg-red-500/20 text-red-400 p-3 rounded-lg font-semibold">
+            🚪 Sign Out
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <div class="glass rounded-2xl p-6 max-w-sm w-full mx-4">
+        <h3 class="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Welcome Back</h3>
+        <form onsubmit="submitLogin(event)">
+          <div class="mb-4">
+            <label class="block text-sm font-medium mb-2">Email</label>
+            <input type="email" id="email" class="w-full p-4 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none transition-colors" placeholder="your@email.com" required>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium mb-2">Password</label>
+            <input type="password" id="password" class="w-full p-4 bg-white/10 rounded-xl border border-white/20 focus:border-primary focus:outline-none transition-colors" placeholder="••••••••" required>
+          </div>
+          <div class="flex gap-3">
+            <button type="submit" class="flex-1 bg-gradient-to-r from-primary to-blue-500 py-3 rounded-xl font-bold hover:from-primary/80 hover:to-blue-500/80 transition-all">
+              Sign In
+            </button>
+            <button type="button" onclick="closeModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 py-3 rounded-xl font-bold transition-colors">
+              Cancel
+            </button>
+          </div>
+        </form>
+        <p class="mt-4 text-xs text-center text-gray-400">Demo: demo@temariware.com / demo123<br>Admin: admin@temariware.com / admin123</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isLoggedIn = localStorage.getItem('token') ? true : false;
+    let currentPage = 'home';
+
+    function showPage(page) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      // Show selected page
+      document.getElementById(page + '-page').classList.add('active');
+      
+      // Update navigation
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-primary/20');
+        if (btn.dataset.page === page) {
+          btn.classList.add('bg-primary/20');
+        }
+      });
+      
+      currentPage = page;
+    }
+
+    function updateAuthUI() {
+      const authSection = document.getElementById('auth-section');
+      const welcomeText = document.getElementById('welcome-text');
+      const profileName = document.getElementById('profile-name');
+      const profileEmail = document.getElementById('profile-email');
+      
+      if (isLoggedIn) {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        authSection.innerHTML = `
+          <div class="glass rounded-xl p-4 text-center">
+            <span class="text-success font-semibold">✅ Signed In as ${user.name || 'User'}</span>
+            <button onclick="logout()" class="ml-3 bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm transition-colors">
+              Sign Out
+            </button>
+          </div>
+        `;
+        welcomeText.textContent = `Welcome back, ${user.name || 'User'}!`;
+        if (profileName) profileName.textContent = user.name || 'Demo User';
+        if (profileEmail) profileEmail.textContent = user.email || 'demo@temariware.com';
+      }
+    }
+
+    function handleLogin() {
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    function handleRegister() {
+      window.open('https://temariware-backend-omek.onrender.com/api/auth/register', '_blank');
+    }
+
+    function closeModal() {
+      document.getElementById('login-modal').classList.add('hidden');
+    }
+
+    function submitLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (email === 'demo@temariware.com' && password === 'demo123') {
+        localStorage.setItem('token', 'demo-token-123');
+        localStorage.setItem('user', JSON.stringify({email, name: 'Demo User'}));
+        isLoggedIn = true;
+        updateAuthUI();
+        closeModal();
+        showNotification('✅ Welcome back, Demo User!', 'success');
+      } else if (email === 'admin@temariware.com' && password === 'admin123') {
+        localStorage.setItem('token', 'admin-token-123');
+        localStorage.setItem('user', JSON.stringify({email, name: 'Admin User', role: 'admin'}));
+        isLoggedIn = true;
+        updateAuthUI();
+        closeModal();
+        showNotification('✅ Welcome back, Admin!', 'success');
+      } else {
+        showNotification('❌ Invalid credentials. Try: demo@temariware.com / demo123', 'error');
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      isLoggedIn = false;
+      location.reload();
+    }
+
+    function claimReward() {
+      if (!isLoggedIn) {
+        showNotification('🔒 Please sign in first', 'warning');
+        handleLogin();
+        return;
+      }
+      showNotification('🎁 Reward claimed! +150 ETB', 'success');
+      // Update balance display
+      const balanceEl = document.getElementById('balance-display');
+      if (balanceEl) {
+        const currentBalance = parseInt(balanceEl.textContent.replace(/[^\d]/g, ''));
+        balanceEl.textContent = `${currentBalance + 150} ETB`;
+      }
+    }
+
+    function refreshJobs() {
+      showNotification('🔄 Refreshing jobs...', 'info');
+    }
+
+    function refreshCourses() {
+      showNotification('🔄 Refreshing courses...', 'info');
+    }
+
+    function refreshWallet() {
+      showNotification('🔄 Refreshing wallet...', 'info');
+    }
+
+    function editProfile() {
+      showNotification('✏️ Profile editing coming soon!', 'info');
+    }
+
+    function showNotification(message, type) {
+      const colors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500',
+        warning: 'bg-yellow-500',
+        info: 'bg-blue-500'
+      };
+      
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg z-50`;
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.remove(), 3000);
+    }
+
+    // Initialize
+    updateAuthUI();
+    showPage('home');
+  </script>
+</body>
+</html>
