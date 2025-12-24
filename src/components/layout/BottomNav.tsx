@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { LanguageContext } from '../../contexts/LanguageContext';
 
 export const BottomNav: React.FC = () => {
@@ -22,10 +21,10 @@ export const BottomNav: React.FC = () => {
             <nav className="bg-[#1e293b]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-2 flex justify-between items-center shadow-2xl">
                 {navs.map(n => (
                     <Link key={n.p} to={n.p} className="flex-1">
-                        <motion.div whileTap={{ scale: 0.9 }} className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${location.pathname === n.p ? 'bg-primary text-black shadow-[0_0_15px_rgba(20,241,149,0.4)]' : 'text-gray-400 hover:text-white'}`}>
+                        <div className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all active:scale-95 ${location.pathname === n.p ? 'bg-primary text-black shadow-[0_0_15px_rgba(20,241,149,0.4)]' : 'text-gray-400 hover:text-white'}`}>
                             <i className={`fas ${n.i} text-lg`}></i>
                             <span className="text-[9px] font-bold">{t(n.l)}</span>
-                        </motion.div>
+                        </div>
                     </Link>
                 ))}
             </nav>

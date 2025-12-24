@@ -35,10 +35,13 @@ export const SimpleHomePage: React.FC = () => {
                 </div>
 
                 {/* Admin Panel Access */}
-                {state.user?.role === UserRole.ADMIN && (
+                {state.user?.role === 'Admin' && (
                     <div className="mb-6">
                         <button 
-                            onClick={() => navigate('/admin')}
+                            onClick={() => {
+                                console.log('Admin button clicked');
+                                navigate('/admin');
+                            }}
                             className="w-full bg-red-600 hover:bg-red-700 p-4 rounded-lg text-center transition-colors"
                         >
                             <div className="text-2xl mb-2">⚙️</div>
@@ -51,7 +54,10 @@ export const SimpleHomePage: React.FC = () => {
                 {/* Quick Actions */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
                     <button 
-                        onClick={() => navigate('/work')}
+                        onClick={() => {
+                            console.log('Work button clicked');
+                            navigate('/work');
+                        }}
                         className="bg-green-600 hover:bg-green-700 p-4 rounded-lg text-center transition-colors"
                     >
                         <div className="text-2xl mb-2">💼</div>
@@ -60,7 +66,10 @@ export const SimpleHomePage: React.FC = () => {
                     </button>
                     
                     <button 
-                        onClick={() => navigate('/gebeta')}
+                        onClick={() => {
+                            console.log('Gebeta button clicked');
+                            navigate('/gebeta');
+                        }}
                         className="bg-blue-600 hover:bg-blue-700 p-4 rounded-lg text-center transition-colors"
                     >
                         <div className="text-2xl mb-2">📚</div>
@@ -69,7 +78,10 @@ export const SimpleHomePage: React.FC = () => {
                     </button>
                     
                     <button 
-                        onClick={() => navigate('/wallet')}
+                        onClick={() => {
+                            console.log('Wallet button clicked');
+                            navigate('/wallet');
+                        }}
                         className="bg-purple-600 hover:bg-purple-700 p-4 rounded-lg text-center transition-colors"
                     >
                         <div className="text-2xl mb-2">💰</div>
@@ -78,7 +90,10 @@ export const SimpleHomePage: React.FC = () => {
                     </button>
                     
                     <button 
-                        onClick={() => navigate('/profile')}
+                        onClick={() => {
+                            console.log('Profile button clicked');
+                            navigate('/profile');
+                        }}
                         className="bg-orange-600 hover:bg-orange-700 p-4 rounded-lg text-center transition-colors"
                     >
                         <div className="text-2xl mb-2">👤</div>
@@ -108,8 +123,14 @@ export const SimpleHomePage: React.FC = () => {
                     <div className="text-4xl mb-2">🎁</div>
                     <h3 className="font-bold mb-2">Daily Reward</h3>
                     <p className="text-sm text-gray-400 mb-4">Claim your daily bonus</p>
-                    <button className="bg-primary text-black px-6 py-2 rounded font-bold hover:bg-primary/90 transition-colors">
-                        Claim 150 ETB
+                    <button 
+                        onClick={() => {
+                            console.log('Daily claim button clicked');
+                            alert('Daily reward claimed! +150 ETB');
+                        }}
+                        className="bg-primary text-black px-6 py-2 rounded font-bold hover:bg-primary/90 transition-colors"
+                    >
+                        Claim Activity Reward
                     </button>
                 </div>
 

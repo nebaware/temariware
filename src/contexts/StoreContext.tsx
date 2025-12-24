@@ -54,8 +54,8 @@ export const appReducer = (state: GlobalState, action: AppAction): GlobalState =
         case 'LOGIN':
             const fullUser = { ...DEFAULT_USER_PROPERTIES, ...action.payload } as UserProfile;
             newState = { ...state, user: fullUser, isAuthenticated: true };
-            // Persist user object for convenience, but it's not used for auth checks.
             localStorage.setItem('tm_user', JSON.stringify(fullUser));
+            console.log('User logged in:', fullUser);
             break;
         case 'LOGOUT':
             newState = { ...state, user: null, isAuthenticated: false };

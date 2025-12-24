@@ -175,8 +175,7 @@ const App: React.FC = () => {
                                         {/* Fallback */}
                                         <Route path="*" element={<Navigate to="/" />} />
                                     </Routes>
-                                    {/* {state.isAuthenticated && <MentorChat />} */}
-                                    {/* {!window.location.hash.includes('admin') && state.isAuthenticated && <BottomNav />} */}
+                                    {state.isAuthenticated && !window.location.hash.includes('admin') && <BottomNav />}
                                 </div>
                             </HashRouter>
                         </ToastProvider>

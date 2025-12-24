@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface CardProps {
     children: React.ReactNode;
@@ -9,5 +8,5 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ children, className = '', onClick, style }) => (
-    <motion.div whileHover={onClick ? { scale: 1.02 } : {}} onClick={onClick} className={`glass-card p-5 rounded-3xl ${onClick ? 'cursor-pointer' : ''} ${className}`} style={style}>{children}</motion.div>
+    <div onClick={onClick} className={`glass-card p-5 rounded-3xl transition-transform hover:scale-105 ${onClick ? 'cursor-pointer' : ''} ${className}`} style={style}>{children}</div>
 );
