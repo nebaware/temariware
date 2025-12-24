@@ -167,7 +167,25 @@
     }
     
     function showWallet() {
-      alert('Wallet: Check your balance via Telegram bot @temariwarebot');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login first to view wallet');
+        showLogin();
+        return;
+      }
+      
+      fetch('https://temariware-backend-omek.onrender.com/api/users/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert(`💰 Wallet Balance: ${data.user.balance || '0'} ETB\n📊 Total Earned: ${data.user.earned || '0'} ETB`);
+        } else {
+          alert('Wallet: Use Telegram bot @temariwarebot for balance check');
+        }
+      })
+      .catch(() => alert('Wallet: Use Telegram bot @temariwarebot for balance check'));
     }
     
     function showCourses() {
@@ -209,7 +227,26 @@
     };
     
     function showProfile() {
-      alert('Profile: Use Telegram bot @temariwarebot for profile management');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login first to view profile');
+        showLogin();
+        return;
+      }
+      
+      fetch('https://temariware-backend-omek.onrender.com/api/users/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.user) {
+          const user = data.user;
+          alert(`👤 Profile:\n\nName: ${user.name || user.email}\nEmail: ${user.email}\nLevel: ${user.level || 1}\nXP: ${user.xp || 0}\nProfile Strength: ${user.profileStrength || 50}%`);
+        } else {
+          alert('Profile: Use Telegram bot @temariwarebot for profile management');
+        }
+      })
+      .catch(() => alert('Profile: Use Telegram bot @temariwarebot for profile management'));
     }
   </script>
 </body>
