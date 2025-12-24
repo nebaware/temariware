@@ -145,16 +145,16 @@ Choose an option below:
                     { text: '🚀 Open TemariWare', web_app: { url: webAppUrl } }
                 ],
                 [
-                    { text: '💼 Browse Jobs', callback_data: 'jobs' },
-                    { text: '💰 My Wallet', callback_data: 'wallet' }
+                    { text: '💼 Browse Jobs', web_app: { url: `${webAppUrl}#/work` } },
+                    { text: '💰 My Wallet', web_app: { url: `${webAppUrl}#/wallet` } }
                 ],
                 [
-                    { text: '👤 My Profile', callback_data: 'profile' },
-                    { text: '📚 Courses', callback_data: 'courses' }
+                    { text: '👤 My Profile', web_app: { url: `${webAppUrl}#/profile` } },
+                    { text: '📚 Courses', web_app: { url: `${webAppUrl}#/gebeta` } }
                 ],
                 [
-                    { text: '🔔 Notifications', callback_data: 'notifications' },
-                    { text: '📊 Live Stats', callback_data: 'stats' }
+                    { text: '📊 Live Stats', callback_data: 'stats' },
+                    { text: '🔧 Settings', web_app: { url: `${webAppUrl}#/settings` } }
                 ],
                 [
                     { text: 'ℹ️ Help', callback_data: 'help' }
@@ -229,6 +229,39 @@ bot.onText(/\/notifications/, (msg) => {
         parse_mode: 'Markdown'
     });
 });
+bot.onText(/\/menu/, (msg) => {
+    const chatId = msg.chat.id;
+    const menuMessage = `📋 *TemariWare Menu*
+
+Quick access to all features:
+
+💼 Jobs: ${webAppUrl}#/work
+📚 Courses: ${webAppUrl}#/gebeta
+💰 Wallet: ${webAppUrl}#/wallet
+👤 Profile: ${webAppUrl}#/profile
+🔧 Settings: ${webAppUrl}#/settings
+🌐 Main App: ${webAppUrl}`;
+    
+    const options = {
+        reply_markup: {
+            inline_keyboard: [
+                [
+                    { text: '💼 Jobs', web_app: { url: `${webAppUrl}#/work` } },
+                    { text: '📚 Courses', web_app: { url: `${webAppUrl}#/gebeta` } }
+                ],
+                [
+                    { text: '💰 Wallet', web_app: { url: `${webAppUrl}#/wallet` } },
+                    { text: '👤 Profile', web_app: { url: `${webAppUrl}#/profile` } }
+                ],
+                [
+                    { text: '🔧 Settings', web_app: { url: `${webAppUrl}#/settings` } },
+                    { text: '🚀 Main App', web_app: { url: webAppUrl } }
+                ]
+            ]
+        },
+        parse_mode: 'Markdown'
+    };
+    
 bot.onText(/\/help/, (msg) => {
     const chatId = msg.chat.id;
     bot.sendMessage(chatId, `
