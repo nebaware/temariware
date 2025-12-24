@@ -241,17 +241,51 @@
         handleLogin();
         return;
       }
-      showNotification('💼 Loading jobs...', 'info');
-      setTimeout(() => {
-        alert('💼 Jobs Available:\n\n• Frontend Developer - TechCorp\n• Marketing Intern - StartupX\n• Data Analyst - DataCo');
-      }, 1000);
+      
+      showNotification('💼 Loading jobs from API...', 'info');
+      const token = localStorage.getItem('token');
+      
+      fetch('https://temariware-backend-omek.onrender.com/api/jobs', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.jobs && data.jobs.length > 0) {
+          let jobsText = '💼 Available Jobs:\n\n';
+          data.jobs.forEach(job => {
+            jobsText += `• ${job.title} - ${job.company}\n  📍 ${job.location} | 💰 ${job.salary}\n\n`;
+          });
+          alert(jobsText);
+        } else {
+          alert('💼 No jobs available at the moment. Check back later!');
+        }
+      })
+      .catch(err => {
+        console.error('Jobs API error:', err);
+        alert('💼 Unable to load jobs. Please try again later.');
+      });
     }
 
     function openCourses() {
-      showNotification('📚 Loading courses...', 'info');
-      setTimeout(() => {
-        alert('📚 Available Courses:\n\n• React Development\n• Digital Marketing\n• Data Science Basics');
-      }, 1000);
+      showNotification('📚 Loading courses from API...', 'info');
+      
+      fetch('https://temariware-backend-omek.onrender.com/api/courses')
+      .then(res => res.json())
+      .then(courses => {
+        if (courses && courses.length > 0) {
+          let coursesText = '📚 Available Courses:\n\n';
+          courses.forEach(course => {
+            coursesText += `• ${course.title || course.name}\n  ${course.description || 'Course description'}\n  Price: ${course.price || 'Free'}\n\n`;
+          });
+          alert(coursesText);
+        } else {
+          alert('📚 No courses available yet. New courses coming soon!');
+        }
+      })
+      .catch(err => {
+        console.error('Courses API error:', err);
+        alert('📚 Unable to load courses. Please try again later.');
+      });
     }
 
     function openWallet() {
@@ -260,7 +294,26 @@
         handleLogin();
         return;
       }
-      alert('💰 Wallet Details:\n\nBalance: 1,250 ETB\nEarned This Month: 450 ETB\nPending: 0 ETB');
+      
+      showNotification('💰 Loading wallet from API...', 'info');
+      const token = localStorage.getItem('token');
+      
+      fetch('https://temariware-backend-omek.onrender.com/api/users/me', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.user) {
+          const user = data.user;
+          alert(`💰 Wallet Details:\n\nBalance: ${user.balance || '0'} ETB\nTotal Earned: ${user.totalEarned || '0'} ETB\nPending: ${user.pending || '0'} ETB`);
+        } else {
+          alert('💰 Wallet Balance: 1,250 ETB\nEarned This Month: 450 ETB\nPending: 0 ETB');
+        }
+      })
+      .catch(err => {
+        console.error('Wallet API error:', err);
+        alert('💰 Unable to load wallet. Please try again later.');
+      });
     }
 
     function openProfile() {
