@@ -48,6 +48,9 @@ import { SubscriptionPage } from './pages/SubscriptionPage';
 import { VideoConferencePage } from './pages/VideoConferencePage';
 import { AdvancedPortfolioPage } from './pages/AdvancedPortfolioPage';
 import { MentorshipPage } from './pages/MentorshipPage';
+import { CareerCounselingPage } from './pages/CareerCounselingPage';
+import { BlockchainCertificatesPage } from './pages/BlockchainCertificatesPage';
+import { StartupFundingPage } from './pages/StartupFundingPage';
 
 // Admin Pages
 import { AdminOverview } from './pages/admin/AdminOverview';
@@ -165,6 +168,9 @@ const App: React.FC = () => {
                                         <Route path="/video/:roomId" element={<AuthGuard><VideoConferencePage /></AuthGuard>} />
                                         <Route path="/advanced-portfolio" element={<AuthGuard><AdvancedPortfolioPage /></AuthGuard>} />
                                         <Route path="/mentorship" element={<AuthGuard><MentorshipPage /></AuthGuard>} />
+                                        <Route path="/career-counseling" element={<AuthGuard><CareerCounselingPage /></AuthGuard>} />
+                                        <Route path="/blockchain-certificates" element={<AuthGuard><BlockchainCertificatesPage /></AuthGuard>} />
+                                        <Route path="/startup-funding" element={<AuthGuard><StartupFundingPage /></AuthGuard>} />
 
                                         {/* Redirect common paths */}
                                         <Route path="/jobs" element={<Navigate to="/work" replace />} />

@@ -163,7 +163,49 @@ export const SimpleHomePage: React.FC = () => {
                         </button>
                         
                         <button 
-                            onClick={() => addToast('Coming Soon!', 'info')}
+                            onClick={() => navigate('/career-counseling')}
+                            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">🧠</div>
+                            <div className="font-bold text-sm">AI Career Coach</div>
+                            <div className="text-xs text-indigo-200">Personalized</div>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Phase 4 Features */}
+                <div className="mb-6">
+                    <h3 className="text-lg font-bold mb-3 text-secondary">Phase 4 Features</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                        <button 
+                            onClick={() => navigate('/blockchain-certificates')}
+                            className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">🔗</div>
+                            <div className="font-bold text-sm">Blockchain Certs</div>
+                            <div className="text-xs text-yellow-200">Verified</div>
+                        </button>
+                        
+                        <button 
+                            onClick={() => navigate('/startup-funding')}
+                            className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">💰</div>
+                            <div className="font-bold text-sm">Startup Funding</div>
+                            <div className="text-xs text-emerald-200">Investors</div>
+                        </button>
+                        
+                        <button 
+                            onClick={() => addToast('International marketplace coming soon!', 'info')}
+                            className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">🌍</div>
+                            <div className="font-bold text-sm">Global Jobs</div>
+                            <div className="text-xs text-blue-200">Coming Soon</div>
+                        </button>
+                        
+                        <button 
+                            onClick={() => addToast('More features in development!', 'info')}
                             className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 p-4 rounded-lg text-center transition-colors"
                         >
                             <div className="text-2xl mb-2">🚀</div>
