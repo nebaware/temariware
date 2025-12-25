@@ -164,23 +164,22 @@
                     <div class="bg-gray-800 rounded-lg p-4 mb-6">
                         <h3 class="font-bold mb-3 flex items-center gap-2">
                             <i class="fas fa-chart-line text-primary"></i>
-                            Ethiopian Job Market Trends
+                            Market Pulse
                         </h3>
-                        <div class="grid grid-cols-3 gap-3 mb-3">
+                        <div class="grid grid-cols-3 gap-3">
                             <div class="text-center">
                                 <div class="text-lg font-bold text-success" id="market-growth">+12%</div>
                                 <div class="text-xs text-gray-400">Tech Growth</div>
                             </div>
                             <div class="text-center">
                                 <div class="text-lg font-bold text-primary" id="avg-salary">45K</div>
-                                <div class="text-xs text-gray-400">Avg Salary (ETB)</div>
+                                <div class="text-xs text-gray-400">Avg Salary</div>
                             </div>
                             <div class="text-center">
                                 <div class="text-lg font-bold text-warning" id="competition">Medium</div>
                                 <div class="text-xs text-gray-400">Competition</div>
                             </div>
                         </div>
-                        <canvas id="market-chart" width="300" height="100"></canvas>
                     </div>
 
                     <!-- Recent Activity Feed -->
@@ -416,14 +415,36 @@
                     <!-- Transaction History with Analytics -->
                     <div class="bg-gray-800 rounded-lg p-4">
                         <div class="flex justify-between items-center mb-3">
-                            <h3 class="font-bold">Transaction Analytics</h3>
+                            <h3 class="font-bold">Spending Overview</h3>
                             <select id="transaction-filter" class="bg-gray-700 rounded px-2 py-1 text-xs">
                                 <option value="all">All Time</option>
                                 <option value="month">This Month</option>
                                 <option value="week">This Week</option>
                             </select>
                         </div>
-                        <canvas id="expense-chart" width="300" height="150" class="mb-3"></canvas>
+                        <!-- Visual Spending Categories -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-red-600/20 border border-red-500/30 p-3 rounded text-center">
+                                <div class="text-xl mb-1">🏠</div>
+                                <div class="font-bold text-sm">Housing</div>
+                                <div class="text-xs text-red-300">40% • 1,280 ETB</div>
+                            </div>
+                            <div class="bg-orange-600/20 border border-orange-500/30 p-3 rounded text-center">
+                                <div class="text-xl mb-1">🍽️</div>
+                                <div class="font-bold text-sm">Food</div>
+                                <div class="text-xs text-orange-300">25% • 800 ETB</div>
+                            </div>
+                            <div class="bg-green-600/20 border border-green-500/30 p-3 rounded text-center">
+                                <div class="text-xl mb-1">🚌</div>
+                                <div class="font-bold text-sm">Transport</div>
+                                <div class="text-xs text-green-300">15% • 480 ETB</div>
+                            </div>
+                            <div class="bg-blue-600/20 border border-blue-500/30 p-3 rounded text-center">
+                                <div class="text-xl mb-1">📚</div>
+                                <div class="font-bold text-sm">Education</div>
+                                <div class="text-xs text-blue-300">20% • 640 ETB</div>
+                            </div>
+                        </div>
                         <div id="transaction-list" class="space-y-2 max-h-40 overflow-y-auto">
                             <!-- Transactions will be populated here -->
                         </div>
@@ -745,9 +766,6 @@
                 const strength = this.profileManager.calculateProfileStrength();
                 document.getElementById('profile-strength').textContent = `${strength}%`;
                 document.getElementById('profile-strength-bar').style.width = `${strength}%`;
-                
-                // Initialize market chart
-                this.initializeMarketChart();
             }
 
             async loadJobs() {
@@ -765,7 +783,6 @@
             async loadWallet() {
                 await this.walletSystem.updateBalance();
                 this.renderWalletContent();
-                this.initializeExpenseChart();
             }
 
             initializeExpenseChart() {
@@ -1937,72 +1954,185 @@
             app.showToast('✅ All notifications marked as read', 'success');
         }
 
-        // Job Application Functions
+        // Complete Job Application Workflow
         app.applyToJob = function(jobId) {
-            const job = this.aiEngine.jobs?.find(j => j.id === jobId) || { title: 'Job Position', company: 'Company' };
+            const job = this.aiEngine.jobs?.find(j => j.id === jobId) || { title: 'Senior Developer', company: 'TechCorp Ethiopia', salary: '35,000 ETB' };
             
             showModal(`
                 <div class="space-y-4">
                     <h3 class="text-lg font-bold mb-4">💼 Apply to ${job.title}</h3>
                     <div class="bg-gray-700 p-3 rounded">
                         <div class="font-bold">${job.title}</div>
-                        <div class="text-sm text-gray-400">${job.company}</div>
+                        <div class="text-sm text-gray-400">${job.company} • ${job.salary}</div>
                     </div>
                     <div class="space-y-2">
-                        <textarea placeholder="Cover letter (optional)" class="w-full p-2 bg-gray-600 rounded h-20 text-sm"></textarea>
+                        <textarea id="cover-letter" placeholder="Why are you interested in this position?" class="w-full p-2 bg-gray-600 rounded h-20 text-sm"></textarea>
                         <div class="flex items-center gap-2">
                             <input type="checkbox" id="resume-attach" checked>
                             <label for="resume-attach" class="text-sm">Attach current resume</label>
                         </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="portfolio-attach">
+                            <label for="portfolio-attach" class="text-sm">Include portfolio link</label>
+                        </div>
                     </div>
-                    <button onclick="submitApplication(${jobId})" class="w-full bg-primary text-black py-2 rounded font-bold">Submit Application</button>
+                    <button onclick="submitJobApplication(${jobId}, '${job.title}', '${job.company}')" class="w-full bg-primary text-black py-2 rounded font-bold">Submit Application</button>
                 </div>
             `);
         };
         
-        app.saveJob = function(jobId) {
-            const savedJobs = JSON.parse(localStorage.getItem('savedJobs') || '[]');
-            if (!savedJobs.includes(jobId)) {
-                savedJobs.push(jobId);
-                localStorage.setItem('savedJobs', JSON.stringify(savedJobs));
-                this.showToast('🔖 Job saved to your bookmarks!', 'success');
-            } else {
-                this.showToast('📌 Job already in bookmarks', 'info');
+        function submitJobApplication(jobId, jobTitle, company) {
+            const coverLetter = document.getElementById('cover-letter').value;
+            
+            if (!coverLetter.trim()) {
+                app.showToast('⚠️ Please write a cover letter', 'error');
+                return;
             }
-        };
-        
-        app.shareJob = function(jobId) {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Job Opportunity on TemariWare',
-                    text: 'Check out this job opportunity!',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                this.showToast('🔗 Job link copied to clipboard!', 'success');
-            }
-        };
-        
-        function submitApplication(jobId) {
+            
             closeModal();
             app.showToast('📨 Application submitted successfully!', 'success');
             
-            // Add to application tracker
+            // Add to application tracker with full workflow
             const tracker = document.getElementById('application-tracker');
             if (tracker) {
+                const applicationId = 'APP' + Date.now();
                 const applicationElement = document.createElement('div');
-                applicationElement.className = 'bg-gray-700 p-3 rounded';
+                applicationElement.className = 'bg-gray-700 p-3 rounded application-item';
+                applicationElement.id = `app-${jobId}`;
                 applicationElement.innerHTML = `
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-center mb-2">
                         <div>
-                            <div class="font-bold text-sm">Job Application #${jobId}</div>
-                            <div class="text-xs text-gray-400">Submitted just now</div>
+                            <div class="font-bold text-sm">${jobTitle}</div>
+                            <div class="text-xs text-gray-400">${company} • ${applicationId}</div>
                         </div>
-                        <div class="text-xs bg-yellow-600 text-white px-2 py-1 rounded">Under Review</div>
+                        <div class="text-xs bg-yellow-600 text-white px-2 py-1 rounded status-badge">Under Review</div>
                     </div>
+                    <div class="w-full bg-gray-600 rounded-full h-1 mb-2">
+                        <div class="bg-yellow-500 h-1 rounded-full transition-all duration-500" style="width: 25%"></div>
+                    </div>
+                    <div class="text-xs text-gray-400">Submitted just now</div>
                 `;
                 tracker.appendChild(applicationElement);
+                
+                // Simulate application progress
+                simulateApplicationProgress(jobId, jobTitle, company);
+            }
+        }
+        
+        function simulateApplicationProgress(jobId, jobTitle, company) {
+            const stages = [
+                { status: 'Application Reviewed', color: 'blue', width: '50%', time: 5000 },
+                { status: 'Interview Scheduled', color: 'purple', width: '75%', time: 10000 },
+                { status: 'Final Decision', color: 'green', width: '100%', time: 15000 }
+            ];
+            
+            stages.forEach((stage, index) => {
+                setTimeout(() => {
+                    const appElement = document.getElementById(`app-${jobId}`);
+                    if (appElement) {
+                        const statusBadge = appElement.querySelector('.status-badge');
+                        const progressBar = appElement.querySelector('.bg-yellow-500, .bg-blue-500, .bg-purple-500');
+                        
+                        statusBadge.textContent = stage.status;
+                        statusBadge.className = `text-xs bg-${stage.color}-600 text-white px-2 py-1 rounded status-badge`;
+                        
+                        if (progressBar) {
+                            progressBar.className = `bg-${stage.color}-500 h-1 rounded-full transition-all duration-500`;
+                            progressBar.style.width = stage.width;
+                        }
+                        
+                        if (index === stages.length - 1) {
+                            // Final stage - job offer
+                            setTimeout(() => {
+                                showJobOffer(jobId, jobTitle, company);
+                            }, 2000);
+                        }
+                        
+                        app.showToast(`📩 Update: ${stage.status} for ${jobTitle}`, 'info');
+                    }
+                }, stage.time);
+            });
+        }
+        
+        function showJobOffer(jobId, jobTitle, company) {
+            showModal(`
+                <div class="space-y-4">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">🎉</div>
+                        <h3 class="text-lg font-bold text-success">Congratulations!</h3>
+                        <p class="text-sm text-gray-300">You've been selected for ${jobTitle}</p>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-green-600 to-blue-600 p-4 rounded-lg text-center">
+                        <div class="font-bold mb-2">${company}</div>
+                        <div class="text-2xl font-bold">35,000 ETB/month</div>
+                        <div class="text-sm opacity-80">Starting Salary</div>
+                    </div>
+                    
+                    <div class="bg-gray-700 p-3 rounded">
+                        <div class="font-bold text-sm mb-2">Job Offer Details:</div>
+                        <div class="text-xs text-gray-300 space-y-1">
+                            <div>• Full-time position</div>
+                            <div>• Health insurance included</div>
+                            <div>• Professional development budget</div>
+                            <div>• Flexible working hours</div>
+                            <div>• Start date: Next Monday</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="acceptJobOffer('${jobId}', '${jobTitle}', '${company}')" class="bg-success text-white py-2 rounded font-bold text-sm">Accept Offer</button>
+                        <button onclick="declineJobOffer('${jobId}')" class="bg-gray-600 text-white py-2 rounded text-sm">Decline</button>
+                    </div>
+                </div>
+            `);
+        }
+        
+        function acceptJobOffer(jobId, jobTitle, company) {
+            closeModal();
+            app.showToast(`🎆 Congratulations! You're now employed at ${company}!`, 'success');
+            
+            // Update application status to hired
+            const appElement = document.getElementById(`app-${jobId}`);
+            if (appElement) {
+                const statusBadge = appElement.querySelector('.status-badge');
+                statusBadge.textContent = 'HIRED ✓';
+                statusBadge.className = 'text-xs bg-success text-white px-2 py-1 rounded status-badge';
+            }
+            
+            // Add to wallet as first salary
+            setTimeout(() => {
+                const currentBalance = parseFloat(document.getElementById('wallet-balance').textContent.replace(' ETB', ''));
+                const newBalance = currentBalance + 35000;
+                document.getElementById('wallet-balance').textContent = `${newBalance.toFixed(2)} ETB`;
+                
+                const transactionList = document.getElementById('transaction-list');
+                if (transactionList) {
+                    const salaryTransaction = document.createElement('div');
+                    salaryTransaction.className = 'bg-gray-800 p-3 rounded flex justify-between items-center';
+                    salaryTransaction.innerHTML = `
+                        <div>
+                            <div class="text-sm font-bold">First Salary - ${jobTitle}</div>
+                            <div class="text-xs text-gray-400">${company} • ${new Date().toLocaleDateString()}</div>
+                        </div>
+                        <div class="font-bold text-success">+35,000 ETB</div>
+                    `;
+                    transactionList.insertBefore(salaryTransaction, transactionList.firstChild);
+                }
+                
+                app.showToast('💰 First salary received: 35,000 ETB!', 'success');
+            }, 3000);
+        }
+        
+        function declineJobOffer(jobId) {
+            closeModal();
+            app.showToast('📝 Job offer declined. Keep applying to other opportunities!', 'info');
+            
+            const appElement = document.getElementById(`app-${jobId}`);
+            if (appElement) {
+                const statusBadge = appElement.querySelector('.status-badge');
+                statusBadge.textContent = 'Declined';
+                statusBadge.className = 'text-xs bg-gray-600 text-white px-2 py-1 rounded status-badge';
             }
         }
         // Course Enrollment Functions
