@@ -1,0 +1,2 @@
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://temariware-backend-omek.onrender.com';
+export const TELEGRAM_BOT_USERNAME = import.meta.env.VITE_BOT_USERNAME || 'temariwarebot';

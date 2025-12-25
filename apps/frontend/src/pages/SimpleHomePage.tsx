@@ -62,7 +62,7 @@ export const SimpleHomePage: React.FC = () => {
                     >
                         <div className="text-2xl mb-2">💼</div>
                         <div className="font-bold">Jobs</div>
-                        <div className="text-xs text-green-200">AI Matching</div>
+                        <div className="text-xs text-green-200">Find Work</div>
                     </button>
                     
                     <button 
@@ -86,7 +86,7 @@ export const SimpleHomePage: React.FC = () => {
                     >
                         <div className="text-2xl mb-2">💰</div>
                         <div className="font-bold">Wallet</div>
-                        <div className="text-xs text-purple-200">ETB Payments</div>
+                        <div className="text-xs text-purple-200">Manage Money</div>
                     </button>
                     
                     <button 
@@ -98,34 +98,7 @@ export const SimpleHomePage: React.FC = () => {
                     >
                         <div className="text-2xl mb-2">👤</div>
                         <div className="font-bold">Profile</div>
-                        <div className="text-xs text-orange-200">Portfolio</div>
-                    </button>
-                </div>
-
-                {/* Additional Features */}
-                <div className="grid grid-cols-3 gap-3 mb-6">
-                    <button 
-                        onClick={() => navigate('/resume-builder')}
-                        className="bg-indigo-600 hover:bg-indigo-700 p-3 rounded-lg text-center transition-colors"
-                    >
-                        <div className="text-lg mb-1">📄</div>
-                        <div className="text-xs font-bold">Resume</div>
-                    </button>
-                    
-                    <button 
-                        onClick={() => navigate('/ekub')}
-                        className="bg-yellow-600 hover:bg-yellow-700 p-3 rounded-lg text-center transition-colors"
-                    >
-                        <div className="text-lg mb-1">🤝</div>
-                        <div className="text-xs font-bold">Ekub</div>
-                    </button>
-                    
-                    <button 
-                        onClick={() => navigate('/messages')}
-                        className="bg-pink-600 hover:bg-pink-700 p-3 rounded-lg text-center transition-colors"
-                    >
-                        <div className="text-lg mb-1">💬</div>
-                        <div className="text-xs font-bold">Chat</div>
+                        <div className="text-xs text-orange-200">Your Info</div>
                     </button>
                 </div>
 

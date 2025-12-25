@@ -1,0 +1,4 @@
+const mpesaService = require('./utils/mpesaService');
+
+// In server.js or elsewhere
+mpesaService.init();
