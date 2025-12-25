@@ -859,13 +859,13 @@
                         </div>
                         
                         <div class="flex gap-2">
-                            <button onclick="app.applyToJob(${job.id})" class="flex-1 bg-primary text-black py-2 rounded font-bold text-sm hover:bg-primary/90 transition-colors">
+                            <button onclick="applyToJobDirect(${job.id}, '${job.title}', '${job.company}', '${job.salary}')" class="flex-1 bg-primary text-black py-2 rounded font-bold text-sm hover:bg-primary/90 transition-colors">
                                 Apply Now
                             </button>
-                            <button onclick="app.saveJob(${job.id})" class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-500 transition-colors">
+                            <button onclick="saveJobDirect(${job.id}, '${job.title}')" class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-500 transition-colors">
                                 <i class="fas fa-bookmark"></i>
                             </button>
-                            <button onclick="app.shareJob(${job.id})" class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-500 transition-colors">
+                            <button onclick="shareJobDirect(${job.id}, '${job.title}')" class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-500 transition-colors">
                                 <i class="fas fa-share"></i>
                             </button>
                         </div>
@@ -2292,9 +2292,146 @@
         function joinEkub() { closeModal(); app.showToast('👥 Joined Ekub group successfully!', 'success'); }
         function createEkub() { closeModal(); app.showToast('👥 New Ekub group created!', 'success'); }
         function applyEnhancements() { closeModal(); app.showToast('🚀 Profile enhancements applied!', 'success'); }
-        function startPortfolioBuilder() { closeModal(); app.showToast('🎨 Portfolio builder launched!', 'success'); }
+        // Advanced Portfolio Builder
+        function startPortfolioBuilder() {
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">🎨 Advanced Portfolio Builder</h3>
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-3 rounded">
+                        <div class="font-bold mb-2">AI-Powered Portfolio Creation</div>
+                        <div class="text-sm opacity-90">Choose your template and let AI optimize your showcase</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="selectTemplate('developer')" class="bg-blue-600 p-3 rounded text-center hover:bg-blue-500">
+                            <div class="text-2xl mb-1">💻</div>
+                            <div class="text-xs font-bold">Developer</div>
+                        </button>
+                        <button onclick="selectTemplate('designer')" class="bg-purple-600 p-3 rounded text-center hover:bg-purple-500">
+                            <div class="text-2xl mb-1">🎨</div>
+                            <div class="text-xs font-bold">Designer</div>
+                        </button>
+                        <button onclick="selectTemplate('business')" class="bg-green-600 p-3 rounded text-center hover:bg-green-500">
+                            <div class="text-2xl mb-1">📊</div>
+                            <div class="text-xs font-bold">Business</div>
+                        </button>
+                        <button onclick="selectTemplate('writer')" class="bg-orange-600 p-3 rounded text-center hover:bg-orange-500">
+                            <div class="text-2xl mb-1">📝</div>
+                            <div class="text-xs font-bold">Writer</div>
+                        </button>
+                    </div>
+                </div>
+            `);
+        }
+        
+        function selectTemplate(type) {
+            closeModal();
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">🎨 ${type.charAt(0).toUpperCase() + type.slice(1)} Portfolio</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="portfolio-title" placeholder="Portfolio title" class="w-full p-3 bg-gray-700 rounded">
+                        <textarea id="portfolio-bio" placeholder="Professional bio (2-3 sentences)" class="w-full p-3 bg-gray-700 rounded h-20"></textarea>
+                        <input type="url" id="portfolio-github" placeholder="GitHub/Portfolio URL" class="w-full p-3 bg-gray-700 rounded">
+                        <input type="text" id="portfolio-skills" placeholder="Key skills (comma separated)" class="w-full p-3 bg-gray-700 rounded">
+                    </div>
+                    <button onclick="generatePortfolio('${type}')" class="w-full bg-primary text-black py-2 rounded font-bold">Generate Portfolio</button>
+                </div>
+            `);
+        }
+        
+        function generatePortfolio(type) {
+            const title = document.getElementById('portfolio-title').value;
+            const bio = document.getElementById('portfolio-bio').value;
+            const github = document.getElementById('portfolio-github').value;
+            const skills = document.getElementById('portfolio-skills').value;
+            
+            if (!title || !bio) {
+                app.showToast('⚠️ Please fill required fields', 'error');
+                return;
+            }
+            
+            closeModal();
+            app.showToast('🎨 Generating AI-optimized portfolio...', 'info');
+            
+            setTimeout(() => {
+                app.showToast(`✅ ${type} portfolio created! Link: temariware.com/portfolio/${title.toLowerCase().replace(/\s+/g, '-')}`, 'success');
+                
+                // Update AI score
+                const currentScore = parseInt(document.getElementById('ai-score').textContent);
+                const newScore = Math.min(100, currentScore + 15);
+                document.getElementById('ai-score').textContent = newScore;
+                document.getElementById('comprehensive-ai-score').textContent = `${newScore}%`;
+                document.getElementById('comprehensive-ai-bar').style.width = `${newScore}%`;
+            }, 3000);
+        }
         function customizeRoadmap() { closeModal(); app.showToast('🗺️ Career roadmap customized!', 'success'); }
         function expandNetwork() { closeModal(); app.showToast('🌐 Network expansion plan activated!', 'success'); }
+        
+        function exportTransactions() {
+            closeModal();
+            app.showToast('📄 Transaction history exported to CSV!', 'success');
+        }
+        
+        // Advanced Profile Enhancement
+        function applyEnhancements() {
+            const checkedItems = document.querySelectorAll('input[type="checkbox"]:checked');
+            if (checkedItems.length === 0) {
+                app.showToast('⚠️ Please select at least one enhancement', 'error');
+                return;
+            }
+            
+            closeModal();
+            app.showToast('🚀 Applying profile enhancements...', 'info');
+            
+            setTimeout(() => {
+                const currentStrength = parseInt(document.getElementById('profile-strength').textContent);
+                const newStrength = Math.min(100, currentStrength + 20);
+                document.getElementById('profile-strength').textContent = `${newStrength}%`;
+                document.getElementById('profile-strength-bar').style.width = `${newStrength}%`;
+                
+                const currentScore = parseInt(document.getElementById('ai-score').textContent);
+                const newScore = Math.min(100, currentScore + 10);
+                document.getElementById('ai-score').textContent = newScore;
+                
+                app.showToast('✅ Profile enhanced! +20% profile strength', 'success');
+            }, 2000);
+        }
+        
+        function customizeRoadmap() {
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">🗺️ Customize Career Path</h3>
+                    <div class="space-y-3">
+                        <select id="career-goal" class="w-full p-3 bg-gray-700 rounded">
+                            <option value="">Select career goal</option>
+                            <option value="senior-dev">Senior Developer</option>
+                            <option value="tech-lead">Tech Lead</option>
+                            <option value="product-manager">Product Manager</option>
+                        </select>
+                        <select id="timeline" class="w-full p-3 bg-gray-700 rounded">
+                            <option value="">Timeline</option>
+                            <option value="2">2 years</option>
+                            <option value="3">3 years</option>
+                            <option value="5">5 years</option>
+                        </select>
+                    </div>
+                    <button onclick="generateCustomRoadmap()" class="w-full bg-primary text-black py-2 rounded font-bold">Generate Roadmap</button>
+                </div>
+            `);
+        }
+        
+        function generateCustomRoadmap() {
+            const goal = document.getElementById('career-goal').value;
+            const timeline = document.getElementById('timeline').value;
+            
+            if (!goal || !timeline) {
+                app.showToast('⚠️ Please select both fields', 'error');
+                return;
+            }
+            
+            closeModal();
+            app.showToast(`🗺️ Custom roadmap created for ${goal.replace('-', ' ')} in ${timeline} years!`, 'success');
+        }
         
         // Complete Action Logic for All Buttons
         function sendMoney() {
@@ -2413,9 +2550,49 @@
             `);
         }
         
-        function exportTransactions() {
-            closeModal();
-            app.showToast('📄 Transaction history exported to CSV!', 'success');
+        // Direct Job Action Functions
+        function applyToJobDirect(jobId, jobTitle, company, salary) {
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">💼 Apply to ${jobTitle}</h3>
+                    <div class="bg-gray-700 p-3 rounded">
+                        <div class="font-bold">${jobTitle}</div>
+                        <div class="text-sm text-gray-400">${company} • ${salary}</div>
+                    </div>
+                    <div class="space-y-2">
+                        <textarea id="cover-letter" placeholder="Why are you interested in this position?" class="w-full p-2 bg-gray-600 rounded h-20 text-sm"></textarea>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="resume-attach" checked>
+                            <label for="resume-attach" class="text-sm">Attach current resume</label>
+                        </div>
+                    </div>
+                    <button onclick="submitJobApplication(${jobId}, '${jobTitle}', '${company}')" class="w-full bg-primary text-black py-2 rounded font-bold">Submit Application</button>
+                </div>
+            `);
+        }
+        
+        function saveJobDirect(jobId, jobTitle) {
+            const savedJobs = JSON.parse(localStorage.getItem('savedJobs') || '[]');
+            if (!savedJobs.includes(jobId)) {
+                savedJobs.push(jobId);
+                localStorage.setItem('savedJobs', JSON.stringify(savedJobs));
+                app.showToast(`🔖 ${jobTitle} saved to bookmarks!`, 'success');
+            } else {
+                app.showToast('📌 Job already bookmarked', 'info');
+            }
+        }
+        
+        function shareJobDirect(jobId, jobTitle) {
+            if (navigator.share) {
+                navigator.share({
+                    title: `${jobTitle} - TemariWare`,
+                    text: `Check out this job opportunity: ${jobTitle}`,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(`${jobTitle} - ${window.location.href}`);
+                app.showToast(`🔗 ${jobTitle} link copied!`, 'success');
+            }
         }
     </script>
 </body>
