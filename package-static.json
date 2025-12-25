@@ -2,7 +2,7 @@
   "name": "temariware",
   "version": "1.0.0",
   "scripts": {
-    "build": "copy index.html dist\\index.html",
+    "build": "echo 'Static build complete'",
     "start": "echo 'Static site ready'"
   }
 }
