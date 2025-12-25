@@ -180,7 +180,7 @@
                                 <div class="text-xs text-gray-400">Competition</div>
                             </div>
                         </div>
-                        <canvas id="market-chart" width="300" height="100"></canvas>
+                        <canvas id="market-chart" width="300" height="120"></canvas>
                     </div>
 
                     <!-- Recent Activity Feed -->
@@ -423,7 +423,7 @@
                                 <option value="week">This Week</option>
                             </select>
                         </div>
-                        <canvas id="expense-chart" width="300" height="150" class="mb-3"></canvas>
+                        <canvas id="expense-chart" width="300" height="200" class="mb-3"></canvas>
                         <div id="transaction-list" class="space-y-2 max-h-40 overflow-y-auto">
                             <!-- Transactions will be populated here -->
                         </div>
@@ -761,6 +761,83 @@
                 this.initializeExpenseChart();
             }
 
+            initializeExpenseChart() {
+                const ctx = document.getElementById('expense-chart');
+                if (!ctx) return;
+                
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Housing', 'Food', 'Transport', 'Education', 'Entertainment', 'Savings'],
+                        datasets: [{
+                            data: [1280, 800, 480, 320, 200, 320],
+                            backgroundColor: [
+                                '#EF4444', // Red for Housing
+                                '#F59E0B', // Orange for Food
+                                '#10B981', // Green for Transport
+                                '#3B82F6', // Blue for Education
+                                '#8B5CF6', // Purple for Entertainment
+                                '#14F195'  // Primary for Savings
+                            ],
+                            borderColor: '#1F2937',
+                            borderWidth: 2,
+                            hoverBorderWidth: 3
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    color: '#ffffff',
+                                    font: { size: 10 },
+                                    usePointStyle: true,
+                                    padding: 10,
+                                    generateLabels: function(chart) {
+                                        const data = chart.data;
+                                        return data.labels.map((label, i) => {
+                                            const value = data.datasets[0].data[i];
+                                            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                            const percentage = ((value / total) * 100).toFixed(1);
+                                            return {
+                                                text: `${label} (${percentage}%)`,
+                                                fillStyle: data.datasets[0].backgroundColor[i],
+                                                strokeStyle: data.datasets[0].backgroundColor[i],
+                                                pointStyle: 'circle'
+                                            };
+                                        });
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                borderColor: '#14F195',
+                                borderWidth: 1,
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${label}: ${value} ETB (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '60%',
+                        animation: {
+                            animateRotate: true,
+                            animateScale: true
+                        }
+                    }
+                });
+            }
+
             async loadProfile() {
                 this.renderProfileContent();
                 this.updateSkillsMatrix();
@@ -830,24 +907,78 @@
                 new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                         datasets: [{
-                            label: 'Job Market Growth',
-                            data: [8, 12, 15, 18, 22, 25],
+                            label: 'Tech Job Growth',
+                            data: [8, 12, 15, 18, 22, 25, 28, 32, 35, 38, 42, 45],
                             borderColor: '#14F195',
                             backgroundColor: 'rgba(20, 241, 149, 0.1)',
-                            tension: 0.4
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#14F195',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }, {
+                            label: 'Average Salary (K ETB)',
+                            data: [35, 36, 37, 39, 41, 43, 44, 46, 47, 48, 49, 50],
+                            borderColor: '#9945FF',
+                            backgroundColor: 'rgba(153, 69, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#9945FF',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { display: false }
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    color: '#ffffff',
+                                    font: { size: 10 },
+                                    usePointStyle: true,
+                                    padding: 15
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#ffffff',
+                                borderColor: '#14F195',
+                                borderWidth: 1
+                            }
                         },
                         scales: {
-                            x: { display: false },
-                            y: { display: false }
+                            x: {
+                                display: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#9CA3AF',
+                                    font: { size: 10 }
+                                }
+                            },
+                            y: {
+                                display: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#9CA3AF',
+                                    font: { size: 10 }
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
                         }
                     }
                 });
