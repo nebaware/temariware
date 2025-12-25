@@ -2,11 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { StoreContext } from '../contexts/StoreContext';
+import { ToastContext } from '../contexts/ToastContext';
 import { UserRole } from '../types';
 
 export const SimpleHomePage: React.FC = () => {
     const navigate = useNavigate();
     const { state } = useContext(StoreContext);
+    const { addToast } = useContext(ToastContext);
 
     return (
         <div className="min-h-screen bg-black text-white p-4">
@@ -127,6 +129,48 @@ export const SimpleHomePage: React.FC = () => {
                         <div className="text-lg mb-1">💬</div>
                         <div className="text-xs font-bold">Chat</div>
                     </button>
+                </div>
+
+                {/* New Roadmap Features */}
+                <div className="mb-6">
+                    <h3 className="text-lg font-bold mb-3 text-primary">New Features</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                        <button 
+                            onClick={() => navigate('/advanced-portfolio')}
+                            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">🎨</div>
+                            <div className="font-bold text-sm">Portfolio Builder</div>
+                            <div className="text-xs text-purple-200">AI-Powered</div>
+                        </button>
+                        
+                        <button 
+                            onClick={() => navigate('/mentorship')}
+                            className="bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">🤝</div>
+                            <div className="font-bold text-sm">Mentorship</div>
+                            <div className="text-xs text-green-200">Find Mentors</div>
+                        </button>
+                        
+                        <button 
+                            onClick={() => navigate('/video/demo-room')}
+                            className="bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">📹</div>
+                            <div className="font-bold text-sm">Video Calls</div>
+                            <div className="text-xs text-red-200">Live Sessions</div>
+                        </button>
+                        
+                        <button 
+                            onClick={() => addToast('Coming Soon!', 'info')}
+                            className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">🚀</div>
+                            <div className="font-bold text-sm">More Features</div>
+                            <div className="text-xs text-gray-300">Coming Soon</div>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Stats */}

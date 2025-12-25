@@ -45,8 +45,9 @@ import { SettingsPage } from './pages/SettingsPage';
 import { SubscriptionPage } from './pages/SubscriptionPage';
 
 // Components
-import { NotificationCenter } from './components/NotificationCenter';
-import { NotificationProvider } from './contexts/NotificationContext';
+import { VideoConferencePage } from './pages/VideoConferencePage';
+import { AdvancedPortfolioPage } from './pages/AdvancedPortfolioPage';
+import { MentorshipPage } from './pages/MentorshipPage';
 
 // Admin Pages
 import { AdminOverview } from './pages/admin/AdminOverview';
@@ -161,7 +162,9 @@ const App: React.FC = () => {
                                         <Route path="/micro-jobs" element={<AuthGuard><MicroJobsPage /></AuthGuard>} />
                                         <Route path="/campus" element={<AuthGuard><CampusPage /></AuthGuard>} />
                                         <Route path="/settings" element={<AuthGuard><SettingsPage /></AuthGuard>} />
-                                        <Route path="/subscription" element={<AuthGuard><SubscriptionPage /></AuthGuard>} />
+                                        <Route path="/video/:roomId" element={<AuthGuard><VideoConferencePage /></AuthGuard>} />
+                                        <Route path="/advanced-portfolio" element={<AuthGuard><AdvancedPortfolioPage /></AuthGuard>} />
+                                        <Route path="/mentorship" element={<AuthGuard><MentorshipPage /></AuthGuard>} />
 
                                         {/* Redirect common paths */}
                                         <Route path="/jobs" element={<Navigate to="/work" replace />} />
