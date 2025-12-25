@@ -180,7 +180,7 @@
                                 <div class="text-xs text-gray-400">Competition</div>
                             </div>
                         </div>
-                        <canvas id="market-chart" width="300" height="120"></canvas>
+                        <canvas id="market-chart" width="300" height="100"></canvas>
                     </div>
 
                     <!-- Recent Activity Feed -->
@@ -423,7 +423,7 @@
                                 <option value="week">This Week</option>
                             </select>
                         </div>
-                        <canvas id="expense-chart" width="300" height="200" class="mb-3"></canvas>
+                        <canvas id="expense-chart" width="300" height="150" class="mb-3"></canvas>
                         <div id="transaction-list" class="space-y-2 max-h-40 overflow-y-auto">
                             <!-- Transactions will be populated here -->
                         </div>
@@ -624,12 +624,18 @@
             }
 
             startRealTimeUpdates() {
-                // Simulate real-time updates
+                // Reduce update frequency to prevent stacking
                 setInterval(() => {
                     this.updateMarketData();
+                }, 10000); // Every 10 seconds instead of 5
+                
+                setInterval(() => {
                     this.updateNotifications();
+                }, 15000); // Every 15 seconds
+                
+                setInterval(() => {
                     this.updateActivityFeed();
-                }, 5000);
+                }, 20000); // Every 20 seconds
             }
 
             updateMarketData() {
@@ -654,31 +660,32 @@
             }
 
             updateActivityFeed() {
+                const feed = document.getElementById('activity-feed');
+                if (!feed) return;
+                
+                // Limit activity feed to prevent memory issues
+                if (feed.children.length >= 3) {
+                    feed.removeChild(feed.lastChild);
+                }
+                
                 const activities = [
-                    'New job match found: Senior Developer at TechCorp',
-                    'Course completed: Advanced JavaScript',
-                    'Skill assessment passed: React Development',
-                    'Payment received: 1,500 ETB from freelance project',
-                    'New connection: Dr. Meron Tadesse',
-                    'Achievement unlocked: Learning Streak Master'
+                    'New job match: Senior Developer',
+                    'Course completed: JavaScript',
+                    'Payment received: 1,500 ETB',
+                    'New connection added',
+                    'Skill assessment passed'
                 ];
                 
-                const feed = document.getElementById('activity-feed');
-                if (feed) {
-                    const randomActivity = activities[Math.floor(Math.random() * activities.length)];
-                    const activityElement = document.createElement('div');
-                    activityElement.className = 'flex items-center gap-2 p-2 bg-gray-700 rounded text-sm';
-                    activityElement.innerHTML = `
-                        <div class="w-2 h-2 bg-primary rounded-full"></div>
-                        <div class="flex-1">${randomActivity}</div>
-                        <div class="text-xs text-gray-400">now</div>
-                    `;
-                    
-                    if (feed.children.length >= 5) {
-                        feed.removeChild(feed.lastChild);
-                    }
-                    feed.insertBefore(activityElement, feed.firstChild);
-                }
+                const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                const activityElement = document.createElement('div');
+                activityElement.className = 'flex items-center gap-2 p-2 bg-gray-700 rounded text-sm';
+                activityElement.innerHTML = `
+                    <div class="w-2 h-2 bg-primary rounded-full"></div>
+                    <div class="flex-1">${randomActivity}</div>
+                    <div class="text-xs text-gray-400">now</div>
+                `;
+                
+                feed.insertBefore(activityElement, feed.firstChild);
             }
 
             showPage(page) {
@@ -763,25 +770,16 @@
 
             initializeExpenseChart() {
                 const ctx = document.getElementById('expense-chart');
-                if (!ctx) return;
+                if (!ctx || ctx.chart) return; // Prevent duplicate charts
                 
-                new Chart(ctx, {
+                ctx.chart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Housing', 'Food', 'Transport', 'Education', 'Entertainment', 'Savings'],
+                        labels: ['Housing', 'Food', 'Transport', 'Education', 'Savings'],
                         datasets: [{
-                            data: [1280, 800, 480, 320, 200, 320],
-                            backgroundColor: [
-                                '#EF4444', // Red for Housing
-                                '#F59E0B', // Orange for Food
-                                '#10B981', // Green for Transport
-                                '#3B82F6', // Blue for Education
-                                '#8B5CF6', // Purple for Entertainment
-                                '#14F195'  // Primary for Savings
-                            ],
-                            borderColor: '#1F2937',
-                            borderWidth: 2,
-                            hoverBorderWidth: 3
+                            data: [40, 25, 15, 10, 10],
+                            backgroundColor: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#14F195'],
+                            borderWidth: 0
                         }]
                     },
                     options: {
@@ -793,47 +791,12 @@
                                 position: 'bottom',
                                 labels: {
                                     color: '#ffffff',
-                                    font: { size: 10 },
-                                    usePointStyle: true,
-                                    padding: 10,
-                                    generateLabels: function(chart) {
-                                        const data = chart.data;
-                                        return data.labels.map((label, i) => {
-                                            const value = data.datasets[0].data[i];
-                                            const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                            const percentage = ((value / total) * 100).toFixed(1);
-                                            return {
-                                                text: `${label} (${percentage}%)`,
-                                                fillStyle: data.datasets[0].backgroundColor[i],
-                                                strokeStyle: data.datasets[0].backgroundColor[i],
-                                                pointStyle: 'circle'
-                                            };
-                                        });
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: '#ffffff',
-                                bodyColor: '#ffffff',
-                                borderColor: '#14F195',
-                                borderWidth: 1,
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.parsed;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = ((value / total) * 100).toFixed(1);
-                                        return `${label}: ${value} ETB (${percentage}%)`;
-                                    }
+                                    font: { size: 10 }
                                 }
                             }
                         },
                         cutout: '60%',
-                        animation: {
-                            animateRotate: true,
-                            animateScale: true
-                        }
+                        animation: { duration: 0 } // Disable animations for performance
                     }
                 });
             }
@@ -902,84 +865,32 @@
 
             initializeMarketChart() {
                 const ctx = document.getElementById('market-chart');
-                if (!ctx) return;
+                if (!ctx || ctx.chart) return; // Prevent duplicate charts
                 
-                new Chart(ctx, {
+                ctx.chart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                         datasets: [{
-                            label: 'Tech Job Growth',
-                            data: [8, 12, 15, 18, 22, 25, 28, 32, 35, 38, 42, 45],
+                            label: 'Job Growth %',
+                            data: [8, 12, 15, 18, 22, 25],
                             borderColor: '#14F195',
                             backgroundColor: 'rgba(20, 241, 149, 0.1)',
                             tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#14F195',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        }, {
-                            label: 'Average Salary (K ETB)',
-                            data: [35, 36, 37, 39, 41, 43, 44, 46, 47, 48, 49, 50],
-                            borderColor: '#9945FF',
-                            backgroundColor: 'rgba(153, 69, 255, 0.1)',
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#9945FF',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
+                            fill: true
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: {
-                                    color: '#ffffff',
-                                    font: { size: 10 },
-                                    usePointStyle: true,
-                                    padding: 15
-                                }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: '#ffffff',
-                                bodyColor: '#ffffff',
-                                borderColor: '#14F195',
-                                borderWidth: 1
-                            }
+                            legend: { display: false }
                         },
                         scales: {
-                            x: {
-                                display: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: '#9CA3AF',
-                                    font: { size: 10 }
-                                }
-                            },
-                            y: {
-                                display: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: '#9CA3AF',
-                                    font: { size: 10 }
-                                }
-                            }
+                            x: { display: false },
+                            y: { display: false }
                         },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index'
-                        }
+                        animation: { duration: 0 } // Disable animations for performance
                     }
                 });
             }
