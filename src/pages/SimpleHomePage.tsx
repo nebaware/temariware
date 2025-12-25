@@ -196,21 +196,36 @@ export const SimpleHomePage: React.FC = () => {
                         </button>
                         
                         <button 
-                            onClick={() => addToast('International marketplace coming soon!', 'info')}
+                            onClick={() => navigate('/international-jobs')}
                             className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 p-4 rounded-lg text-center transition-colors"
                         >
                             <div className="text-2xl mb-2">🌍</div>
                             <div className="font-bold text-sm">Global Jobs</div>
-                            <div className="text-xs text-blue-200">Coming Soon</div>
+                            <div className="text-xs text-blue-200">International</div>
                         </button>
                         
                         <button 
-                            onClick={() => addToast('More features in development!', 'info')}
-                            className="bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 p-4 rounded-lg text-center transition-colors"
+                            onClick={() => navigate('/alumni-network')}
+                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 p-4 rounded-lg text-center transition-colors"
                         >
-                            <div className="text-2xl mb-2">🚀</div>
-                            <div className="font-bold text-sm">More Features</div>
-                            <div className="text-xs text-gray-300">Coming Soon</div>
+                            <div className="text-2xl mb-2">🎓</div>
+                            <div className="font-bold text-sm">Alumni Network</div>
+                            <div className="text-xs text-purple-200">Connect</div>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Enterprise Features */}
+                <div className="mb-6">
+                    <h3 className="text-lg font-bold mb-3 text-accent">Enterprise Solutions</h3>
+                    <div className="grid grid-cols-1 gap-3">
+                        <button 
+                            onClick={() => navigate('/enterprise-solutions')}
+                            className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 p-4 rounded-lg text-center transition-colors"
+                        >
+                            <div className="text-2xl mb-2">🏢</div>
+                            <div className="font-bold text-sm">Enterprise Solutions</div>
+                            <div className="text-xs text-orange-200">B2B Partnerships & Corporate Training</div>
                         </button>
                     </div>
                 </div>
