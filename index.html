@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TemariWare - Student Ecosystem Platform</title>
+    <title>TemariWare - Advanced Student Ecosystem</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -17,6 +18,9 @@
                         dark: '#0f172a',
                         card: '#1e293b',
                         accent: '#F59E0B',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        error: '#EF4444'
                     }
                 }
             }
@@ -25,774 +29,1121 @@
 </head>
 <body class="bg-black text-white min-h-screen">
     <div id="app" class="max-w-md mx-auto p-4">
-        <!-- Loading Screen -->
+        <!-- Loading Screen with Progress -->
         <div id="loading" class="text-center py-20">
             <div class="animate-spin text-4xl mb-4">⚡</div>
-            <p>Loading TemariWare...</p>
+            <p class="mb-4">Initializing TemariWare AI Systems...</p>
+            <div class="w-full bg-gray-700 rounded-full h-2 mb-2">
+                <div id="loading-progress" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div id="loading-status" class="text-xs text-gray-400">Loading core modules...</div>
         </div>
 
         <!-- Main App -->
         <div id="main-app" class="hidden">
-            <!-- Header -->
+            <!-- Header with User Status -->
             <div class="text-center mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-black font-bold text-sm" id="user-avatar">?</div>
+                        <div class="text-left">
+                            <div class="text-sm font-bold" id="user-name">Guest User</div>
+                            <div class="text-xs text-gray-400" id="user-status">Not Verified</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="bg-gray-800 px-2 py-1 rounded text-xs">
+                            <span class="text-primary" id="ai-score">0</span> AI Score
+                        </div>
+                        <button onclick="showNotifications()" class="relative">
+                            <i class="fas fa-bell text-gray-400"></i>
+                            <span id="notification-badge" class="absolute -top-1 -right-1 bg-error text-xs rounded-full w-4 h-4 flex items-center justify-center hidden">0</span>
+                        </button>
+                    </div>
+                </div>
                 <h1 class="text-3xl font-bold text-primary mb-2">TemariWare</h1>
-                <p class="text-gray-400">Complete Student Ecosystem Platform</p>
-                <div class="flex justify-center gap-4 mt-4">
-                    <button onclick="showLogin()" class="bg-primary text-black px-4 py-2 rounded font-bold">Login</button>
-                    <button onclick="showRegister()" class="bg-secondary text-white px-4 py-2 rounded font-bold">Register</button>
-                </div>
+                <p class="text-gray-400">Advanced Student Ecosystem Platform</p>
             </div>
 
-            <!-- Navigation -->
+            <!-- Navigation with Activity Indicators -->
             <div class="flex justify-between mb-6 bg-gray-800 rounded-lg p-2">
-                <button onclick="showPage('home')" class="nav-btn flex-1 py-2 rounded text-sm" data-page="home">🏠 Home</button>
-                <button onclick="showPage('jobs')" class="nav-btn flex-1 py-2 rounded text-sm" data-page="jobs">💼 Jobs</button>
-                <button onclick="showPage('courses')" class="nav-btn flex-1 py-2 rounded text-sm" data-page="courses">📚 Learn</button>
-                <button onclick="showPage('wallet')" class="nav-btn flex-1 py-2 rounded text-sm" data-page="wallet">💰 Wallet</button>
-                <button onclick="showPage('profile')" class="nav-btn flex-1 py-2 rounded text-sm" data-page="profile">👤 Profile</button>
+                <button onclick="showPage('dashboard')" class="nav-btn flex-1 py-2 rounded text-xs relative" data-page="dashboard">
+                    🏠 Dashboard
+                    <div class="activity-dot hidden"></div>
+                </button>
+                <button onclick="showPage('jobs')" class="nav-btn flex-1 py-2 rounded text-xs relative" data-page="jobs">
+                    💼 Jobs
+                    <div class="activity-dot hidden"></div>
+                </button>
+                <button onclick="showPage('learning')" class="nav-btn flex-1 py-2 rounded text-xs relative" data-page="learning">
+                    📚 Learn
+                    <div class="activity-dot hidden"></div>
+                </button>
+                <button onclick="showPage('wallet')" class="nav-btn flex-1 py-2 rounded text-xs relative" data-page="wallet">
+                    💰 Wallet
+                    <div class="activity-dot hidden"></div>
+                </button>
+                <button onclick="showPage('profile')" class="nav-btn flex-1 py-2 rounded text-xs relative" data-page="profile">
+                    👤 Profile
+                    <div class="activity-dot hidden"></div>
+                </button>
             </div>
 
-            <!-- Pages -->
+            <!-- Pages Container -->
             <div id="pages">
-                <!-- Home Page -->
-                <div id="home-page" class="page">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page">
+                    <!-- AI Insights Panel -->
+                    <div class="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border border-purple-500/30 rounded-lg p-4 mb-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i class="fas fa-brain text-primary"></i>
+                            <h3 class="font-bold">AI Career Insights</h3>
+                        </div>
+                        <div id="ai-insights" class="text-sm text-gray-300">
+                            Analyzing your profile and market trends...
+                        </div>
+                        <div class="mt-3 flex gap-2">
+                            <button onclick="generateInsights()" class="bg-primary text-black px-3 py-1 rounded text-xs font-bold">Refresh AI Analysis</button>
+                            <button onclick="viewDetailedAnalysis()" class="bg-gray-600 text-white px-3 py-1 rounded text-xs">Detailed Report</button>
+                        </div>
+                    </div>
+
+                    <!-- Performance Metrics -->
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-gray-800 p-3 rounded">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs text-gray-400">Profile Strength</span>
+                                <span class="text-xs text-primary" id="profile-strength">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full transition-all duration-500" id="profile-strength-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 p-3 rounded">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs text-gray-400">Market Demand</span>
+                                <span class="text-xs text-success" id="market-demand">High</span>
+                            </div>
+                            <div class="flex gap-1">
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                <div class="w-2 h-2 bg-gray-600 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions Grid -->
                     <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div class="bg-gradient-to-r from-green-600 to-green-700 p-4 rounded-lg text-center cursor-pointer" onclick="showPage('jobs')">
-                            <div class="text-2xl mb-2">💼</div>
-                            <div class="font-bold text-sm">AI Job Matching</div>
-                            <div class="text-xs text-green-200">Smart Career Guidance</div>
+                        <div class="bg-gradient-to-r from-green-600 to-green-700 p-4 rounded-lg text-center cursor-pointer hover:scale-105 transition-transform" onclick="quickJobSearch()">
+                            <div class="text-2xl mb-2">🎯</div>
+                            <div class="font-bold text-sm">Smart Job Hunt</div>
+                            <div class="text-xs text-green-200">AI-Powered Matching</div>
                         </div>
                         
-                        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-lg text-center cursor-pointer" onclick="showPage('courses')">
-                            <div class="text-2xl mb-2">📚</div>
-                            <div class="font-bold text-sm">Learning Platform</div>
-                            <div class="text-xs text-blue-200">Gebeta Courses</div>
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-lg text-center cursor-pointer hover:scale-105 transition-transform" onclick="skillGapAnalysis()">
+                            <div class="text-2xl mb-2">📊</div>
+                            <div class="font-bold text-sm">Skill Analysis</div>
+                            <div class="text-xs text-blue-200">Gap Assessment</div>
                         </div>
                         
-                        <div class="bg-gradient-to-r from-purple-600 to-purple-700 p-4 rounded-lg text-center cursor-pointer" onclick="showPage('wallet')">
-                            <div class="text-2xl mb-2">💰</div>
-                            <div class="font-bold text-sm">Ethiopian Payments</div>
-                            <div class="text-xs text-purple-200">Telebirr, CBE, Dashen</div>
+                        <div class="bg-gradient-to-r from-purple-600 to-purple-700 p-4 rounded-lg text-center cursor-pointer hover:scale-105 transition-transform" onclick="salaryNegotiator()">
+                            <div class="text-2xl mb-2">💎</div>
+                            <div class="font-bold text-sm">Salary Optimizer</div>
+                            <div class="text-xs text-purple-200">Market Analysis</div>
                         </div>
                         
-                        <div class="bg-gradient-to-r from-orange-600 to-orange-700 p-4 rounded-lg text-center cursor-pointer" onclick="showPage('profile')">
-                            <div class="text-2xl mb-2">🎓</div>
-                            <div class="font-bold text-sm">Portfolio Builder</div>
-                            <div class="text-xs text-orange-200">AI-Powered</div>
+                        <div class="bg-gradient-to-r from-orange-600 to-orange-700 p-4 rounded-lg text-center cursor-pointer hover:scale-105 transition-transform" onclick="networkBuilder()">
+                            <div class="text-2xl mb-2">🌐</div>
+                            <div class="font-bold text-sm">Network Builder</div>
+                            <div class="text-xs text-orange-200">Professional Connections</div>
                         </div>
                     </div>
 
-                    <!-- Live Stats -->
-                    <div class="grid grid-cols-3 gap-3 mb-6">
-                        <div class="bg-gray-800 p-3 rounded text-center">
-                            <div class="text-lg font-bold text-primary" id="live-jobs">0</div>
-                            <div class="text-xs text-gray-400">Live Jobs</div>
+                    <!-- Live Market Data -->
+                    <div class="bg-gray-800 rounded-lg p-4 mb-6">
+                        <h3 class="font-bold mb-3 flex items-center gap-2">
+                            <i class="fas fa-chart-line text-primary"></i>
+                            Ethiopian Job Market Trends
+                        </h3>
+                        <div class="grid grid-cols-3 gap-3 mb-3">
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-success" id="market-growth">+12%</div>
+                                <div class="text-xs text-gray-400">Tech Growth</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-primary" id="avg-salary">45K</div>
+                                <div class="text-xs text-gray-400">Avg Salary (ETB)</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-warning" id="competition">Medium</div>
+                                <div class="text-xs text-gray-400">Competition</div>
+                            </div>
                         </div>
-                        <div class="bg-gray-800 p-3 rounded text-center">
-                            <div class="text-lg font-bold text-green-400" id="active-students">0</div>
-                            <div class="text-xs text-gray-400">Students</div>
-                        </div>
-                        <div class="bg-gray-800 p-3 rounded text-center">
-                            <div class="text-lg font-bold text-blue-400" id="success-rate">0%</div>
-                            <div class="text-xs text-gray-400">Success</div>
-                        </div>
+                        <canvas id="market-chart" width="300" height="100"></canvas>
                     </div>
 
-                    <!-- Advanced Features -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-bold mb-4 text-primary">Advanced Features</h3>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-3 rounded-lg text-center cursor-pointer" onclick="openMentorship()">
-                                <div class="text-lg mb-1">🤝</div>
-                                <div class="text-xs font-bold">Mentorship</div>
-                            </div>
-                            
-                            <div class="bg-gradient-to-r from-red-600 to-pink-600 p-3 rounded-lg text-center cursor-pointer" onclick="startVideoCall()">
-                                <div class="text-lg mb-1">📹</div>
-                                <div class="text-xs font-bold">Video Calls</div>
-                            </div>
-                            
-                            <div class="bg-gradient-to-r from-yellow-600 to-orange-600 p-3 rounded-lg text-center cursor-pointer" onclick="viewCertificates()">
-                                <div class="text-lg mb-1">🔗</div>
-                                <div class="text-xs font-bold">Blockchain</div>
-                            </div>
-                            
-                            <div class="bg-gradient-to-r from-emerald-600 to-green-600 p-3 rounded-lg text-center cursor-pointer" onclick="browseFunding()">
-                                <div class="text-lg mb-1">💼</div>
-                                <div class="text-xs font-bold">Funding</div>
-                            </div>
-                            
-                            <div class="bg-gradient-to-r from-blue-600 to-cyan-600 p-3 rounded-lg text-center cursor-pointer" onclick="browseGlobalJobs()">
-                                <div class="text-lg mb-1">🌍</div>
-                                <div class="text-xs font-bold">Global Jobs</div>
-                            </div>
-                            
-                            <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-3 rounded-lg text-center cursor-pointer" onclick="joinAlumni()">
-                                <div class="text-lg mb-1">🎓</div>
-                                <div class="text-xs font-bold">Alumni</div>
-                            </div>
+                    <!-- Recent Activity Feed -->
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <h3 class="font-bold mb-3">Recent Activity</h3>
+                        <div id="activity-feed" class="space-y-2">
+                            <!-- Activity items will be populated here -->
                         </div>
                     </div>
                 </div>
 
-                <!-- Jobs Page -->
+                <!-- Advanced Jobs Page -->
                 <div id="jobs-page" class="page hidden">
-                    <h2 class="text-xl font-bold mb-4 text-primary">AI-Powered Job Matching</h2>
-                    
-                    <!-- Job Search -->
-                    <div class="mb-4">
-                        <input type="text" id="job-search" placeholder="Search jobs..." class="w-full p-3 bg-gray-800 rounded border border-gray-600 text-white">
-                        <button onclick="searchJobs()" class="w-full mt-2 bg-primary text-black py-2 rounded font-bold">🔍 AI Search</button>
+                    <!-- AI Job Matching Header -->
+                    <div class="bg-gradient-to-r from-green-900/50 to-blue-900/50 border border-green-500/30 rounded-lg p-4 mb-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h2 class="text-lg font-bold text-primary">AI Job Matching Engine</h2>
+                            <div class="text-xs bg-primary text-black px-2 py-1 rounded font-bold" id="match-accuracy">94% Accuracy</div>
+                        </div>
+                        <div class="text-sm text-gray-300 mb-3">Advanced algorithms analyzing 50+ factors for perfect job matches</div>
+                        <div class="flex gap-2">
+                            <button onclick="runAIAnalysis()" class="bg-primary text-black px-3 py-1 rounded text-xs font-bold">🤖 Run AI Analysis</button>
+                            <button onclick="toggleJobAlerts()" class="bg-gray-600 text-white px-3 py-1 rounded text-xs">🔔 Smart Alerts</button>
+                        </div>
                     </div>
 
-                    <!-- Job Categories -->
-                    <div class="grid grid-cols-2 gap-2 mb-4">
-                        <button onclick="filterJobs('tech')" class="bg-blue-600 p-2 rounded text-sm">💻 Tech</button>
-                        <button onclick="filterJobs('business')" class="bg-green-600 p-2 rounded text-sm">📊 Business</button>
-                        <button onclick="filterJobs('design')" class="bg-purple-600 p-2 rounded text-sm">🎨 Design</button>
-                        <button onclick="filterJobs('remote')" class="bg-orange-600 p-2 rounded text-sm">🌐 Remote</button>
+                    <!-- Advanced Search & Filters -->
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="job-search" placeholder="AI-powered job search..." class="flex-1 p-2 bg-gray-700 rounded border border-gray-600 text-white text-sm">
+                            <button onclick="aiJobSearch()" class="bg-primary text-black px-4 py-2 rounded font-bold text-sm">🔍</button>
+                        </div>
+                        
+                        <!-- Smart Filters -->
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <select id="experience-filter" class="p-2 bg-gray-700 rounded text-sm">
+                                <option value="">Experience Level</option>
+                                <option value="entry">Entry Level (0-2 years)</option>
+                                <option value="mid">Mid Level (2-5 years)</option>
+                                <option value="senior">Senior Level (5+ years)</option>
+                            </select>
+                            <select id="salary-filter" class="p-2 bg-gray-700 rounded text-sm">
+                                <option value="">Salary Range (ETB)</option>
+                                <option value="15000-25000">15K - 25K</option>
+                                <option value="25000-40000">25K - 40K</option>
+                                <option value="40000+">40K+</option>
+                            </select>
+                        </div>
+
+                        <!-- Job Categories with AI Recommendations -->
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="filterJobs('tech')" class="bg-blue-600 p-2 rounded text-xs hover:bg-blue-500 transition-colors">
+                                💻 Tech
+                                <div class="text-xs text-blue-200">85% Match</div>
+                            </button>
+                            <button onclick="filterJobs('business')" class="bg-green-600 p-2 rounded text-xs hover:bg-green-500 transition-colors">
+                                📊 Business
+                                <div class="text-xs text-green-200">72% Match</div>
+                            </button>
+                            <button onclick="filterJobs('design')" class="bg-purple-600 p-2 rounded text-xs hover:bg-purple-500 transition-colors">
+                                🎨 Design
+                                <div class="text-xs text-purple-200">68% Match</div>
+                            </button>
+                            <button onclick="filterJobs('remote')" class="bg-orange-600 p-2 rounded text-xs hover:bg-orange-500 transition-colors">
+                                🌐 Remote
+                                <div class="text-xs text-orange-200">91% Match</div>
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Job Listings -->
+                    <!-- Job Listings with Advanced Features -->
                     <div id="job-listings" class="space-y-3">
-                        <!-- Jobs will be populated here -->
+                        <!-- Jobs will be populated here with advanced features -->
+                    </div>
+
+                    <!-- Job Application Tracker -->
+                    <div class="bg-gray-800 rounded-lg p-4 mt-4">
+                        <h3 class="font-bold mb-3 flex items-center gap-2">
+                            <i class="fas fa-clipboard-list text-primary"></i>
+                            Application Tracker
+                        </h3>
+                        <div id="application-tracker" class="space-y-2">
+                            <!-- Application status will be shown here -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Courses Page -->
-                <div id="courses-page" class="page hidden">
-                    <h2 class="text-xl font-bold mb-4 text-primary">Gebeta Learning Platform</h2>
-                    
-                    <!-- Course Categories -->
+                <!-- Advanced Learning Platform -->
+                <div id="learning-page" class="page hidden">
+                    <!-- Learning Analytics Dashboard -->
+                    <div class="bg-gradient-to-r from-blue-900/50 to-purple-900/50 border border-blue-500/30 rounded-lg p-4 mb-4">
+                        <h2 class="text-lg font-bold text-primary mb-2">Gebeta Learning Analytics</h2>
+                        <div class="grid grid-cols-3 gap-3 mb-3">
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-success" id="learning-streak">0</div>
+                                <div class="text-xs text-gray-400">Day Streak</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-primary" id="courses-completed">0</div>
+                                <div class="text-xs text-gray-400">Completed</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-lg font-bold text-warning" id="skill-points">0</div>
+                                <div class="text-xs text-gray-400">Skill Points</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="generateLearningPath()" class="bg-primary text-black px-3 py-1 rounded text-xs font-bold">🎯 AI Learning Path</button>
+                            <button onclick="skillAssessment()" class="bg-gray-600 text-white px-3 py-1 rounded text-xs">📊 Skill Test</button>
+                        </div>
+                    </div>
+
+                    <!-- Personalized Course Recommendations -->
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <h3 class="font-bold mb-3 flex items-center gap-2">
+                            <i class="fas fa-magic text-primary"></i>
+                            AI Course Recommendations
+                        </h3>
+                        <div id="recommended-courses" class="space-y-2">
+                            <!-- AI-recommended courses will be shown here -->
+                        </div>
+                    </div>
+
+                    <!-- Learning Categories with Progress -->
                     <div class="grid grid-cols-2 gap-3 mb-4">
-                        <div class="bg-blue-600 p-3 rounded text-center cursor-pointer" onclick="browseCourses('programming')">
+                        <div class="bg-blue-600 p-3 rounded text-center cursor-pointer hover:scale-105 transition-transform" onclick="browseCourses('programming')">
                             <div class="text-xl mb-1">💻</div>
                             <div class="text-sm font-bold">Programming</div>
+                            <div class="text-xs text-blue-200">Progress: 65%</div>
+                            <div class="w-full bg-blue-800 rounded-full h-1 mt-1">
+                                <div class="bg-blue-200 h-1 rounded-full" style="width: 65%"></div>
+                            </div>
                         </div>
-                        <div class="bg-green-600 p-3 rounded text-center cursor-pointer" onclick="browseCourses('business')">
+                        <div class="bg-green-600 p-3 rounded text-center cursor-pointer hover:scale-105 transition-transform" onclick="browseCourses('business')">
                             <div class="text-xl mb-1">📊</div>
                             <div class="text-sm font-bold">Business</div>
+                            <div class="text-xs text-green-200">Progress: 40%</div>
+                            <div class="w-full bg-green-800 rounded-full h-1 mt-1">
+                                <div class="bg-green-200 h-1 rounded-full" style="width: 40%"></div>
+                            </div>
                         </div>
-                        <div class="bg-purple-600 p-3 rounded text-center cursor-pointer" onclick="browseCourses('design')">
+                        <div class="bg-purple-600 p-3 rounded text-center cursor-pointer hover:scale-105 transition-transform" onclick="browseCourses('design')">
                             <div class="text-xl mb-1">🎨</div>
                             <div class="text-sm font-bold">Design</div>
+                            <div class="text-xs text-purple-200">Progress: 25%</div>
+                            <div class="w-full bg-purple-800 rounded-full h-1 mt-1">
+                                <div class="bg-purple-200 h-1 rounded-full" style="width: 25%"></div>
+                            </div>
                         </div>
-                        <div class="bg-orange-600 p-3 rounded text-center cursor-pointer" onclick="browseCourses('language')">
+                        <div class="bg-orange-600 p-3 rounded text-center cursor-pointer hover:scale-105 transition-transform" onclick="browseCourses('language')">
                             <div class="text-xl mb-1">🗣️</div>
                             <div class="text-sm font-bold">Languages</div>
+                            <div class="text-xs text-orange-200">Progress: 80%</div>
+                            <div class="w-full bg-orange-800 rounded-full h-1 mt-1">
+                                <div class="bg-orange-200 h-1 rounded-full" style="width: 80%"></div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Course List -->
-                    <div id="course-list" class="space-y-3">
-                        <!-- Courses will be populated here -->
+                    <!-- Active Courses -->
+                    <div id="active-courses" class="space-y-3">
+                        <!-- Active courses will be populated here -->
                     </div>
                 </div>
 
-                <!-- Wallet Page -->
+                <!-- Advanced Wallet System -->
                 <div id="wallet-page" class="page hidden">
-                    <h2 class="text-xl font-bold mb-4 text-primary">Ethiopian Payment Wallet</h2>
-                    
-                    <!-- Balance -->
+                    <!-- Wallet Overview with Analytics -->
                     <div class="bg-gradient-to-r from-green-600 to-blue-600 p-6 rounded-lg mb-4 text-center">
-                        <div class="text-2xl font-bold" id="wallet-balance">0.00 ETB</div>
-                        <div class="text-sm opacity-80">Available Balance</div>
+                        <div class="text-2xl font-bold mb-1" id="wallet-balance">0.00 ETB</div>
+                        <div class="text-sm opacity-80 mb-2">Available Balance</div>
+                        <div class="flex justify-center gap-4 text-xs">
+                            <div>
+                                <div class="font-bold" id="monthly-income">+0 ETB</div>
+                                <div class="opacity-70">This Month</div>
+                            </div>
+                            <div>
+                                <div class="font-bold" id="monthly-expenses">-0 ETB</div>
+                                <div class="opacity-70">Expenses</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Payment Methods -->
-                    <div class="grid grid-cols-3 gap-2 mb-4">
-                        <button onclick="addMoney('telebirr')" class="bg-orange-600 p-3 rounded text-center">
-                            <div class="text-lg mb-1">📱</div>
-                            <div class="text-xs">Telebirr</div>
+                    <!-- Ethiopian Payment Integration -->
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <h3 class="font-bold mb-3 flex items-center gap-2">
+                            <i class="fas fa-university text-primary"></i>
+                            Ethiopian Banking Integration
+                        </h3>
+                        <div class="grid grid-cols-3 gap-2 mb-3">
+                            <button onclick="connectBank('telebirr')" class="bg-orange-600 p-3 rounded text-center hover:bg-orange-500 transition-colors">
+                                <div class="text-lg mb-1">📱</div>
+                                <div class="text-xs font-bold">Telebirr</div>
+                                <div class="text-xs text-orange-200" id="telebirr-status">Connect</div>
+                            </button>
+                            <button onclick="connectBank('cbe')" class="bg-blue-600 p-3 rounded text-center hover:bg-blue-500 transition-colors">
+                                <div class="text-lg mb-1">🏦</div>
+                                <div class="text-xs font-bold">CBE Bank</div>
+                                <div class="text-xs text-blue-200" id="cbe-status">Connect</div>
+                            </button>
+                            <button onclick="connectBank('dashen')" class="bg-purple-600 p-3 rounded text-center hover:bg-purple-500 transition-colors">
+                                <div class="text-lg mb-1">💳</div>
+                                <div class="text-xs font-bold">Dashen</div>
+                                <div class="text-xs text-purple-200" id="dashen-status">Connect</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Smart Financial Tools -->
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button onclick="budgetPlanner()" class="bg-gradient-to-r from-green-600 to-emerald-600 p-3 rounded text-center">
+                            <div class="text-lg mb-1">📊</div>
+                            <div class="text-xs font-bold">Budget Planner</div>
+                            <div class="text-xs text-green-200">AI-Powered</div>
                         </button>
-                        <button onclick="addMoney('cbe')" class="bg-blue-600 p-3 rounded text-center">
-                            <div class="text-lg mb-1">🏦</div>
-                            <div class="text-xs">CBE</div>
+                        <button onclick="savingsGoals()" class="bg-gradient-to-r from-blue-600 to-cyan-600 p-3 rounded text-center">
+                            <div class="text-lg mb-1">🎯</div>
+                            <div class="text-xs font-bold">Savings Goals</div>
+                            <div class="text-xs text-blue-200">Smart Tracking</div>
                         </button>
-                        <button onclick="addMoney('dashen')" class="bg-purple-600 p-3 rounded text-center">
-                            <div class="text-lg mb-1">💳</div>
-                            <div class="text-xs">Dashen</div>
+                        <button onclick="expenseAnalyzer()" class="bg-gradient-to-r from-purple-600 to-pink-600 p-3 rounded text-center">
+                            <div class="text-lg mb-1">📈</div>
+                            <div class="text-xs font-bold">Expense Analysis</div>
+                            <div class="text-xs text-purple-200">Insights</div>
+                        </button>
+                        <button onclick="ekubManager()" class="bg-gradient-to-r from-orange-600 to-red-600 p-3 rounded text-center">
+                            <div class="text-lg mb-1">👥</div>
+                            <div class="text-xs font-bold">Ekub Groups</div>
+                            <div class="text-xs text-orange-200">Traditional</div>
                         </button>
                     </div>
 
-                    <!-- Quick Actions -->
-                    <div class="space-y-2 mb-4">
-                        <button onclick="sendMoney()" class="w-full bg-primary text-black py-3 rounded font-bold">💸 Send Money</button>
-                        <button onclick="requestMoney()" class="w-full bg-secondary text-white py-3 rounded font-bold">📥 Request Money</button>
-                        <button onclick="viewTransactions()" class="w-full bg-gray-600 text-white py-3 rounded font-bold">📊 Transactions</button>
-                    </div>
-
-                    <!-- Recent Transactions -->
-                    <div id="transactions" class="space-y-2">
-                        <!-- Transactions will be populated here -->
+                    <!-- Transaction History with Analytics -->
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-bold">Transaction Analytics</h3>
+                            <select id="transaction-filter" class="bg-gray-700 rounded px-2 py-1 text-xs">
+                                <option value="all">All Time</option>
+                                <option value="month">This Month</option>
+                                <option value="week">This Week</option>
+                            </select>
+                        </div>
+                        <canvas id="expense-chart" width="300" height="150" class="mb-3"></canvas>
+                        <div id="transaction-list" class="space-y-2 max-h-40 overflow-y-auto">
+                            <!-- Transactions will be populated here -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Profile Page -->
+                <!-- Advanced Profile System -->
                 <div id="profile-page" class="page hidden">
-                    <h2 class="text-xl font-bold mb-4 text-primary">Student Profile</h2>
-                    
-                    <!-- Profile Card -->
+                    <!-- Profile Header with Verification -->
                     <div class="bg-gray-800 p-4 rounded-lg mb-4">
                         <div class="flex items-center gap-3 mb-3">
-                            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-black font-bold text-xl" id="profile-avatar">A</div>
-                            <div>
+                            <div class="relative">
+                                <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center text-black font-bold text-xl" id="profile-avatar">A</div>
+                                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-success rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-white text-xs"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1">
                                 <div class="font-bold" id="profile-name">Anonymous Student</div>
                                 <div class="text-sm text-gray-400" id="profile-university">University Not Set</div>
-                                <div class="text-xs text-green-400" id="profile-status">✓ Verified</div>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <div class="text-xs text-success flex items-center gap-1">
+                                        <i class="fas fa-shield-alt"></i>
+                                        <span id="verification-status">Verified Student</span>
+                                    </div>
+                                    <div class="text-xs bg-primary text-black px-2 py-1 rounded">Level 3</div>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- AI Score -->
+                        <!-- Comprehensive AI Scoring -->
                         <div class="bg-gradient-to-r from-purple-600 to-pink-600 p-3 rounded mb-3">
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm">AI Profile Score</span>
-                                <span class="font-bold" id="ai-score">85%</span>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-bold">AI Profile Analysis</span>
+                                <span class="font-bold" id="comprehensive-ai-score">85%</span>
                             </div>
-                            <div class="w-full bg-gray-700 rounded-full h-2 mt-2">
-                                <div class="bg-primary h-2 rounded-full" style="width: 85%" id="ai-score-bar"></div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 mb-2">
+                                <div class="bg-primary h-2 rounded-full transition-all duration-500" style="width: 85%" id="comprehensive-ai-bar"></div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-xs">
+                                <div class="text-center">
+                                    <div class="font-bold text-green-400" id="skills-score">92%</div>
+                                    <div class="text-gray-300">Skills</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="font-bold text-blue-400" id="experience-score">78%</div>
+                                    <div class="text-gray-300">Experience</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="font-bold text-purple-400" id="network-score">85%</div>
+                                    <div class="text-gray-300">Network</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Skills -->
+                        <!-- Advanced Skills Matrix -->
                         <div class="mb-3">
-                            <div class="text-sm font-bold mb-2">Skills</div>
-                            <div class="flex flex-wrap gap-1" id="profile-skills">
-                                <span class="bg-blue-600 px-2 py-1 rounded text-xs">JavaScript</span>
-                                <span class="bg-green-600 px-2 py-1 rounded text-xs">React</span>
-                                <span class="bg-purple-600 px-2 py-1 rounded text-xs">Node.js</span>
+                            <div class="flex justify-between items-center mb-2">
+                                <div class="text-sm font-bold">Skills Portfolio</div>
+                                <button onclick="skillsAssessment()" class="text-xs bg-gray-600 text-white px-2 py-1 rounded">+ Add Skills</button>
+                            </div>
+                            <div id="skills-matrix" class="space-y-2">
+                                <!-- Skills with proficiency levels will be shown here -->
                             </div>
                         </div>
 
-                        <!-- Actions -->
-                        <div class="space-y-2">
-                            <button onclick="editProfile()" class="w-full bg-primary text-black py-2 rounded font-bold">✏️ Edit Profile</button>
-                            <button onclick="uploadResume()" class="w-full bg-secondary text-white py-2 rounded font-bold">📄 Upload Resume</button>
-                            <button onclick="viewPortfolio()" class="w-full bg-gray-600 text-white py-2 rounded font-bold">🎨 View Portfolio</button>
+                        <!-- Profile Actions -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="enhanceProfile()" class="bg-primary text-black py-2 rounded font-bold text-sm">🚀 Enhance Profile</button>
+                            <button onclick="portfolioBuilder()" class="bg-secondary text-white py-2 rounded font-bold text-sm">🎨 Portfolio</button>
+                            <button onclick="careerRoadmap()" class="bg-gray-600 text-white py-2 rounded font-bold text-sm">🗺️ Career Path</button>
+                            <button onclick="networkAnalyzer()" class="bg-orange-600 text-white py-2 rounded font-bold text-sm">🌐 Network</button>
+                        </div>
+                    </div>
+
+                    <!-- Achievement System -->
+                    <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                        <h3 class="font-bold mb-3 flex items-center gap-2">
+                            <i class="fas fa-trophy text-warning"></i>
+                            Achievements & Badges
+                        </h3>
+                        <div id="achievements-grid" class="grid grid-cols-4 gap-2">
+                            <!-- Achievement badges will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Professional Network -->
+                    <div class="bg-gray-800 rounded-lg p-4">
+                        <h3 class="font-bold mb-3 flex items-center gap-2">
+                            <i class="fas fa-users text-primary"></i>
+                            Professional Network
+                        </h3>
+                        <div class="grid grid-cols-3 gap-3 mb-3 text-center">
+                            <div>
+                                <div class="text-lg font-bold text-primary" id="connections-count">0</div>
+                                <div class="text-xs text-gray-400">Connections</div>
+                            </div>
+                            <div>
+                                <div class="text-lg font-bold text-success" id="mentors-count">0</div>
+                                <div class="text-xs text-gray-400">Mentors</div>
+                            </div>
+                            <div>
+                                <div class="text-lg font-bold text-warning" id="endorsements-count">0</div>
+                                <div class="text-xs text-gray-400">Endorsements</div>
+                            </div>
+                        </div>
+                        <div id="network-suggestions" class="space-y-2">
+                            <!-- Network suggestions will be shown here -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modals -->
-        <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" onclick="closeModal()">
+        <!-- Advanced Modal System -->
+        <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 backdrop-blur-sm" onclick="closeModal()">
             <div class="flex items-center justify-center min-h-screen p-4">
-                <div id="modal-content" class="bg-gray-800 rounded-lg p-6 max-w-sm w-full" onclick="event.stopPropagation()">
+                <div id="modal-content" class="bg-gray-800 rounded-lg max-w-sm w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
                     <!-- Modal content will be inserted here -->
                 </div>
             </div>
         </div>
+
+        <!-- Notification Toast Container -->
+        <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2">
+            <!-- Toast notifications will appear here -->
+        </div>
     </div>
 
     <script>
-        // App State
-        let currentUser = null;
-        let currentPage = 'home';
-        let walletBalance = 2500.75;
-        let jobs = [];
-        let courses = [];
-        let transactions = [];
+        // Advanced Application State Management
+        class TemariWareApp {
+            constructor() {
+                this.state = {
+                    user: null,
+                    currentPage: 'dashboard',
+                    aiScore: 0,
+                    walletBalance: 0,
+                    learningStreak: 0,
+                    notifications: [],
+                    jobs: [],
+                    courses: [],
+                    transactions: [],
+                    skills: [],
+                    achievements: [],
+                    connections: []
+                };
+                this.aiEngine = new AIEngine();
+                this.walletSystem = new WalletSystem();
+                this.learningPlatform = new LearningPlatform();
+                this.profileManager = new ProfileManager();
+            }
 
-        // Initialize App
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                initializeApp();
-            }, 2000);
-        });
+            async initialize() {
+                await this.loadUserData();
+                await this.initializeModules();
+                this.startRealTimeUpdates();
+                this.showPage('dashboard');
+            }
 
-        function initializeApp() {
-            loadMockData();
-            updateLiveStats();
-            showPage('home');
-            setInterval(updateLiveStats, 5000);
-        }
+            async loadUserData() {
+                // Simulate loading user data
+                this.state.user = {
+                    id: 'user_' + Date.now(),
+                    name: 'Abebe Tadesse',
+                    email: 'abebe@example.com',
+                    university: 'Addis Ababa University',
+                    verified: true,
+                    level: 3,
+                    joinDate: '2024-01-15'
+                };
+                
+                this.state.aiScore = 85;
+                this.state.walletBalance = 2847.50;
+                this.state.learningStreak = 12;
+                
+                this.updateUserInterface();
+            }
 
-        function loadMockData() {
-            jobs = [
-                { id: 1, title: 'Frontend Developer', company: 'TechCorp ET', salary: '25,000 ETB', type: 'tech', match: 95 },
-                { id: 2, title: 'UI/UX Designer', company: 'DesignHub', salary: '20,000 ETB', type: 'design', match: 88 },
-                { id: 3, title: 'Business Analyst', company: 'ConsultPro', salary: '30,000 ETB', type: 'business', match: 82 },
-                { id: 4, title: 'Remote Developer', company: 'GlobalTech', salary: '$1,200', type: 'remote', match: 90 }
-            ];
+            async initializeModules() {
+                await Promise.all([
+                    this.aiEngine.initialize(),
+                    this.walletSystem.initialize(),
+                    this.learningPlatform.initialize(),
+                    this.profileManager.initialize()
+                ]);
+            }
 
-            courses = [
-                { id: 1, title: 'JavaScript Mastery', instructor: 'Dr. Abebe', price: '500 ETB', category: 'programming', rating: 4.8 },
-                { id: 2, title: 'Business Strategy', instructor: 'Prof. Meron', price: '750 ETB', category: 'business', rating: 4.6 },
-                { id: 3, title: 'UI/UX Design', instructor: 'Hanna Tadesse', price: '600 ETB', category: 'design', rating: 4.9 },
-                { id: 4, title: 'English for Business', instructor: 'John Smith', price: '400 ETB', category: 'language', rating: 4.7 }
-            ];
+            updateUserInterface() {
+                if (this.state.user) {
+                    document.getElementById('user-name').textContent = this.state.user.name;
+                    document.getElementById('user-avatar').textContent = this.state.user.name.charAt(0);
+                    document.getElementById('user-status').textContent = this.state.user.verified ? 'Verified Student' : 'Pending Verification';
+                    document.getElementById('ai-score').textContent = this.state.aiScore;
+                    document.getElementById('profile-name').textContent = this.state.user.name;
+                    document.getElementById('profile-university').textContent = this.state.user.university;
+                }
+            }
 
-            transactions = [
-                { id: 1, type: 'received', amount: 1500, from: 'Job Payment - TechCorp', date: '2024-12-24' },
-                { id: 2, type: 'sent', amount: 500, to: 'Course Payment', date: '2024-12-23' },
-                { id: 3, type: 'received', amount: 2000, from: 'Freelance Project', date: '2024-12-22' }
-            ];
-        }
+            startRealTimeUpdates() {
+                // Simulate real-time updates
+                setInterval(() => {
+                    this.updateMarketData();
+                    this.updateNotifications();
+                    this.updateActivityFeed();
+                }, 5000);
+            }
 
-        function updateLiveStats() {
-            document.getElementById('live-jobs').textContent = Math.floor(Math.random() * 50) + 150;
-            document.getElementById('active-students').textContent = Math.floor(Math.random() * 100) + 2400;
-            document.getElementById('success-rate').textContent = (Math.random() * 5 + 93).toFixed(1) + '%';
-        }
+            updateMarketData() {
+                const growth = (Math.random() * 4 + 10).toFixed(1);
+                const salary = Math.floor(Math.random() * 10000 + 40000);
+                const competition = ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)];
+                
+                document.getElementById('market-growth').textContent = `+${growth}%`;
+                document.getElementById('avg-salary').textContent = `${salary/1000}K`;
+                document.getElementById('competition').textContent = competition;
+            }
 
-        function showPage(page) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            
-            // Show selected page
-            document.getElementById(page + '-page').classList.remove('hidden');
-            
-            // Update navigation
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-primary', 'text-black');
-                btn.classList.add('text-gray-400');
-            });
-            
-            document.querySelector(`[data-page="${page}"]`).classList.add('bg-primary', 'text-black');
-            document.querySelector(`[data-page="${page}"]`).classList.remove('text-gray-400');
-            
-            currentPage = page;
-            
-            // Load page-specific content
-            if (page === 'jobs') loadJobs();
-            if (page === 'courses') loadCourses();
-            if (page === 'wallet') loadWallet();
-            if (page === 'profile') loadProfile();
-        }
+            updateNotifications() {
+                const notificationCount = Math.floor(Math.random() * 5);
+                const badge = document.getElementById('notification-badge');
+                if (notificationCount > 0) {
+                    badge.textContent = notificationCount;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
 
-        function loadJobs() {
-            const container = document.getElementById('job-listings');
-            container.innerHTML = jobs.map(job => `
-                <div class="bg-gray-800 p-4 rounded-lg">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <div class="font-bold">${job.title}</div>
-                            <div class="text-sm text-gray-400">${job.company}</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-primary font-bold">${job.salary}</div>
-                            <div class="text-xs text-green-400">${job.match}% match</div>
-                        </div>
-                    </div>
-                    <button onclick="applyJob(${job.id})" class="w-full bg-primary text-black py-2 rounded font-bold mt-2">Apply Now</button>
-                </div>
-            `).join('');
-        }
+            updateActivityFeed() {
+                const activities = [
+                    'New job match found: Senior Developer at TechCorp',
+                    'Course completed: Advanced JavaScript',
+                    'Skill assessment passed: React Development',
+                    'Payment received: 1,500 ETB from freelance project',
+                    'New connection: Dr. Meron Tadesse',
+                    'Achievement unlocked: Learning Streak Master'
+                ];
+                
+                const feed = document.getElementById('activity-feed');
+                if (feed) {
+                    const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                    const activityElement = document.createElement('div');
+                    activityElement.className = 'flex items-center gap-2 p-2 bg-gray-700 rounded text-sm';
+                    activityElement.innerHTML = `
+                        <div class="w-2 h-2 bg-primary rounded-full"></div>
+                        <div class="flex-1">${randomActivity}</div>
+                        <div class="text-xs text-gray-400">now</div>
+                    `;
+                    
+                    if (feed.children.length >= 5) {
+                        feed.removeChild(feed.lastChild);
+                    }
+                    feed.insertBefore(activityElement, feed.firstChild);
+                }
+            }
 
-        function loadCourses() {
-            const container = document.getElementById('course-list');
-            container.innerHTML = courses.map(course => `
-                <div class="bg-gray-800 p-4 rounded-lg">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <div class="font-bold">${course.title}</div>
-                            <div class="text-sm text-gray-400">${course.instructor}</div>
-                            <div class="text-xs text-yellow-400">⭐ ${course.rating}</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-primary font-bold">${course.price}</div>
-                        </div>
-                    </div>
-                    <button onclick="enrollCourse(${course.id})" class="w-full bg-primary text-black py-2 rounded font-bold mt-2">Enroll Now</button>
-                </div>
-            `).join('');
-        }
+            showPage(page) {
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+                
+                // Show selected page
+                const targetPage = document.getElementById(page + '-page');
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
+                }
+                
+                // Update navigation
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('bg-primary', 'text-black');
+                    btn.classList.add('text-gray-400');
+                });
+                
+                const activeBtn = document.querySelector(`[data-page="${page}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('bg-primary', 'text-black');
+                    activeBtn.classList.remove('text-gray-400');
+                }
+                
+                this.state.currentPage = page;
+                
+                // Load page-specific content
+                this.loadPageContent(page);
+            }
 
-        function loadWallet() {
-            document.getElementById('wallet-balance').textContent = walletBalance.toFixed(2) + ' ETB';
-            
-            const container = document.getElementById('transactions');
-            container.innerHTML = '<h3 class="font-bold mb-2">Recent Transactions</h3>' + 
-                transactions.map(tx => `
-                    <div class="bg-gray-800 p-3 rounded flex justify-between items-center">
-                        <div>
-                            <div class="text-sm font-bold">${tx.type === 'received' ? tx.from : tx.to}</div>
-                            <div class="text-xs text-gray-400">${tx.date}</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold ${tx.type === 'received' ? 'text-green-400' : 'text-red-400'}">
-                                ${tx.type === 'received' ? '+' : '-'}${tx.amount} ETB
+            async loadPageContent(page) {
+                switch(page) {
+                    case 'dashboard':
+                        await this.loadDashboard();
+                        break;
+                    case 'jobs':
+                        await this.loadJobs();
+                        break;
+                    case 'learning':
+                        await this.loadLearning();
+                        break;
+                    case 'wallet':
+                        await this.loadWallet();
+                        break;
+                    case 'profile':
+                        await this.loadProfile();
+                        break;
+                }
+            }
+
+            async loadDashboard() {
+                // Load AI insights
+                const insights = await this.aiEngine.generateInsights();
+                document.getElementById('ai-insights').textContent = insights;
+                
+                // Update profile strength
+                const strength = this.profileManager.calculateProfileStrength();
+                document.getElementById('profile-strength').textContent = `${strength}%`;
+                document.getElementById('profile-strength-bar').style.width = `${strength}%`;
+                
+                // Initialize market chart
+                this.initializeMarketChart();
+            }
+
+            async loadJobs() {
+                const jobs = await this.aiEngine.getMatchedJobs();
+                this.renderJobListings(jobs);
+                this.updateApplicationTracker();
+            }
+
+            async loadLearning() {
+                const courses = await this.learningPlatform.getRecommendedCourses();
+                this.renderLearningContent(courses);
+                this.updateLearningStats();
+            }
+
+            async loadWallet() {
+                await this.walletSystem.updateBalance();
+                this.renderWalletContent();
+                this.initializeExpenseChart();
+            }
+
+            async loadProfile() {
+                this.renderProfileContent();
+                this.updateSkillsMatrix();
+                this.loadAchievements();
+                this.loadNetworkData();
+            }
+
+            renderJobListings(jobs) {
+                const container = document.getElementById('job-listings');
+                if (!container) return;
+                
+                container.innerHTML = jobs.map(job => `
+                    <div class="bg-gray-800 p-4 rounded-lg border-l-4 border-${this.getMatchColor(job.match)}">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <div class="font-bold text-lg">${job.title}</div>
+                                <div class="text-sm text-gray-400 flex items-center gap-2">
+                                    <i class="fas fa-building"></i>
+                                    ${job.company}
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${job.location} • ${job.type}
+                                </div>
                             </div>
+                            <div class="text-right">
+                                <div class="text-primary font-bold text-lg">${job.salary}</div>
+                                <div class="text-xs text-success bg-success/20 px-2 py-1 rounded">${job.match}% match</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="text-sm font-bold mb-1">Required Skills:</div>
+                            <div class="flex flex-wrap gap-1">
+                                ${job.skills.map(skill => `
+                                    <span class="bg-blue-600/30 text-blue-300 px-2 py-1 rounded text-xs">${skill}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="app.applyToJob(${job.id})" class="flex-1 bg-primary text-black py-2 rounded font-bold text-sm hover:bg-primary/90 transition-colors">
+                                Apply Now
+                            </button>
+                            <button onclick="app.saveJob(${job.id})" class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-500 transition-colors">
+                                <i class="fas fa-bookmark"></i>
+                            </button>
+                            <button onclick="app.shareJob(${job.id})" class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-500 transition-colors">
+                                <i class="fas fa-share"></i>
+                            </button>
                         </div>
                     </div>
                 `).join('');
-        }
+            }
 
-        function loadProfile() {
-            // Profile is already loaded with default data
-        }
+            getMatchColor(match) {
+                if (match >= 90) return 'green-500';
+                if (match >= 75) return 'blue-500';
+                if (match >= 60) return 'yellow-500';
+                return 'red-500';
+            }
 
-        // Feature Functions
-        function searchJobs() {
-            const query = document.getElementById('job-search').value;
-            showNotification(`🔍 AI searching for "${query}" jobs...`);
-            setTimeout(() => {
-                showNotification('✅ Found 12 matching jobs with 94% AI accuracy!');
-            }, 2000);
-        }
-
-        function filterJobs(category) {
-            const filtered = jobs.filter(job => job.type === category);
-            const container = document.getElementById('job-listings');
-            container.innerHTML = filtered.map(job => `
-                <div class="bg-gray-800 p-4 rounded-lg">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <div class="font-bold">${job.title}</div>
-                            <div class="text-sm text-gray-400">${job.company}</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-primary font-bold">${job.salary}</div>
-                            <div class="text-xs text-green-400">${job.match}% match</div>
-                        </div>
-                    </div>
-                    <button onclick="applyJob(${job.id})" class="w-full bg-primary text-black py-2 rounded font-bold mt-2">Apply Now</button>
-                </div>
-            `).join('');
-        }
-
-        function applyJob(jobId) {
-            const job = jobs.find(j => j.id === jobId);
-            showNotification(`✅ Applied to ${job.title} at ${job.company}!`);
-        }
-
-        function browseCourses(category) {
-            const filtered = courses.filter(course => course.category === category);
-            const container = document.getElementById('course-list');
-            container.innerHTML = filtered.map(course => `
-                <div class="bg-gray-800 p-4 rounded-lg">
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <div class="font-bold">${course.title}</div>
-                            <div class="text-sm text-gray-400">${course.instructor}</div>
-                            <div class="text-xs text-yellow-400">⭐ ${course.rating}</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-primary font-bold">${course.price}</div>
-                        </div>
-                    </div>
-                    <button onclick="enrollCourse(${course.id})" class="w-full bg-primary text-black py-2 rounded font-bold mt-2">Enroll Now</button>
-                </div>
-            `).join('');
-        }
-
-        function enrollCourse(courseId) {
-            const course = courses.find(c => c.id === courseId);
-            showNotification(`🎓 Enrolled in ${course.title}!`);
-        }
-
-        function addMoney(method) {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">Add Money via ${method.toUpperCase()}</h3>
-                <input type="number" id="amount" placeholder="Amount in ETB" class="w-full p-3 bg-gray-700 rounded mb-4">
-                <button onclick="processPayment('${method}')" class="w-full bg-primary text-black py-2 rounded font-bold">Add Money</button>
-            `);
-        }
-
-        function processPayment(method) {
-            const amount = parseFloat(document.getElementById('amount').value);
-            if (amount > 0) {
-                walletBalance += amount;
-                transactions.unshift({
-                    id: Date.now(),
-                    type: 'received',
-                    amount: amount,
-                    from: `${method.toUpperCase()} Top-up`,
-                    date: new Date().toISOString().split('T')[0]
+            initializeMarketChart() {
+                const ctx = document.getElementById('market-chart');
+                if (!ctx) return;
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Job Market Growth',
+                            data: [8, 12, 15, 18, 22, 25],
+                            borderColor: '#14F195',
+                            backgroundColor: 'rgba(20, 241, 149, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false }
+                        }
+                    }
                 });
-                closeModal();
-                showNotification(`✅ Added ${amount} ETB via ${method.toUpperCase()}!`);
-                if (currentPage === 'wallet') loadWallet();
+            }
+
+            showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `bg-${type === 'success' ? 'success' : type === 'error' ? 'error' : 'primary'} text-${type === 'success' || type === 'error' ? 'white' : 'black'} px-4 py-2 rounded font-bold shadow-lg transform translate-x-full transition-transform duration-300`;
+                toast.textContent = message;
+                
+                document.getElementById('toast-container').appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.classList.remove('translate-x-full');
+                }, 100);
+                
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
             }
         }
 
-        function sendMoney() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">Send Money</h3>
-                <input type="text" id="recipient" placeholder="Recipient phone/email" class="w-full p-3 bg-gray-700 rounded mb-3">
-                <input type="number" id="send-amount" placeholder="Amount in ETB" class="w-full p-3 bg-gray-700 rounded mb-4">
-                <button onclick="processSendMoney()" class="w-full bg-primary text-black py-2 rounded font-bold">Send Money</button>
-            `);
-        }
+        // AI Engine Class
+        class AIEngine {
+            constructor() {
+                this.models = {
+                    jobMatching: 'gemini-pro',
+                    skillAnalysis: 'gemini-pro',
+                    careerGuidance: 'gemini-pro'
+                };
+            }
 
-        function processSendMoney() {
-            const amount = parseFloat(document.getElementById('send-amount').value);
-            const recipient = document.getElementById('recipient').value;
-            if (amount > 0 && amount <= walletBalance && recipient) {
-                walletBalance -= amount;
-                transactions.unshift({
-                    id: Date.now(),
-                    type: 'sent',
-                    amount: amount,
-                    to: `Sent to ${recipient}`,
-                    date: new Date().toISOString().split('T')[0]
-                });
-                closeModal();
-                showNotification(`✅ Sent ${amount} ETB to ${recipient}!`);
-                if (currentPage === 'wallet') loadWallet();
+            async initialize() {
+                // Initialize AI models
+                console.log('AI Engine initialized');
+            }
+
+            async generateInsights() {
+                const insights = [
+                    "Based on your JavaScript skills, you're 94% likely to get hired in the next 30 days.",
+                    "Your profile views increased by 45% this week. Consider updating your portfolio.",
+                    "Market demand for React developers is up 23% in Ethiopia this month.",
+                    "You're missing 2 key skills for senior positions. Consider taking advanced courses.",
+                    "Your salary potential increased to 35K ETB based on recent skill additions."
+                ];
+                
+                return insights[Math.floor(Math.random() * insights.length)];
+            }
+
+            async getMatchedJobs() {
+                return [
+                    {
+                        id: 1,
+                        title: 'Senior Frontend Developer',
+                        company: 'TechCorp Ethiopia',
+                        location: 'Addis Ababa',
+                        type: 'Full-time',
+                        salary: '35,000 ETB',
+                        match: 94,
+                        skills: ['React', 'JavaScript', 'TypeScript', 'Node.js'],
+                        description: 'Leading frontend development for enterprise applications'
+                    },
+                    {
+                        id: 2,
+                        title: 'Full Stack Developer',
+                        company: 'StartupHub ET',
+                        location: 'Remote',
+                        type: 'Contract',
+                        salary: '28,000 ETB',
+                        match: 87,
+                        skills: ['React', 'Node.js', 'MongoDB', 'AWS'],
+                        description: 'Building scalable web applications for fintech startup'
+                    },
+                    {
+                        id: 3,
+                        title: 'UI/UX Developer',
+                        company: 'DesignStudio',
+                        location: 'Addis Ababa',
+                        type: 'Part-time',
+                        salary: '20,000 ETB',
+                        match: 76,
+                        skills: ['Figma', 'React', 'CSS', 'JavaScript'],
+                        description: 'Creating beautiful user interfaces for mobile apps'
+                    }
+                ];
             }
         }
 
-        function requestMoney() {
-            showNotification('💸 Money request feature coming soon!');
-        }
+        // Wallet System Class
+        class WalletSystem {
+            constructor() {
+                this.balance = 2847.50;
+                this.connectedBanks = [];
+                this.transactions = [];
+            }
 
-        function viewTransactions() {
-            showNotification('📊 Viewing all transactions...');
-        }
+            async initialize() {
+                this.loadTransactionHistory();
+                console.log('Wallet System initialized');
+            }
 
-        // Advanced Features
-        function openMentorship() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">🤝 Mentorship Matching</h3>
-                <p class="text-sm text-gray-300 mb-4">Connect with industry experts and senior students</p>
-                <div class="space-y-2">
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Dr. Abebe Tadesse</div>
-                        <div class="text-xs text-gray-400">Senior Software Engineer at Google</div>
-                        <div class="text-xs text-green-400">Available for mentorship</div>
-                    </div>
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Hanna Meron</div>
-                        <div class="text-xs text-gray-400">Product Manager at Microsoft</div>
-                        <div class="text-xs text-yellow-400">Busy until next week</div>
-                    </div>
-                </div>
-                <button onclick="requestMentorship()" class="w-full bg-primary text-black py-2 rounded font-bold mt-4">Request Mentorship</button>
-            `);
-        }
+            async updateBalance() {
+                document.getElementById('wallet-balance').textContent = `${this.balance.toFixed(2)} ETB`;
+                
+                const monthlyIncome = this.calculateMonthlyIncome();
+                const monthlyExpenses = this.calculateMonthlyExpenses();
+                
+                document.getElementById('monthly-income').textContent = `+${monthlyIncome.toFixed(0)} ETB`;
+                document.getElementById('monthly-expenses').textContent = `-${monthlyExpenses.toFixed(0)} ETB`;
+            }
 
-        function requestMentorship() {
-            closeModal();
-            showNotification('🤝 Mentorship request sent! You\'ll hear back within 24 hours.');
-        }
+            loadTransactionHistory() {
+                this.transactions = [
+                    {
+                        id: 1,
+                        type: 'income',
+                        amount: 2500,
+                        description: 'Freelance Project Payment',
+                        date: '2024-12-24',
+                        category: 'work'
+                    },
+                    {
+                        id: 2,
+                        type: 'expense',
+                        amount: 500,
+                        description: 'JavaScript Course',
+                        date: '2024-12-23',
+                        category: 'education'
+                    },
+                    {
+                        id: 3,
+                        type: 'income',
+                        amount: 1800,
+                        description: 'Part-time Job',
+                        date: '2024-12-22',
+                        category: 'work'
+                    }
+                ];
+            }
 
-        function startVideoCall() {
-            showNotification('📹 Starting video call... Feature powered by WebRTC!');
-            setTimeout(() => {
-                showNotification('📹 Video call connected! Enjoy your session.');
-            }, 3000);
-        }
+            calculateMonthlyIncome() {
+                return this.transactions
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + t.amount, 0);
+            }
 
-        function viewCertificates() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">🔗 Blockchain Certificates</h3>
-                <p class="text-sm text-gray-300 mb-4">Your verified achievements on the blockchain</p>
-                <div class="space-y-2">
-                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded">
-                        <div class="font-bold">JavaScript Mastery</div>
-                        <div class="text-xs">Verified on Ethereum • Block #18234567</div>
-                    </div>
-                    <div class="bg-gradient-to-r from-green-600 to-blue-600 p-3 rounded">
-                        <div class="font-bold">React Developer</div>
-                        <div class="text-xs">Verified on Polygon • Block #45123890</div>
-                    </div>
-                </div>
-                <button onclick="downloadCertificate()" class="w-full bg-primary text-black py-2 rounded font-bold mt-4">Download Certificate</button>
-            `);
-        }
-
-        function downloadCertificate() {
-            closeModal();
-            showNotification('📄 Certificate downloaded! Blockchain verification included.');
-        }
-
-        function browseFunding() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">💼 Startup Funding</h3>
-                <p class="text-sm text-gray-300 mb-4">Connect with investors and funding opportunities</p>
-                <div class="space-y-2">
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Seed Funding - $50K</div>
-                        <div class="text-xs text-gray-400">Tech startups • 6% equity</div>
-                        <div class="text-xs text-green-400">Applications open</div>
-                    </div>
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Angel Investment - $25K</div>
-                        <div class="text-xs text-gray-400">Early stage • 10% equity</div>
-                        <div class="text-xs text-blue-400">Interview stage</div>
-                    </div>
-                </div>
-                <button onclick="applyFunding()" class="w-full bg-primary text-black py-2 rounded font-bold mt-4">Apply for Funding</button>
-            `);
-        }
-
-        function applyFunding() {
-            closeModal();
-            showNotification('💼 Funding application submitted! Investors will review within 48 hours.');
-        }
-
-        function browseGlobalJobs() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">🌍 International Jobs</h3>
-                <p class="text-sm text-gray-300 mb-4">Global opportunities for Ethiopian talent</p>
-                <div class="space-y-2">
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Remote Developer - USA</div>
-                        <div class="text-xs text-gray-400">$80K/year • Full remote</div>
-                        <div class="text-xs text-green-400">Visa sponsorship available</div>
-                    </div>
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Product Manager - Germany</div>
-                        <div class="text-xs text-gray-400">€65K/year • Berlin</div>
-                        <div class="text-xs text-blue-400">EU work permit required</div>
-                    </div>
-                </div>
-                <button onclick="applyGlobalJob()" class="w-full bg-primary text-black py-2 rounded font-bold mt-4">Apply International</button>
-            `);
-        }
-
-        function applyGlobalJob() {
-            closeModal();
-            showNotification('🌍 International application submitted! Global HR team will contact you.');
-        }
-
-        function joinAlumni() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">🎓 Alumni Network</h3>
-                <p class="text-sm text-gray-300 mb-4">Connect with TemariWare graduates worldwide</p>
-                <div class="space-y-2">
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Alumni Meetup - Addis Ababa</div>
-                        <div class="text-xs text-gray-400">Dec 30, 2024 • Skylight Hotel</div>
-                        <div class="text-xs text-green-400">50+ attendees expected</div>
-                    </div>
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Virtual Networking</div>
-                        <div class="text-xs text-gray-400">Weekly • Every Friday 7PM</div>
-                        <div class="text-xs text-blue-400">Global participants</div>
-                    </div>
-                </div>
-                <button onclick="joinAlumniEvent()" class="w-full bg-primary text-black py-2 rounded font-bold mt-4">Join Alumni Network</button>
-            `);
-        }
-
-        function joinAlumniEvent() {
-            closeModal();
-            showNotification('🎓 Welcome to the Alumni Network! Event invitations sent to your email.');
-        }
-
-        // Profile Functions
-        function editProfile() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">✏️ Edit Profile</h3>
-                <input type="text" id="edit-name" placeholder="Full Name" class="w-full p-3 bg-gray-700 rounded mb-3" value="Anonymous Student">
-                <input type="text" id="edit-university" placeholder="University" class="w-full p-3 bg-gray-700 rounded mb-3" value="Addis Ababa University">
-                <input type="text" id="edit-skills" placeholder="Skills (comma separated)" class="w-full p-3 bg-gray-700 rounded mb-4" value="JavaScript, React, Node.js">
-                <button onclick="saveProfile()" class="w-full bg-primary text-black py-2 rounded font-bold">Save Profile</button>
-            `);
-        }
-
-        function saveProfile() {
-            const name = document.getElementById('edit-name').value;
-            const university = document.getElementById('edit-university').value;
-            const skills = document.getElementById('edit-skills').value;
-            
-            document.getElementById('profile-name').textContent = name;
-            document.getElementById('profile-university').textContent = university;
-            document.getElementById('profile-avatar').textContent = name.charAt(0).toUpperCase();
-            
-            const skillsArray = skills.split(',').map(s => s.trim());
-            document.getElementById('profile-skills').innerHTML = skillsArray.map(skill => 
-                `<span class="bg-blue-600 px-2 py-1 rounded text-xs">${skill}</span>`
-            ).join('');
-            
-            closeModal();
-            showNotification('✅ Profile updated successfully!');
-        }
-
-        function uploadResume() {
-            showNotification('📄 Resume upload feature activated! AI will analyze your skills.');
-            setTimeout(() => {
-                const newScore = Math.floor(Math.random() * 10) + 85;
-                document.getElementById('ai-score').textContent = newScore + '%';
-                document.getElementById('ai-score-bar').style.width = newScore + '%';
-                showNotification(`🤖 AI analysis complete! Your profile score is now ${newScore}%`);
-            }, 3000);
-        }
-
-        function viewPortfolio() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">🎨 Portfolio</h3>
-                <div class="space-y-3">
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">E-commerce Website</div>
-                        <div class="text-xs text-gray-400">React, Node.js, MongoDB</div>
-                        <div class="text-xs text-green-400">⭐ Featured Project</div>
-                    </div>
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">Mobile Banking App</div>
-                        <div class="text-xs text-gray-400">React Native, Firebase</div>
-                        <div class="text-xs text-blue-400">🏆 Award Winner</div>
-                    </div>
-                    <div class="bg-gray-700 p-3 rounded">
-                        <div class="font-bold">AI Chatbot</div>
-                        <div class="text-xs text-gray-400">Python, TensorFlow</div>
-                        <div class="text-xs text-purple-400">🚀 Trending</div>
-                    </div>
-                </div>
-                <button onclick="addProject()" class="w-full bg-primary text-black py-2 rounded font-bold mt-4">Add New Project</button>
-            `);
-        }
-
-        function addProject() {
-            closeModal();
-            showNotification('🎨 Project upload interface opened! Add your latest work.');
-        }
-
-        // Auth Functions
-        function showLogin() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">🔐 Login</h3>
-                <input type="email" id="login-email" placeholder="Email" class="w-full p-3 bg-gray-700 rounded mb-3">
-                <input type="password" id="login-password" placeholder="Password" class="w-full p-3 bg-gray-700 rounded mb-4">
-                <button onclick="processLogin()" class="w-full bg-primary text-black py-2 rounded font-bold mb-2">Login</button>
-                <button onclick="showRegister()" class="w-full bg-gray-600 text-white py-2 rounded">Create Account</button>
-            `);
-        }
-
-        function showRegister() {
-            showModal(`
-                <h3 class="text-lg font-bold mb-4">📝 Register</h3>
-                <input type="text" id="reg-name" placeholder="Full Name" class="w-full p-3 bg-gray-700 rounded mb-3">
-                <input type="email" id="reg-email" placeholder="Email" class="w-full p-3 bg-gray-700 rounded mb-3">
-                <input type="password" id="reg-password" placeholder="Password" class="w-full p-3 bg-gray-700 rounded mb-3">
-                <input type="text" id="reg-university" placeholder="University" class="w-full p-3 bg-gray-700 rounded mb-4">
-                <button onclick="processRegister()" class="w-full bg-primary text-black py-2 rounded font-bold mb-2">Register</button>
-                <button onclick="showLogin()" class="w-full bg-gray-600 text-white py-2 rounded">Already have account?</button>
-            `);
-        }
-
-        function processLogin() {
-            const email = document.getElementById('login-email').value;
-            if (email) {
-                currentUser = { email: email, name: 'Student User' };
-                closeModal();
-                showNotification('✅ Login successful! Welcome back to TemariWare.');
+            calculateMonthlyExpenses() {
+                return this.transactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
             }
         }
 
-        function processRegister() {
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const university = document.getElementById('reg-university').value;
-            
-            if (name && email && university) {
-                currentUser = { email: email, name: name, university: university };
-                document.getElementById('profile-name').textContent = name;
-                document.getElementById('profile-university').textContent = university;
-                document.getElementById('profile-avatar').textContent = name.charAt(0).toUpperCase();
-                closeModal();
-                showNotification('🎉 Registration successful! Welcome to TemariWare.');
+        // Learning Platform Class
+        class LearningPlatform {
+            constructor() {
+                this.courses = [];
+                this.userProgress = {};
+            }
+
+            async initialize() {
+                this.loadCourses();
+                console.log('Learning Platform initialized');
+            }
+
+            loadCourses() {
+                this.courses = [
+                    {
+                        id: 1,
+                        title: 'Advanced React Development',
+                        instructor: 'Dr. Abebe Tadesse',
+                        price: 750,
+                        rating: 4.9,
+                        category: 'programming',
+                        difficulty: 'Advanced',
+                        duration: '8 weeks',
+                        students: 1247
+                    },
+                    {
+                        id: 2,
+                        title: 'Ethiopian Business Strategy',
+                        instructor: 'Prof. Meron Haile',
+                        price: 600,
+                        rating: 4.7,
+                        category: 'business',
+                        difficulty: 'Intermediate',
+                        duration: '6 weeks',
+                        students: 892
+                    }
+                ];
+            }
+
+            async getRecommendedCourses() {
+                return this.courses.filter(course => 
+                    course.category === 'programming' || course.rating >= 4.7
+                );
             }
         }
 
-        // Utility Functions
+        // Profile Manager Class
+        class ProfileManager {
+            constructor() {
+                this.skills = [];
+                this.achievements = [];
+            }
+
+            async initialize() {
+                this.loadSkills();
+                this.loadAchievements();
+                console.log('Profile Manager initialized');
+            }
+
+            loadSkills() {
+                this.skills = [
+                    { name: 'JavaScript', level: 85, category: 'programming' },
+                    { name: 'React', level: 78, category: 'programming' },
+                    { name: 'Node.js', level: 72, category: 'programming' },
+                    { name: 'Communication', level: 90, category: 'soft' },
+                    { name: 'Problem Solving', level: 88, category: 'soft' }
+                ];
+            }
+
+            loadAchievements() {
+                this.achievements = [
+                    { id: 1, name: 'First Job Application', icon: '🎯', earned: true },
+                    { id: 2, name: 'Course Completion', icon: '📚', earned: true },
+                    { id: 3, name: 'Skill Master', icon: '⭐', earned: false },
+                    { id: 4, name: 'Network Builder', icon: '🤝', earned: true }
+                ];
+            }
+
+            calculateProfileStrength() {
+                const factors = {
+                    skills: this.skills.length * 10,
+                    achievements: this.achievements.filter(a => a.earned).length * 15,
+                    verification: 20,
+                    activity: 25
+                };
+                
+                const total = Object.values(factors).reduce((sum, val) => sum + val, 0);
+                return Math.min(100, total);
+            }
+        }
+
+        // Global App Instance
+        let app;
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Show loading progress
+            const loadingSteps = [
+                'Loading AI Engine...',
+                'Connecting to Ethiopian Banks...',
+                'Initializing Learning Platform...',
+                'Setting up Profile System...',
+                'Finalizing Setup...'
+            ];
+            
+            let progress = 0;
+            const progressBar = document.getElementById('loading-progress');
+            const statusText = document.getElementById('loading-status');
+            
+            for (let i = 0; i < loadingSteps.length; i++) {
+                statusText.textContent = loadingSteps[i];
+                progress = ((i + 1) / loadingSteps.length) * 100;
+                progressBar.style.width = progress + '%';
+                await new Promise(resolve => setTimeout(resolve, 800));
+            }
+            
+            // Initialize main application
+            app = new TemariWareApp();
+            await app.initialize();
+            
+            // Hide loading and show app
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+        });
+
+        // Global Functions for UI Interactions
+        function showPage(page) {
+            app.showPage(page);
+        }
+
         function showModal(content) {
-            document.getElementById('modal-content').innerHTML = content;
+            document.getElementById('modal-content').innerHTML = `
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold">Modal</h3>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-white">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    ${content}
+                </div>
+            `;
             document.getElementById('modal-overlay').classList.remove('hidden');
         }
 
@@ -800,16 +1151,84 @@
             document.getElementById('modal-overlay').classList.add('hidden');
         }
 
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-primary text-black px-4 py-2 rounded font-bold z-50';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
+        // Feature Functions
+        function quickJobSearch() {
+            app.showToast('🎯 AI Job Hunt activated! Analyzing 500+ opportunities...', 'success');
             setTimeout(() => {
-                notification.remove();
-            }, 3000);
+                app.showPage('jobs');
+            }, 1500);
         }
+
+        function skillGapAnalysis() {
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">📊 AI Skill Gap Analysis</h3>
+                    <div class="bg-gray-700 p-3 rounded">
+                        <div class="font-bold text-warning">Missing Skills for Senior Roles:</div>
+                        <div class="text-sm text-gray-300 mt-1">
+                            • TypeScript (High Priority)<br>
+                            • AWS/Cloud Services (Medium Priority)<br>
+                            • System Design (High Priority)
+                        </div>
+                    </div>
+                    <div class="bg-gray-700 p-3 rounded">
+                        <div class="font-bold text-success">Recommended Learning Path:</div>
+                        <div class="text-sm text-gray-300 mt-1">
+                            1. Complete TypeScript Fundamentals (2 weeks)<br>
+                            2. AWS Certified Developer Course (4 weeks)<br>
+                            3. System Design Interview Prep (3 weeks)
+                        </div>
+                    </div>
+                    <button onclick="startLearningPath()" class="w-full bg-primary text-black py-2 rounded font-bold">Start Learning Path</button>
+                </div>
+            `);
+        }
+
+        function salaryNegotiator() {
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">💎 AI Salary Optimizer</h3>
+                    <div class="bg-gradient-to-r from-green-600 to-blue-600 p-3 rounded text-center">
+                        <div class="text-2xl font-bold">42,000 ETB</div>
+                        <div class="text-sm opacity-80">Recommended Salary Range</div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-sm">Market Average:</span>
+                            <span class="text-sm font-bold">38,000 ETB</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm">Your Skills Premium:</span>
+                            <span class="text-sm font-bold text-success">+4,000 ETB</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm">Experience Bonus:</span>
+                            <span class="text-sm font-bold text-primary">+2,000 ETB</span>
+                        </div>
+                    </div>
+                    <button onclick="generateNegotiationScript()" class="w-full bg-primary text-black py-2 rounded font-bold">Generate Negotiation Script</button>
+                </div>
+            `);
+        }
+
+        function networkBuilder() {
+            app.showToast('🌐 AI Network Builder analyzing 10,000+ professionals...', 'success');
+            setTimeout(() => {
+                app.showPage('profile');
+            }, 1500);
+        }
+
+        function generateInsights() {
+            app.showToast('🧠 AI analyzing your profile and market trends...', 'info');
+            setTimeout(async () => {
+                const insights = await app.aiEngine.generateInsights();
+                document.getElementById('ai-insights').textContent = insights;
+                app.showToast('✅ AI insights updated!', 'success');
+            }, 2000);
+        }
+
+        // Add more advanced functions as needed...
+        
     </script>
 </body>
 </html>
