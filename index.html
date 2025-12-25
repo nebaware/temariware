@@ -2165,6 +2165,128 @@
         function startPortfolioBuilder() { closeModal(); app.showToast('🎨 Portfolio builder launched!', 'success'); }
         function customizeRoadmap() { closeModal(); app.showToast('🗺️ Career roadmap customized!', 'success'); }
         function expandNetwork() { closeModal(); app.showToast('🌐 Network expansion plan activated!', 'success'); }
+        
+        // Complete Action Logic for All Buttons
+        function sendMoney() {
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">💸 Send Money</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="recipient-phone" placeholder="Recipient phone number" class="w-full p-3 bg-gray-700 rounded">
+                        <input type="number" id="send-amount" placeholder="Amount (ETB)" class="w-full p-3 bg-gray-700 rounded">
+                        <select id="send-method" class="w-full p-3 bg-gray-700 rounded">
+                            <option value="">Select payment method</option>
+                            <option value="telebirr">Telebirr</option>
+                            <option value="cbe">CBE Bank</option>
+                            <option value="dashen">Dashen Bank</option>
+                        </select>
+                    </div>
+                    <button onclick="processSendMoney()" class="w-full bg-primary text-black py-2 rounded font-bold">Send Money</button>
+                </div>
+            `);
+        }
+        
+        function processSendMoney() {
+            const phone = document.getElementById('recipient-phone').value;
+            const amount = parseFloat(document.getElementById('send-amount').value);
+            const method = document.getElementById('send-method').value;
+            
+            if (!phone || !amount || !method) {
+                app.showToast('⚠️ Please fill all fields', 'error');
+                return;
+            }
+            
+            const currentBalance = parseFloat(document.getElementById('wallet-balance').textContent.replace(' ETB', ''));
+            
+            if (amount > currentBalance) {
+                app.showToast('❌ Insufficient balance', 'error');
+                return;
+            }
+            
+            closeModal();
+            
+            setTimeout(() => {
+                const newBalance = currentBalance - amount;
+                document.getElementById('wallet-balance').textContent = `${newBalance.toFixed(2)} ETB`;
+                
+                const transactionList = document.getElementById('transaction-list');
+                if (transactionList) {
+                    const transaction = document.createElement('div');
+                    transaction.className = 'bg-gray-800 p-3 rounded flex justify-between items-center';
+                    transaction.innerHTML = `
+                        <div>
+                            <div class="text-sm font-bold">Sent to ${phone}</div>
+                            <div class="text-xs text-gray-400">${new Date().toLocaleDateString()}</div>
+                        </div>
+                        <div class="font-bold text-red-400">-${amount} ETB</div>
+                    `;
+                    transactionList.insertBefore(transaction, transactionList.firstChild);
+                }
+                
+                app.showToast(`✅ ${amount} ETB sent successfully!`, 'success');
+            }, 1000);
+        }
+        
+        function requestMoney() {
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">📥 Request Money</h3>
+                    <div class="space-y-3">
+                        <input type="text" id="request-from" placeholder="Request from (phone/email)" class="w-full p-3 bg-gray-700 rounded">
+                        <input type="number" id="request-amount" placeholder="Amount (ETB)" class="w-full p-3 bg-gray-700 rounded">
+                        <textarea id="request-reason" placeholder="Reason for request" class="w-full p-3 bg-gray-700 rounded h-20"></textarea>
+                    </div>
+                    <button onclick="processMoneyRequest()" class="w-full bg-secondary text-white py-2 rounded font-bold">Send Request</button>
+                </div>
+            `);
+        }
+        
+        function processMoneyRequest() {
+            const from = document.getElementById('request-from').value;
+            const amount = document.getElementById('request-amount').value;
+            
+            if (!from || !amount) {
+                app.showToast('⚠️ Please fill required fields', 'error');
+                return;
+            }
+            
+            closeModal();
+            app.showToast(`📤 Money request sent to ${from} for ${amount} ETB`, 'success');
+        }
+        
+        function viewTransactions() {
+            showModal(`
+                <div class="space-y-4">
+                    <h3 class="text-lg font-bold mb-4">📊 Transaction History</h3>
+                    <div class="space-y-2 max-h-60 overflow-y-auto">
+                        <div class="bg-gray-700 p-3 rounded">
+                            <div class="flex justify-between">
+                                <div>
+                                    <div class="font-bold text-sm">Freelance Payment</div>
+                                    <div class="text-xs text-gray-400">Dec 24, 2024</div>
+                                </div>
+                                <div class="text-success font-bold">+2,500 ETB</div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-700 p-3 rounded">
+                            <div class="flex justify-between">
+                                <div>
+                                    <div class="font-bold text-sm">Course Payment</div>
+                                    <div class="text-xs text-gray-400">Dec 23, 2024</div>
+                                </div>
+                                <div class="text-red-400 font-bold">-500 ETB</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="exportTransactions()" class="w-full bg-primary text-black py-2 rounded font-bold">Export CSV</button>
+                </div>
+            `);
+        }
+        
+        function exportTransactions() {
+            closeModal();
+            app.showToast('📄 Transaction history exported to CSV!', 'success');
+        }
     </script>
 </body>
 </html>
