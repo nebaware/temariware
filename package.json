@@ -1,1 +1,28 @@
-{\n  \"name\": \"temariware\",\n  \"version\": \"1.0.0\",\n  \"description\": \"Complete Student Ecosystem Platform for Ethiopian Students\",\n  \"private\": true,\n  \"workspaces\": [\n    \"apps/frontend\",\n    \"apps/backend\",\n    \"apps/telegram-bot\"\n  ],\n  \"scripts\": {\n    \"dev\": \"npm run dev --workspace=apps/frontend\",\n    \"build\": \"npm run build --workspace=apps/frontend\",\n    \"start:backend\": \"npm start --workspace=apps/backend\",\n    \"start:bot\": \"npm start --workspace=apps/telegram-bot\",\n    \"test\": \"npm run test --workspaces\",\n    \"lint\": \"npm run lint --workspaces\",\n    \"deploy\": \"npm run build && npm run start:backend\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"https://github.com/temariware/platform.git\"\n  },\n  \"keywords\": [\n    \"student-platform\",\n    \"ethiopia\",\n    \"jobs\",\n    \"education\",\n    \"ai-powered\",\n    \"telegram-bot\"\n  ],\n  \"author\": \"TemariWare Team\",\n  \"license\": \"MIT\",\n  \"engines\": {\n    \"node\": \">=18.0.0\",\n    \"npm\": \">=8.0.0\"\n  }\n}
+{
+  "name": "temariware",
+  "version": "1.0.0",
+  "description": "Complete Student Ecosystem Platform for Ethiopian Students",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "start": "vite preview --port 3000"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "framer-motion": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@vitejs/plugin-react": "^3.1.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
